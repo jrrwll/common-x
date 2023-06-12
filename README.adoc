@@ -2,13 +2,10 @@
 
 == jwrap-excel
 
-https://github.com/jrrwll/jwrap/blob/master/jwrap-excel/README.adoc[README]
+https://github.com/jrrwll/common-x/blob/master/common-excel/README.adoc[README]
 
 **Excel** Tool，Wrapped for **Apache POI**
 
 == jwrap-conv
 
-https://github.com/jrrwll/jwrap/blob/master/jwrap-conv/README.adoc[README]
-
 Some document conversion tools, include pdf, office files, swf and so on
-

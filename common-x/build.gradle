@@ -1,0 +1,20 @@
+ext {
+    // https://mvnrepository.com/artifact/com.google.zxing/core
+    zxingVersion = '3.5.1'
+    // https://mvnrepository.com/artifact/co.elastic.clients/elasticsearch-java
+    elasticsearchVersion = '8.8.1'
+}
+
+dependencies {
+    /// compileOnly
+    compileOnly "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    compileOnly "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    compileOnly "com.google.zxing:core:$zxingVersion"
+    compileOnly "com.google.zxing:javase:$zxingVersion"
+    compileOnly "co.elastic.clients:elasticsearch-java:$elasticsearchVersion"
+
+    /// test
+    testImplementation "com.google.zxing:core:$zxingVersion"
+    testImplementation "com.google.zxing:javase:$zxingVersion"
+    testImplementation "co.elastic.clients:elasticsearch-java:$elasticsearchVersion"
+}

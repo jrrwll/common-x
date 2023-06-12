@@ -1,0 +1,13 @@
+rootProject.name = 'common-x'
+
+def projects = [
+        'common-excel',
+        'common-conv', 'common-conv:example-pdf', 'common-conv:example-jacob',
+        'common-x', 'common-x:example-elasticsearch',
+        'common-web', 'common-web:example-mybatis',
+        'common-web:example-web', 'common-web:example-webflux',
+]
+
+projects.forEach {
+    include it
+}

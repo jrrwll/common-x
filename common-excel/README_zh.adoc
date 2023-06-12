@@ -1,0 +1,57 @@
+= excel
+
+https://github.com/jrrwll/common-x/blob/master/common-excel/README.adoc[English]
+
+**Excel** 工具包，封装**Apache POI**
+
+== 特性
+
+- Java Bean List导出
+
+https://github.com/jrrwll/common-x/blob/master/common-excel/src/test/java/org/dreamcat/common/excel/demo/SimpleListDemo.java[SimpleListDemo.java]
+
+[source,java]
+----
+// 定义一个空的Sheet页，名字为：Sheet One
+SimpleListSheet sheet = new SimpleListSheet("Sheet One");
+
+// 添加带样式的头部行，基于Pojo类及其字段的注解生成
+sheet.addHeader(Pojo.class);
+
+// 添加多个数据行，基于Pojo对象的各个字段，展开成多列
+List<Pojo> pojoList = Arrays.asList(new Pojo(), new Pojo());
+sheet.addAll(pojoList);
+
+// 添加一个数据行
+sheet.add(new Pojo());
+
+// 写入到Excel文件
+String excelFile = System.getenv("HOME") + "/Downloads/SimpleListDemo.xlsx";
+new ExcelWorkbook<>().addSheet(sheet).writeTo(excelFile);
+----
+
+== 架构
+
+=== 概念
+
+==== `Workbook`
+
+对应一个Excel文件，抽象接口：`IExcelWorkbook`
+
+包含Sheet页(Sheets)、字体(Fonts)、样式(CellStyles)、图片(Pictures)等
+
+===== `Sheet`
+
+对应一个Excel中的Sheet页，抽象接口：`IExcelSheet`
+
+包含单元格(Cells)
+
+==== `cell`
+
+对应一个Excel中的一个单元格，抽象接口：`IExcelCell`
+
+包含地址(行索引，列索引，行宽，列宽)，内容Content, 样式CellStyle的引用，超链接Hyperlink，备注Comment等
+
+=== 渲染
+
+如需使用样式和字体，应当在`workbook`中先行声明，然后在相应的地方引用

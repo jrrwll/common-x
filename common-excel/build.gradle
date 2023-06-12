@@ -1,0 +1,12 @@
+ext {
+    // https://mvnrepository.com/artifact/org.apache.poi/poi
+    poiVersion = "5.2.3"
+}
+
+dependencies {
+    implementation "org.dreamcat:common:0.4"
+    implementation "org.apache.poi:poi:$poiVersion"
+    implementation "org.apache.poi:poi-ooxml:$poiVersion"
+
+    testImplementation 'com.opencsv:opencsv:5.7.1'
+}

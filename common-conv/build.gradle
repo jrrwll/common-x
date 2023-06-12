@@ -1,0 +1,15 @@
+ext {
+    // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
+    pdfboxVersion = '2.0.28'
+    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+    thumbnailatorVersion = '0.4.19'
+    // https://mvnrepository.com/artifact/com.hynnet/jacob
+    jacobVersion = '1.18'
+}
+
+dependencies {
+    implementation "org.dreamcat:common:0.4"
+    implementation "org.apache.pdfbox:pdfbox:$pdfboxVersion"
+    implementation "net.coobird:thumbnailator:$thumbnailatorVersion"
+    implementation "com.hynnet:jacob:$jacobVersion"
+}

@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -23,10 +25,16 @@ public final class ExcelUtil {
     private ExcelUtil() {
     }
 
-    public static List<List<List<String>>> parseAsString(String filename)
-            throws IOException, InvalidFormatException {
-        return stringify3d(parse(filename));
+    public static List<String> getSheetNames(Workbook workbook) {
+        int sheetNum = workbook.getNumberOfSheets();
+        List<String> sheetNames = new ArrayList<>(sheetNum);
+        for (int i = 0; i < sheetNum; i++) {
+            sheetNames.add(workbook.getSheetName(i));
+        }
+        return sheetNames;
     }
+
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static List<List<List<String>>> parseAsString(File file)
             throws IOException, InvalidFormatException {
@@ -47,12 +55,6 @@ public final class ExcelUtil {
 
     // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 
-    public static List<List<String>> parseAsString(String filename, int sheetIndex)
-            throws IOException, InvalidFormatException {
-
-        return stringify2d(parse(filename, sheetIndex));
-    }
-
     public static List<List<String>> parseAsString(File file, int sheetIndex)
             throws IOException, InvalidFormatException {
         return stringify2d(parse(file, sheetIndex));
@@ -61,11 +63,6 @@ public final class ExcelUtil {
     public static List<List<String>> parseAsString(InputStream input, int sheetIndex)
             throws IOException {
         return stringify2d(parse(input, sheetIndex));
-    }
-
-    public static List<List<String>> parseAsString(String filename, String sheetName)
-            throws IOException, InvalidFormatException {
-        return stringify2d(parse(filename, sheetName));
     }
 
     public static List<List<String>> parseAsString(File file, String sheetName)
@@ -105,10 +102,34 @@ public final class ExcelUtil {
 
     // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 
-    public static List<List<List<Object>>> parse(String filename)
+    public static Map<String, List<List<Object>>> parseAsMap(File file)
             throws IOException, InvalidFormatException {
-        return parse(new File(filename));
+        try (Workbook workbook = new XSSFWorkbook(file)) {
+            return parseAsMap(workbook);
+        }
     }
+
+    public static Map<String, List<List<Object>>> parseAsMap(InputStream input)
+            throws IOException {
+        try (Workbook workbook = new XSSFWorkbook(input)) {
+            return parseAsMap(workbook);
+        }
+    }
+
+    // NOTE THAT: may cause some problem on same sheet names
+    public static Map<String, List<List<Object>>> parseAsMap(Workbook workbook) {
+        int sheetNum = workbook.getNumberOfSheets();
+        Map<String, List<List<Object>>> sheets = new HashMap<>(sheetNum);
+        if (sheetNum == 0) return sheets;
+
+        for (int i = 0; i < sheetNum; i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+            sheets.put(sheet.getSheetName(), parse(sheet));
+        }
+        return sheets;
+    }
+
+    // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 
     public static List<List<List<Object>>> parse(File file)
             throws IOException, InvalidFormatException {
@@ -167,7 +188,8 @@ public final class ExcelUtil {
         }
     }
 
-    public static List<List<Object>> parse(InputStream input, String sheetName) throws IOException {
+    public static List<List<Object>> parse(InputStream input, String sheetName)
+            throws IOException {
         try (Workbook workbook = new XSSFWorkbook(input)) {
             return parse(workbook, sheetName);
         }

@@ -8,15 +8,16 @@ import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.function.IBiConsumer;
 import org.dreamcat.common.function.IConsumer;
+import org.dreamcat.common.util.SystemUtil;
 
 /**
  * Create by tuke on 2021/2/15
  */
 public class BaseTest {
 
-    protected static final String basePath = System.getenv("HOME") + "/Downloads";
-
-    protected static final File baseDir = new File(basePath);
+    private static final String homeDir = SystemUtil.getEnvOrProperty("HOME", "user.dir", ".");
+    protected static final File baseDir = new File(homeDir, "Downloads");
+    protected static final String basePath = baseDir.getAbsolutePath();
 
     /// pattern
 

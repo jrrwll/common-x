@@ -7,6 +7,7 @@ import static org.dreamcat.common.util.RandomUtil.randi;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -93,6 +94,7 @@ public class ExcelBuilderTest extends BaseTest {
             style.setFgColor(IndexedColors.ROSE.getIndex());
             style.setHorizontalAlignment(HorizontalAlignment.CENTER);
             style.setVerticalAlignment(VerticalAlignment.CENTER);
+            style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             style.setFont(font);
 
             ExcelCell cell = new ExcelCell(
@@ -112,11 +114,11 @@ public class ExcelBuilderTest extends BaseTest {
         sheet.setWriteCallback(new FitWidthWriteCallback());
 
         book.addSheet(sheet);
-        book.writeTo("/Users/tuke/Downloads/book.xlsx");
+        book.writeTo(basePath + "/book.xlsx");
     }
 
     @Test
-    void test() throws Exception {
+    void test() {
         SheetTerm sheetTerm = headerSheet();
         ExcelSheet headerSheet = sheetTerm.finish();
         headerSheet.setWriteCallback(new LoggingWriteCallback());

@@ -144,7 +144,11 @@ public class ExcelStyle {
         if (hasColor(fgColor) || hasColor(bgColor)) {
             if (hasColor(fgColor)) style.setFillForegroundColor(fgColor);
             if (hasColor(bgColor)) style.setFillBackgroundColor(bgColor);
-            if (fillPattern != null) style.setFillPattern(fillPattern);
+            if (fillPattern != null) {
+                style.setFillPattern(fillPattern);
+            } else {
+                style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            }
         }
 
         if (borderBottom != null) style.setBorderBottom(borderBottom);

@@ -2,6 +2,7 @@ package org.dreamcat.common.excel.content;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.dreamcat.common.excel.style.ExcelRichString;
 
@@ -11,6 +12,9 @@ import org.dreamcat.common.excel.style.ExcelRichString;
 public interface IExcelContent {
 
     static IExcelContent from(Cell cell) {
+        if (DateUtil.isCellDateFormatted(cell)) {
+            return new ExcelDateContent(cell.getDateCellValue());
+        }
         CellType type = cell.getCellType();
         switch (type) {
             case STRING:

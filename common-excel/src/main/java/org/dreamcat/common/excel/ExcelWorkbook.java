@@ -34,6 +34,7 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
     final Map<Font, ExcelFont> reversedFonts;
     final Map<ExcelStyle, CellStyle> styles;
     final Map<CellStyle, ExcelStyle> reversedStyles;
+    boolean date1904;
 
     public ExcelWorkbook() {
         this.sheets = new ArrayList<>();
@@ -65,13 +66,13 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
     }
 
     public static ExcelWorkbook<ExcelSheet> from(Workbook workbook) {
-        ExcelWorkbook<ExcelSheet> excelWorkbook = new ExcelWorkbook<>();
+        ExcelWorkbook<ExcelSheet> self = new ExcelWorkbook<>();
         // font
         int fontNum = workbook.getNumberOfFonts();
         for (int i = 0; i < fontNum; i++) {
             Font font = workbook.getFontAt(i);
             ExcelFont excelFont = ExcelFont.from(font);
-            excelWorkbook.fonts.put(excelFont, font);
+            self.fonts.put(excelFont, font);
         }
         // cell style
         int cellStyleNum = workbook.getNumCellStyles();
@@ -79,20 +80,31 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
             CellStyle cellStyle = workbook.getCellStyleAt(i);
             Font font = ExcelFont.getFont(cellStyle.getFontIndex(), workbook);
             ExcelStyle excelStyle = ExcelStyle.from(cellStyle, font);
-            excelWorkbook.styles.put(excelStyle, cellStyle);
+            self.styles.put(excelStyle, cellStyle);
         }
         // sheet
         int sheetNum = workbook.getNumberOfSheets();
         for (int i = 0; i < sheetNum; i++) {
             Sheet sheet = workbook.getSheetAt(i);
-            excelWorkbook.sheets.add(ExcelSheet.from(sheet, excelWorkbook));
+            self.sheets.add(ExcelSheet.from(sheet, self));
         }
         // picture
         List<? extends PictureData> pictures = workbook.getAllPictures();
         for (PictureData picture : pictures) {
-            excelWorkbook.pictures.add(ExcelPicture.from(picture));
+            self.pictures.add(ExcelPicture.from(picture));
         }
-        return excelWorkbook;
+        // extra
+        if (workbook instanceof XSSFWorkbook) {
+            XSSFWorkbook xssfWorkbook = (XSSFWorkbook) workbook;
+            self.date1904 = xssfWorkbook.isDate1904();
+        } else if (workbook instanceof HSSFWorkbook) {
+            HSSFWorkbook hssfWorkbook = (HSSFWorkbook) workbook;
+            self.date1904 = hssfWorkbook.getWorkbook().isUsing1904DateWindowing();
+        } else if (workbook instanceof SXSSFWorkbook) {
+            SXSSFWorkbook sxssfWorkbook = (SXSSFWorkbook) workbook;
+            self.date1904 = sxssfWorkbook.getXSSFWorkbook().isDate1904();
+        }
+        return self;
     }
 
     @Override

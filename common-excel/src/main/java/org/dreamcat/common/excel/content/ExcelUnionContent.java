@@ -14,59 +14,63 @@ import org.dreamcat.common.util.DateUtil;
 @SuppressWarnings("rawtypes")
 public class ExcelUnionContent implements IExcelContent {
 
-    private final ExcelStringContent stringContent;
-    private final ExcelNumericContent numericContent;
-    private final ExcelBooleanContent booleanContent;
-    private final ExcelDateContent dateContent;
+    private final ExcelStringContent stringContent = new ExcelStringContent();
+    private final ExcelNumericContent numericContent = new ExcelNumericContent();
+    private final ExcelBooleanContent booleanContent = new ExcelBooleanContent();
+    private final ExcelDateContent dateContent = new ExcelDateContent();
     // transient
-    private IExcelContent rawContent;
-    private Class type;
-
-    protected ExcelUnionContent() {
-        this.stringContent = new ExcelStringContent();
-        this.numericContent = new ExcelNumericContent();
-        this.booleanContent = new ExcelBooleanContent();
-        this.dateContent = new ExcelDateContent();
-    }
+    private IExcelContent rawContent = ExcelBlankContent.INSTANCE;
 
     public ExcelUnionContent(String value) {
-        this();
         setStringContent(value);
     }
 
     public ExcelUnionContent(double value) {
-        this();
         setNumericContent(value);
     }
 
     public ExcelUnionContent(boolean value) {
-        this();
         setBooleanContent(value);
     }
 
+    public ExcelUnionContent(Date value) {
+        setDateContent(value);
+    }
+
+    public ExcelUnionContent(Calendar value) {
+        setDateContent(value);
+    }
+
+    public ExcelUnionContent(LocalDate value) {
+        setDateContent(value);
+    }
+
+    public ExcelUnionContent(LocalDateTime value) {
+        setDateContent(value);
+    }
+
     public ExcelUnionContent(Object value) {
-        this();
         setContent(value);
     }
 
     public void setStringContent(String value) {
         this.stringContent.setValue(ExcelRichString.from(value));
-        this.type = ExcelStringContent.class;
+        this.rawContent = this.stringContent;
     }
 
     public void setNumericContent(double value) {
         this.numericContent.setValue(value);
-        this.type = ExcelNumericContent.class;
+        this.rawContent = this.numericContent;
     }
 
     public void setBooleanContent(boolean value) {
         this.booleanContent.setValue(value);
-        this.type = ExcelBooleanContent.class;
+        this.rawContent = this.booleanContent;
     }
 
     public void setDateContent(Date value) {
         this.dateContent.setValue(value);
-        this.type = ExcelDateContent.class;
+        this.rawContent = this.dateContent;
     }
 
     public void setDateContent(Calendar value) {
@@ -82,8 +86,10 @@ public class ExcelUnionContent implements IExcelContent {
     }
 
     public void setRawContent(IExcelContent rawContent) {
+        if (rawContent == null) {
+            rawContent = ExcelBlankContent.INSTANCE;
+        }
         this.rawContent = rawContent;
-        this.type = IExcelContent.class;
     }
 
     public void setContent(Object value) {
@@ -105,40 +111,20 @@ public class ExcelUnionContent implements IExcelContent {
             setDateContent((LocalDateTime) value);
         } else if (value instanceof String) {
             setStringContent((String) value);
-        } else if (value != null){
+        } else if (value != null) {
             setStringContent(value.toString());
+        } else {
+            this.rawContent = ExcelBlankContent.INSTANCE;
         }
     }
 
     @Override
     public String toString() {
-        if (type == null) {
-            return String.valueOf(rawContent);
-        } else if (type.equals(ExcelStringContent.class)) {
-            return String.valueOf(stringContent);
-        } else if (type.equals(ExcelNumericContent.class)) {
-            return String.valueOf(numericContent);
-        } else if (type.equals(ExcelBooleanContent.class)) {
-            return String.valueOf(booleanContent);
-        } else if (type.equals(ExcelDateContent.class)) {
-            return String.valueOf(dateContent);
-        } else {
-            return String.valueOf(rawContent);
-        }
+        return String.valueOf(rawContent);
     }
 
     @Override
     public void fill(Cell cell) {
-        if (type == null) {
-            cell.setBlank();
-        } else if (type.equals(ExcelStringContent.class)) {
-            stringContent.fill(cell);
-        } else if (type.equals(ExcelNumericContent.class)) {
-            numericContent.fill(cell);
-        } else if (type.equals(ExcelBooleanContent.class)) {
-            booleanContent.fill(cell);
-        } else if (rawContent != null) {
-            rawContent.fill(cell);
-        }
+        rawContent.fill(cell);
     }
 }

@@ -32,6 +32,9 @@ public interface IExcelContent {
     }
 
     static Object valueOf(Cell cell) {
+        if (DateUtil.isCellDateFormatted(cell)) {
+            return cell.getDateCellValue();
+        }
         CellType type = cell.getCellType();
         switch (type) {
             case STRING:

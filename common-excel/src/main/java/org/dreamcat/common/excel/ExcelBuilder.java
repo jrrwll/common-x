@@ -1,5 +1,9 @@
 package org.dreamcat.common.excel;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -8,12 +12,14 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.dreamcat.common.excel.content.ExcelBooleanContent;
+import org.dreamcat.common.excel.content.ExcelDateContent;
 import org.dreamcat.common.excel.content.ExcelNumericContent;
 import org.dreamcat.common.excel.content.ExcelStringContent;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
 import org.dreamcat.common.excel.style.ExcelStyle;
+import org.dreamcat.common.util.DateUtil;
 
 /**
  * Create by tuke on 2020/7/22
@@ -39,8 +45,16 @@ public final class ExcelBuilder {
             Number number = (Number) value;
             return new ExcelNumericContent(number.doubleValue());
         } else if (value instanceof Boolean) {
-            Boolean bool = (Boolean) value;
-            return new ExcelBooleanContent(bool);
+            return new ExcelBooleanContent((Boolean) value);
+        } else if (value instanceof Date) {
+            return new ExcelDateContent((Date) value);
+        } else if (value instanceof Calendar) {
+            return new ExcelDateContent(((Calendar) value).getTime());
+        } else if (value instanceof LocalDate) {
+            LocalDateTime localDateTime = ((LocalDate) value).atStartOfDay();
+            return new ExcelDateContent(DateUtil.asDate(localDateTime));
+        } else if (value instanceof LocalDateTime) {
+            return new ExcelDateContent(DateUtil.asDate((LocalDateTime) value));
         } else if (value instanceof IExcelContent) {
             return (IExcelContent) value;
         } else {

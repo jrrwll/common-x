@@ -22,40 +22,40 @@ public class BaseTest {
     /// pattern
 
     @SafeVarargs
-    public final <T extends IExcelSheet> void writeXlsxWithBigGrid(String prefix, T... sheets) {
-        writeExcel(prefix, "xlsx", IExcelWorkbook::writeToWithBigGrid, sheets);
+    public final <T extends IExcelSheet> void writeXlsxWithBigGrid(String name, T... sheets) {
+        writeExcel(name, "xlsx", IExcelWorkbook::writeToWithBigGrid, sheets);
     }
 
     @SafeVarargs
-    public final <T extends IExcelSheet> void writeXlsx(String prefix, T... sheets) {
-        writeExcel(prefix, "xlsx", IExcelWorkbook::writeTo, sheets);
+    public final <T extends IExcelSheet> void writeXlsx(String name, T... sheets) {
+        writeExcel(name, "xlsx", IExcelWorkbook::writeTo, sheets);
     }
 
     @SafeVarargs
     public final <T extends IExcelSheet> void writeXlsx(
-            ExcelWorkbook<T> book, String prefix, T... sheets) {
-        writeExcel(book, prefix, "xlsx", sheets);
+            ExcelWorkbook<T> book, String name, T... sheets) {
+        writeExcel(book, name, "xlsx", sheets);
     }
 
     @SafeVarargs
     public final <T extends IExcelSheet> void writeExcel(
-            ExcelWorkbook<T> book, String prefix, String suffix, T... sheets) {
-        writeExcel(book, prefix, suffix, IExcelWorkbook::writeTo, sheets);
+            ExcelWorkbook<T> book, String name, String suffix, T... sheets) {
+        writeExcel(book, name, suffix, IExcelWorkbook::writeTo, sheets);
     }
 
     @SafeVarargs
     public final <T extends IExcelSheet> void writeExcel(
-            String prefix, String suffix,
+            String name, String suffix,
             IBiConsumer<IExcelWorkbook<?>, File, IOException> writer, T... sheets) {
         ExcelWorkbook<T> book = new ExcelWorkbook<>();
-        writeExcel(book, prefix, suffix, writer, sheets);
+        writeExcel(book, name, suffix, writer, sheets);
     }
 
     @SafeVarargs
     public final <T extends IExcelSheet> void writeExcel(
-            ExcelWorkbook<T> book, String prefix, String suffix,
+            ExcelWorkbook<T> book, String name, String suffix,
             IBiConsumer<IExcelWorkbook<?>, File, IOException> writer, T... sheets) {
-        File file = new File(baseDir, prefix + "." + suffix);
+        File file = new File(baseDir, getClass().getSimpleName() + "_" + name + "." + suffix);
         System.out.printf("writing to %s\n", file);
         try {
             writer.accept(book.addSheets(Arrays.asList(sheets)), file);
@@ -64,16 +64,15 @@ public class BaseTest {
         }
     }
 
-    public void readXlsx(String prefix,
-            IConsumer<ExcelSheet, IOException> callback) {
-        readExcel(prefix, "xlsx", callback);
+    public void readXlsx(String name, IConsumer<ExcelSheet, IOException> callback) {
+        readExcel(name, "xlsx", callback);
     }
 
-    public void readExcel(String prefix, String suffix,
+    public void readExcel(String name, String suffix,
             IConsumer<ExcelSheet, IOException> callback) {
         ExcelWorkbook<ExcelSheet> book;
         try {
-            book = ExcelWorkbook.from(new File(baseDir, prefix + "." + suffix));
+            book = ExcelWorkbook.from(new File(baseDir, getClass().getSimpleName() + "_" + name + "." + suffix));
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -103,11 +102,8 @@ public class BaseTest {
 
     public void printSheetVerbose(IExcelSheet sheet) {
         for (IExcelCell cell : sheet) {
-            ExcelFont font = null;
+            ExcelFont font = cell.getFont();
             ExcelStyle style = cell.getStyle();
-            if (style != null) {
-                font = style.getFont();
-            }
 
             System.out.printf("[%d, %d, %d, %d] %s\n%s\n%s\n\n",
                     cell.getRowIndex(), cell.getColumnIndex(),

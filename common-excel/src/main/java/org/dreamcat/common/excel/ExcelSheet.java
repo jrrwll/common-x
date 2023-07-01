@@ -7,22 +7,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
+import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
 import org.dreamcat.common.excel.style.ExcelStyle;
+import org.dreamcat.common.util.ListUtil;
 
 /**
  * Create by tuke on 2020/7/20
  */
 @Data
+@Slf4j
 public class ExcelSheet implements IExcelSheet {
 
     private final String name;
@@ -73,9 +78,12 @@ public class ExcelSheet implements IExcelSheet {
         Hyperlink hyperlink = cell.getHyperlink();
         Comment comment = cell.getCellComment();
         if (style != null) {
-            ExcelStyle excelStyle = excelWorkbook.reversedStyles.get(style);
-            if (excelStyle == null) throw new IllegalStateException("assertion failure");
-            excelCell.setStyle(excelStyle);
+            ExcelStyle excelStyle = ListUtil.getOrNull(excelWorkbook.styles, style.getIndex());
+            if (excelStyle == null) {
+                log.error("undefined cell style: {}", ExcelStyle.from(style));
+            } else {
+                excelCell.setStyle(excelStyle);
+            }
         }
         if (hyperlink != null) {
             excelCell.setHyperLink(ExcelHyperLink.from(hyperlink));

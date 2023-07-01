@@ -15,8 +15,10 @@ import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.content.ExcelUnionContent;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.map.XlsMeta.Cell;
+import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.BeanUtil;
+import org.dreamcat.common.util.FunctionUtil;
 import org.dreamcat.common.util.ObjectUtil;
 import org.dreamcat.common.util.ReflectUtil;
 
@@ -115,6 +117,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
         int rowSpan;
         int columnSpan;
         ExcelStyle style;
+        ExcelFont font;
 
         Iter() {
             init();
@@ -181,7 +184,12 @@ public class AnnotatedRowSheet implements IExcelSheet {
 
         @Override
         public ExcelStyle getStyle() {
-            return style != null ? style : null;
+            return style;
+        }
+
+        @Override
+        public ExcelFont getFont() {
+            return font;
         }
 
         @Override
@@ -212,7 +220,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
                 columnIndex = offset;
                 rowSpan = maxRowSpan;
                 columnSpan = cell.span;
-                fillStyle(cell);
+                fillStyleAndFont(cell);
 
                 // move
                 scalar = null;
@@ -233,7 +241,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
                 columnIndex = offset;
                 rowSpan = 1;
                 columnSpan = cell.span;
-                fillStyle(cell);
+                fillStyleAndFont(cell);
 
                 // move
                 scalarArrayIndex++;
@@ -257,7 +265,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
                 columnIndex = offset++;
                 rowSpan = maxRowSpan;
                 columnSpan = subCell.span;
-                fillStyle(subCell, cell);
+                fillStyleAndFont(subCell, cell);
 
                 // move
                 vectorIndex++;
@@ -278,7 +286,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
                 columnIndex = offset++;
                 rowSpan = maxRowSpan;
                 columnSpan = cell.span;
-                fillStyle(cell, cell);
+                fillStyleAndFont(cell, cell);
 
                 // move
                 dynamicIndex++;
@@ -299,7 +307,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
                 columnIndex = offset + dynamicArrayColumnIndex;
                 rowSpan = 1;
                 columnSpan = cell.span;
-                fillStyle(cell, cell);
+                fillStyleAndFont(cell, cell);
 
                 // move
                 dynamicArrayColumnIndex++;
@@ -328,7 +336,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
             columnIndex = offset + vectorArrayColumnIndex;
             rowSpan = 1;
             columnSpan = subCell.span;
-            fillStyle(subCell, cell);
+            fillStyleAndFont(subCell, cell);
 
             // move
             vectorArrayColumnIndex++;
@@ -461,11 +469,12 @@ public class AnnotatedRowSheet implements IExcelSheet {
             vectorArrayColumnIndex = 0;
         }
 
-        private void fillStyle(Cell cell) {
-            style = cell.style != null ? cell.style : meta.defaultStyle;
+        private void fillStyleAndFont(Cell cell) {
+            style = FunctionUtil.firstNotNull(cell.style, meta.defaultStyle);
+            font = FunctionUtil.firstNotNull(cell.font, meta.defaultFont);
         }
 
-        private void fillStyle(Cell subCell, Cell cell) {
+        private void fillStyleAndFont(Cell subCell, Cell cell) {
             if (subCell.style != null) {
                 style = subCell.style;
             } else if (subMeta != null && subMeta.defaultStyle != null) {

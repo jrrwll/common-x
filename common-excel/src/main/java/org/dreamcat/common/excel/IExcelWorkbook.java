@@ -15,6 +15,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dreamcat.common.excel.content.ExcelPicture;
+import org.dreamcat.common.excel.style.ExcelFont;
+import org.dreamcat.common.excel.style.ExcelStyle;
 
 /**
  * Create by tuke on 2020/7/22
@@ -53,7 +55,7 @@ public interface IExcelWorkbook<T extends IExcelSheet> extends Iterable<T> {
     }
 
     /**
-     * make a {@link CellStyle} or return a existed one
+     * make a {@link CellStyle} or return an existed one
      *
      * @param excelCell the cell to provide the cell style
      * @param workbook  the workbook to store the cell style

@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.dreamcat.common.excel.content.ExcelBooleanContent;
 import org.dreamcat.common.excel.content.ExcelDateContent;
@@ -37,8 +38,6 @@ public final class ExcelBuilder {
         ExcelWorkbook<ExcelSheet> book = new ExcelWorkbook<>();
         return new WorkbookTerm(book);
     }
-
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static IExcelContent term(Object value) {
         if (value instanceof Number) {
@@ -74,12 +73,20 @@ public final class ExcelBuilder {
         return new ExcelCell(term(string), rowIndex, columnIndex);
     }
 
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
-
     public static ExcelCell term(String string, int rowIndex, int columnIndex, int rowSpan,
             int columnSpan) {
         return new ExcelCell(term(string), rowIndex, columnIndex, rowSpan, columnSpan);
     }
+
+    public static StyleTerm style() {
+        return new StyleTerm();
+    }
+
+    public static FontTerm font() {
+        return new FontTerm();
+    }
+
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     @RequiredArgsConstructor
     public static class WorkbookTerm {
@@ -166,8 +173,7 @@ public final class ExcelBuilder {
 
         public CellTerm richCell(IExcelContent term, int rowIndex, int columnIndex,
                 int rowSpan, int columnSpan) {
-            ExcelCell cell = new ExcelCell(term, rowIndex, columnIndex, rowSpan,
-                    columnSpan);
+            ExcelCell cell = new ExcelCell(term, rowIndex, columnIndex, rowSpan, columnSpan);
             sheet.getCells().add(cell);
             return new CellTerm(this, cell);
         }
@@ -177,8 +183,6 @@ public final class ExcelBuilder {
 
         private final SheetTerm sheetTerm;
         private final ExcelCell cell;
-        private ExcelFont font;
-        private ExcelStyle style;
 
         public CellTerm(SheetTerm sheetTerm, ExcelCell cell) {
             this.sheetTerm = sheetTerm;
@@ -186,12 +190,6 @@ public final class ExcelBuilder {
         }
 
         public SheetTerm finishCell() {
-            if (style == null && font == null) {
-                return sheetTerm;
-            }
-            if (style == null) style = new ExcelStyle();
-            if (font != null) style.setFont(font);
-            cell.setStyle(style);
             return sheetTerm;
         }
 
@@ -208,192 +206,216 @@ public final class ExcelBuilder {
             return this;
         }
 
-        public CellTerm bold() {
-            return bold(true);
-        }
-
-        public CellTerm bold(boolean bold) {
-            getFont().setBold(bold);
+        public CellTerm style(ExcelStyle style) {
+            cell.setStyle(style);
             return this;
         }
 
-        public CellTerm italic() {
-            return italic(true);
+        public CellTerm font(ExcelFont font) {
+            cell.setFont(font);
+            return this;
+        }
+    }
+
+    public static class StyleTerm {
+
+        private final ExcelStyle style = new ExcelStyle();
+
+        public ExcelStyle finish() {
+            return style;
         }
 
-        public CellTerm italic(boolean italic) {
-            getFont().setItalic(italic);
+        public StyleTerm horizontalAlignment(HorizontalAlignment horizontalAlignment) {
+            style.setHorizontalAlignment(horizontalAlignment);
             return this;
         }
 
-        public CellTerm underline() {
-            return underline(Font.U_SINGLE);
-        }
-
-        public CellTerm underline(byte underline) {
-            getFont().setUnderline(underline);
+        public StyleTerm verticalAlignment(VerticalAlignment verticalAlignment) {
+            style.setVerticalAlignment(verticalAlignment);
             return this;
         }
 
-        public CellTerm strikeout() {
-            return strikeout(true);
-        }
-
-        public CellTerm strikeout(boolean strikeout) {
-            getFont().setStrikeout(strikeout);
-            return this;
-        }
-
-        public CellTerm typeOffset() {
-            return typeOffset(Font.SS_NONE);
-        }
-
-        public CellTerm typeOffset(short typeOffset) {
-            getFont().setTypeOffset(typeOffset);
-            return this;
-        }
-
-        public CellTerm color() {
-            return color(Font.COLOR_NORMAL);
-        }
-
-        public CellTerm color(short color) {
-            getFont().setColor(color);
-            return this;
-        }
-
-        public CellTerm height(int height) {
-            getFont().setHeight((short) height);
-            return this;
-        }
-
-        public CellTerm horizontalAlignment(HorizontalAlignment horizontalAlignment) {
-            getStyle().setHorizontalAlignment(horizontalAlignment);
-            return this;
-        }
-
-        public CellTerm verticalAlignment(VerticalAlignment verticalAlignment) {
-            getStyle().setVerticalAlignment(verticalAlignment);
-            return this;
-        }
-
-        public CellTerm hidden() {
+        public StyleTerm hidden() {
             return hidden(true);
         }
 
-        public CellTerm hidden(boolean hidden) {
-            getStyle().setHidden(hidden);
+        public StyleTerm hidden(boolean hidden) {
+            style.setHidden(hidden);
             return this;
         }
 
-        public CellTerm wrapText() {
+        public StyleTerm wrapText() {
             return wrapText(true);
         }
 
-        public CellTerm wrapText(boolean wrapText) {
-            getStyle().setWrapText(wrapText);
+        public StyleTerm wrapText(boolean wrapText) {
+            style.setWrapText(wrapText);
             return this;
         }
 
-        public CellTerm locked() {
+        public StyleTerm locked() {
             return locked(true);
         }
 
-        public CellTerm locked(boolean locked) {
-            getStyle().setLocked(locked);
+        public StyleTerm locked(boolean locked) {
+            style.setLocked(locked);
             return this;
         }
 
-        public CellTerm quotePrefix() {
+        public StyleTerm quotePrefix() {
             return quotePrefix(true);
         }
 
-        public CellTerm quotePrefix(boolean quotePrefix) {
-            getStyle().setQuotePrefix(quotePrefix);
+        public StyleTerm quotePrefix(boolean quotePrefix) {
+            style.setQuotePrefix(quotePrefix);
             return this;
         }
 
-        public CellTerm shrinkToFit() {
+        public StyleTerm shrinkToFit() {
             return shrinkToFit(true);
         }
 
-        public CellTerm shrinkToFit(boolean shrinkToFit) {
-            getStyle().setShrinkToFit(shrinkToFit);
+        public StyleTerm shrinkToFit(boolean shrinkToFit) {
+            style.setShrinkToFit(shrinkToFit);
             return this;
         }
 
         // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 
-        public CellTerm rotation(short rotation) {
-            getStyle().setRotation(rotation);
+        public StyleTerm rotation(short rotation) {
+            style.setRotation(rotation);
             return this;
         }
 
-        public CellTerm bgColor(short bgColor) {
-            getStyle().setBgColor(bgColor);
+        public StyleTerm bgColor(short bgColor) {
+            style.setBgColor(bgColor);
             return this;
         }
 
-        public CellTerm fgColor(short fgColor) {
-            getStyle().setFgColor(fgColor);
+        public StyleTerm bgColor(IndexedColors bgColor) {
+            return bgColor(bgColor.getIndex());
+        }
+
+        public StyleTerm fgColor(short fgColor) {
+            style.setFgColor(fgColor);
             return this;
         }
 
-        public CellTerm fillPattern(FillPatternType fillPatternType) {
-            getStyle().setFillPattern(fillPatternType);
+        public StyleTerm fgColor(IndexedColors fgColor) {
+            return fgColor(fgColor.getIndex());
+        }
+
+        public StyleTerm fillPattern(FillPatternType fillPatternType) {
+            style.setFillPattern(fillPatternType);
             return this;
         }
 
-        public CellTerm borderBottom(BorderStyle borderBottom) {
-            getStyle().setBorderBottom(borderBottom);
+        public StyleTerm borderBottom(BorderStyle borderBottom) {
+            style.setBorderBottom(borderBottom);
             return this;
         }
 
-        public CellTerm borderLeft(BorderStyle borderLeft) {
-            getStyle().setBorderLeft(borderLeft);
+        public StyleTerm borderLeft(BorderStyle borderLeft) {
+            style.setBorderLeft(borderLeft);
             return this;
         }
 
-        public CellTerm borderTop(BorderStyle borderTop) {
-            getStyle().setBorderTop(borderTop);
+        public StyleTerm borderTop(BorderStyle borderTop) {
+            style.setBorderTop(borderTop);
             return this;
         }
 
-        public CellTerm borderRight(BorderStyle borderRight) {
-            getStyle().setBorderRight(borderRight);
+        public StyleTerm borderRight(BorderStyle borderRight) {
+            style.setBorderRight(borderRight);
             return this;
         }
 
-        public CellTerm bottomBorderColor(short bottomBorderColor) {
-            getStyle().setBottomBorderColor(bottomBorderColor);
+        public StyleTerm bottomBorderColor(short bottomBorderColor) {
+            style.setBottomBorderColor(bottomBorderColor);
             return this;
         }
 
-        public CellTerm leftBorderColor(short leftBorderColor) {
-            getStyle().setLeftBorderColor(leftBorderColor);
+        public StyleTerm leftBorderColor(short leftBorderColor) {
+            style.setLeftBorderColor(leftBorderColor);
             return this;
         }
 
-        public CellTerm topBorderColor(short topBorderColor) {
-            getStyle().setTopBorderColor(topBorderColor);
+        public StyleTerm topBorderColor(short topBorderColor) {
+            style.setTopBorderColor(topBorderColor);
             return this;
         }
 
-        public CellTerm rightBorderColor(short rightBorderColor) {
-            getStyle().setRightBorderColor(rightBorderColor);
+        public StyleTerm rightBorderColor(short rightBorderColor) {
+            style.setRightBorderColor(rightBorderColor);
             return this;
         }
+    }
 
-        // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
+    public static class FontTerm {
 
-        private ExcelFont getFont() {
-            if (font == null) font = new ExcelFont();
+        private final ExcelFont font = new ExcelFont();
+
+        public ExcelFont finish() {
             return font;
         }
 
-        private ExcelStyle getStyle() {
-            if (style == null) style = new ExcelStyle();
-            return style;
+        public FontTerm bold() {
+            return bold(true);
+        }
+
+        public FontTerm bold(boolean bold) {
+            font.setBold(bold);
+            return this;
+        }
+
+        public FontTerm italic() {
+            return italic(true);
+        }
+
+        public FontTerm italic(boolean italic) {
+            font.setItalic(italic);
+            return this;
+        }
+
+        public FontTerm underline() {
+            return underline(Font.U_SINGLE);
+        }
+
+        public FontTerm underline(byte underline) {
+            font.setUnderline(underline);
+            return this;
+        }
+
+        public FontTerm strikeout() {
+            return strikeout(true);
+        }
+
+        public FontTerm strikeout(boolean strikeout) {
+            font.setStrikeout(strikeout);
+            return this;
+        }
+
+        public FontTerm typeOffset() {
+            return typeOffset(Font.SS_NONE);
+        }
+
+        public FontTerm typeOffset(short typeOffset) {
+            font.setTypeOffset(typeOffset);
+            return this;
+        }
+
+        public FontTerm color() {
+            return color(Font.COLOR_NORMAL);
+        }
+
+        public FontTerm color(short color) {
+            font.setColor(color);
+            return this;
+        }
+
+        public FontTerm height(int height) {
+            font.setHeight((short) height);
+            return this;
         }
     }
 

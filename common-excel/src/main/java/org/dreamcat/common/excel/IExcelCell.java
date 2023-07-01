@@ -2,6 +2,7 @@ package org.dreamcat.common.excel;
 
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
+import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
 import org.dreamcat.common.excel.style.ExcelStyle;
 
@@ -33,6 +34,10 @@ public interface IExcelCell {
     IExcelContent getContent();
 
     default ExcelStyle getStyle() {
+        return null;
+    }
+
+    default ExcelFont getFont() {
         return null;
     }
 

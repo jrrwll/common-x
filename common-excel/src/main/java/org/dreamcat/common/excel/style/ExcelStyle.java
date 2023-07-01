@@ -3,12 +3,14 @@ package org.dreamcat.common.excel.style;
 import lombok.Data;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.dreamcat.common.excel.annotation.XlsStyle;
+import org.dreamcat.common.util.ObjectUtil;
 
 /**
  * Create by tuke on 2020/7/21
@@ -16,7 +18,9 @@ import org.dreamcat.common.excel.annotation.XlsStyle;
 @Data
 public class ExcelStyle {
 
-    private ExcelFont font;
+    private int index = -1; // unique index number
+    private String dataFormat;
+    private int fontIndex = -1;
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
     private VerticalAlignment verticalAlignment = VerticalAlignment.CENTER;
     private boolean hidden;
@@ -48,10 +52,11 @@ public class ExcelStyle {
     private short topBorderColor = -1;
     private short rightBorderColor = -1;
 
-    public static ExcelStyle from(CellStyle style, Font font) {
+    public static ExcelStyle from(CellStyle style) {
         ExcelStyle excelStyle = new ExcelStyle();
-        if (font != null) excelStyle.font = ExcelFont.from(font);
-
+        excelStyle.index = style.getIndex();
+        excelStyle.dataFormat = style.getDataFormatString();
+        excelStyle.fontIndex = style.getFontIndex();
         excelStyle.setHorizontalAlignment(style.getAlignment());
         excelStyle.setVerticalAlignment(style.getVerticalAlignment());
         excelStyle.setHidden(style.getHidden());
@@ -78,6 +83,7 @@ public class ExcelStyle {
 
     public static ExcelStyle from(XlsStyle xlsStyle) {
         ExcelStyle style = new ExcelStyle();
+        style.setDataFormat(xlsStyle.dataFormat());
         style.setHorizontalAlignment(xlsStyle.horizontalAlignment());
         style.setVerticalAlignment(xlsStyle.verticalAlignment());
         style.setHidden(xlsStyle.hidden());
@@ -129,8 +135,11 @@ public class ExcelStyle {
         return style;
     }
 
-    public void fill(CellStyle style, Font font) {
-        if (font != null) style.setFont(font);
+    public void fill(CellStyle style, DataFormat dataFormat) {
+        if (ObjectUtil.isNotEmpty(this.dataFormat)) {
+            short format = dataFormat.getFormat(this.dataFormat);
+            style.setDataFormat(format);
+        }
         if (horizontalAlignment != null) style.setAlignment(horizontalAlignment);
         if (verticalAlignment != null) style.setVerticalAlignment(verticalAlignment);
         style.setLocked(locked);

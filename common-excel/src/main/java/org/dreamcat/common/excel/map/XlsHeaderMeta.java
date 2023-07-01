@@ -32,6 +32,7 @@ public class XlsHeaderMeta implements IExcelSheet {
     @Getter
     public String name;
     public ExcelStyle defaultStyle;
+    public ExcelFont defaultFont;
     public final Map<Integer, Cell> headers = new HashMap<>();
     // true if any cell's subheader is true
     boolean subheader;
@@ -120,9 +121,11 @@ public class XlsHeaderMeta implements IExcelSheet {
 
         String header;
         ExcelStyle style;
+        ExcelFont font;
         boolean subheader;
         boolean subheaderInherited;
         ExcelStyle subheaderStyle;
+        ExcelFont subheaderFont;
 
         public String getHeader() {
             if (header == null) {
@@ -148,12 +151,12 @@ public class XlsHeaderMeta implements IExcelSheet {
             subheaderInherited = xlsHeader.subheaderInherited();
 
             style = ExcelStyle.from(xlsHeader.style());
-            style.setFont(ExcelFont.from(xlsHeader.font()));
+            font = ExcelFont.from(xlsHeader.font());
 
             SubheaderStyle subStyle = xlsHeader.subheaderStyle();
             if (subStyle.enabled()) {
                 subheaderStyle = ExcelStyle.from(subStyle.style());
-                subheaderStyle.setFont(ExcelFont.from(subStyle.font()));
+                subheaderFont = ExcelFont.from(subStyle.font());
             }
         }
     }
@@ -197,9 +200,8 @@ public class XlsHeaderMeta implements IExcelSheet {
                 clazz, XlsHeader.Default.class);
         if (xlsHeaderDefault == null) return false;
 
-        ExcelStyle style = ExcelStyle.from(xlsHeaderDefault.style());
-        style.setFont(ExcelFont.from(xlsHeaderDefault.font()));
-        meta.defaultStyle = style;
+        meta.defaultStyle = ExcelStyle.from(xlsHeaderDefault.style());
+        meta.defaultFont = ExcelFont.from(xlsHeaderDefault.font());
         return xlsHeaderDefault.onlyAnnotated();
     }
 

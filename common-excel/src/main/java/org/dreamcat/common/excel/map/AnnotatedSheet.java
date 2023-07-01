@@ -10,6 +10,7 @@ import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.content.IExcelContent;
+import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
 
 /**
@@ -28,7 +29,7 @@ public class AnnotatedSheet implements IExcelSheet {
     private String name;
     // [Sheet..., T1..., Sheet..., T2...], it mixes Sheet & Pojo up
     private final List schemes;
-    // Note that if you set it ture, then that maybe create more than 64000 cell styles on one sheet, which will cause a error
+    // Note that if you set it ture, then that maybe create more than 64000 cell styles on one sheet, which will cause an error
     @Setter
     private boolean annotationStyle;
     @Setter
@@ -99,11 +100,6 @@ public class AnnotatedSheet implements IExcelSheet {
         }
 
         @Override
-        public IExcelContent getContent() {
-            return cell.getContent();
-        }
-
-        @Override
         public int getRowIndex() {
             return cell.getRowIndex() + offset;
         }
@@ -124,9 +120,20 @@ public class AnnotatedSheet implements IExcelSheet {
         }
 
         @Override
+        public IExcelContent getContent() {
+            return cell.getContent();
+        }
+
+        @Override
         public ExcelStyle getStyle() {
             if ((nextInRowSheetIterCase || inSwitchIterCase) && !annotationStyle) return null;
             return cell.getStyle();
+        }
+
+        @Override
+        public ExcelFont getFont() {
+            if ((nextInRowSheetIterCase || inSwitchIterCase) && !annotationStyle) return null;
+            return cell.getFont();
         }
 
         @Override

@@ -5,7 +5,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.dreamcat.common.Pair;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
@@ -29,7 +28,7 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
             writeCallback.onCreateSheet(workbook, sheet, sheetIndex);
         }
         for (IExcelCell excelCell : this) {
-            Pair<Row, Cell> rowCell = Private.makeRowCell(excelCell, sheet);
+            Pair<Row, Cell> rowCell = ExcelUtil.makeRowCell(excelCell, sheet);
             Row row = rowCell.first();
             Cell cell = rowCell.second();
 
@@ -57,39 +56,13 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
                 excelComment.fill(cell, sheet);
             }
 
-            if (writeCallback != null)
-                writeCallback.onFinishCell(
-                        workbook, sheet, sheetIndex,
+            if (writeCallback != null) {
+                writeCallback.onFinishCell(workbook, sheet, sheetIndex,
                         row, cell, cellContent, style);
+            }
         }
         if (writeCallback != null) {
             writeCallback.onFinishSheet(workbook, sheet, sheetIndex);
-        }
-    }
-
-    final class Private {
-
-        private Private() {
-        }
-
-        private static Pair<Row, Cell> makeRowCell(
-                IExcelCell excelCell, Sheet sheet) {
-            int ri = excelCell.getRowIndex();
-            int ci = excelCell.getColumnIndex();
-
-            if (excelCell.hasMergedRegion()) {
-                int rs = excelCell.getRowSpan();
-                int cs = excelCell.getColumnSpan();
-                sheet.addMergedRegion(new CellRangeAddress(
-                        ri, ri + rs - 1, ci, ci + cs - 1));
-            }
-
-            Row row = sheet.getRow(ri);
-            if (row == null) {
-                row = sheet.createRow(ri);
-            }
-            Cell cell = row.createCell(ci);
-            return Pair.of(row, cell);
         }
     }
 }

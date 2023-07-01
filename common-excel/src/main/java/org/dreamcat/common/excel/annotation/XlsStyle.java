@@ -23,6 +23,8 @@ public @interface XlsStyle {
 
     VerticalAlignment verticalAlignment() default VerticalAlignment.CENTER;
 
+    String dataFormat() default "";
+
     boolean hidden() default false;
 
     boolean wrapText() default false;

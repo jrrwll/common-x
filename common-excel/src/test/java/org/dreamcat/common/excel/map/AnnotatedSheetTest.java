@@ -32,7 +32,7 @@ class AnnotatedSheetTest extends BaseTest {
         sheet2.addSheet(ExcelBuilderTest.headerSheet().finish());
         printSheetVerbose(sheet2);
 
-        writeXlsx("AnnotationListSheetTest_testSmall", sheet1, sheet2);
+        writeXlsx("testSmall", sheet1, sheet2);
     }
 
     @Test
@@ -57,7 +57,7 @@ class AnnotatedSheetTest extends BaseTest {
         for (int i = 0; i < 6; i++) sheet2.add(XlsMetaTest.newPojo());
         for (int i = 0; i < 6; i++) sheet2.addSheet(ExcelBuilderTest.headerSheet().finish());
 
-        writeXlsx("AnnotationListSheetTest_test", sheet1, sheet2);
+        writeXlsx("test", sheet1, sheet2);
     }
 
 }

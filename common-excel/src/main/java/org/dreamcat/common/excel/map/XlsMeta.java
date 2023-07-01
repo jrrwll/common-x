@@ -30,6 +30,7 @@ public class XlsMeta {
     // @XlsSheet
     public String name;
     public ExcelStyle defaultStyle;
+    public ExcelFont defaultFont;
     public final Map<Integer, Cell> cells = new HashMap<>();
     // transient
     List<Integer> fieldIndexes;
@@ -58,10 +59,7 @@ public class XlsMeta {
     }
 
     private void setDefaultFont(XlsFont xlsFont) {
-        if (defaultStyle == null) {
-            defaultStyle = new ExcelStyle();
-        }
-        defaultStyle.setFont(ExcelFont.from(xlsFont));
+        defaultFont = ExcelFont.from(xlsFont);
     }
 
     /**
@@ -76,6 +74,7 @@ public class XlsMeta {
 
         boolean expanded;
         ExcelStyle style;
+        ExcelFont font;
         XlsMeta expandedMeta;
 
         // format
@@ -90,13 +89,6 @@ public class XlsMeta {
             }
             this.fieldName = fieldName;
             return this;
-        }
-
-        private void setFont(XlsFont xlsFont) {
-            if (style == null) {
-                style = new ExcelStyle();
-            }
-            style.setFont(ExcelFont.from(xlsFont));
         }
     }
 
@@ -155,15 +147,13 @@ public class XlsMeta {
     private static void parseXlsFont(Cell cell, Field field) {
         XlsFont xlsFont = field.getDeclaredAnnotation(XlsFont.class);
         if (xlsFont == null) return;
-        cell.setFont(xlsFont);
+        cell.setFont(ExcelFont.from(xlsFont));
     }
 
     private static void parseXlsStyle(Cell cell, Field field) {
         XlsStyle xlsStyle = field.getDeclaredAnnotation(XlsStyle.class);
         if (xlsStyle == null) return;
-
-        ExcelStyle style = ExcelStyle.from(xlsStyle);
-        cell.setStyle(style);
+        cell.setStyle(ExcelStyle.from(xlsStyle));
     }
 
     private static void parseXlsFormat(Cell cell, Field field) {

@@ -1,6 +1,8 @@
 package org.dreamcat.common.excel;
 
+import static org.dreamcat.common.excel.ExcelBuilder.font;
 import static org.dreamcat.common.excel.ExcelBuilder.sheet;
+import static org.dreamcat.common.excel.ExcelBuilder.style;
 import static org.dreamcat.common.excel.ExcelBuilder.term;
 import static org.dreamcat.common.util.RandomUtil.rand;
 import static org.dreamcat.common.util.RandomUtil.randi;
@@ -32,43 +34,42 @@ public class ExcelBuilderTest extends BaseTest {
         return sheet("Sheet Cell")
                 // col1
                 .richCell(term("A1:A2"), 0, 0, 2, 1)
-                .height(24)
-                .color(IndexedColors.RED1.getIndex())
-                .verticalAlignment(VerticalAlignment.CENTER)
-                .horizontalAlignment(HorizontalAlignment.CENTER)
-                .fgColor(IndexedColors.ROSE.getIndex())
+                .style(style().verticalAlignment(VerticalAlignment.CENTER)
+                        .horizontalAlignment(HorizontalAlignment.CENTER)
+                        .fgColor(IndexedColors.ROSE).finish())
+                .font(font().height(24).color(IndexedColors.RED1.getIndex()).finish())
                 .finishCell()
                 // col2
                 .richCell("B1", 0, 1, 2, 1)
-                .height(32)
-                .fgColor(IndexedColors.VIOLET.getIndex())
+                .style(style().fgColor(IndexedColors.VIOLET).finish())
+                .font(font().height(32).finish())
                 .finishCell()
                 // col3
                 .richCell(term("C1:D1"), 0, 2, 1, 2)
-                .height(16)
-                .verticalAlignment(VerticalAlignment.CENTER)
-                .fgColor(IndexedColors.LEMON_CHIFFON.getIndex())
+                .style(style().verticalAlignment(VerticalAlignment.CENTER)
+                        .fgColor(IndexedColors.LEMON_CHIFFON).finish())
+                .font(font().height(16).finish())
                 .finishCell()
                 .richCell("C2", 1, 2)
-                .height(14)
-                .fgColor(IndexedColors.GREY_50_PERCENT.getIndex())
+                .style(style().fgColor(IndexedColors.GREY_50_PERCENT).finish())
+                .font(font().height(14).finish())
                 .finishCell()
                 .richCell("D2", 1, 3)
-                .fgColor(IndexedColors.LAVENDER.getIndex())
+                .style(style().fgColor(IndexedColors.LAVENDER).finish())
                 .finishCell()
                 // col4
                 .richCell(term("E1:F1"), 0, 4, 1, 2)
-                .height(12)
-                .verticalAlignment(VerticalAlignment.CENTER)
-                .fgColor(IndexedColors.AQUA.getIndex())
+                .style(style().verticalAlignment(VerticalAlignment.CENTER)
+                        .fgColor(IndexedColors.AQUA).finish())
+                .font(font().height(12).finish())
                 .finishCell()
                 .richCell("E2", 1, 4)
-                .height(10)
-                .fgColor(IndexedColors.OLIVE_GREEN.getIndex())
+                .style(style().fgColor(IndexedColors.OLIVE_GREEN).finish())
+                .font(font().height(10).finish())
                 .finishCell()
                 .richCell("F2", 1, 5)
-                .height(8)
-                .fgColor(IndexedColors.PALE_BLUE.getIndex())
+                .style(style().fgColor(IndexedColors.PALE_BLUE).finish())
+                .font(font().height(8).finish())
                 .finishCell();
     }
 
@@ -91,16 +92,17 @@ public class ExcelBuilderTest extends BaseTest {
             font.setColor(colors[randi(128) % 4].getIndex());
 
             ExcelStyle style = new ExcelStyle();
+            style.setFontIndex(i);
             style.setFgColor(IndexedColors.ROSE.getIndex());
             style.setHorizontalAlignment(HorizontalAlignment.CENTER);
             style.setVerticalAlignment(VerticalAlignment.CENTER);
             style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            style.setFont(font);
 
             ExcelCell cell = new ExcelCell(
                     term(rand() * (1 << 10)),
                     i, 0, 1, 1)
                     .setStyle(style)
+                    .setFont(font)
                     .setHyperLink(new ExcelHyperLink(
                             HyperlinkType.URL, "http://marry.me", "link"))
                     .setComment(new ExcelComment(
@@ -123,6 +125,6 @@ public class ExcelBuilderTest extends BaseTest {
         ExcelSheet headerSheet = sheetTerm.finish();
         headerSheet.setWriteCallback(new LoggingWriteCallback());
         printSheetVerbose(headerSheet);
-        writeXlsx("book_ExcelBuilderTest_test", headerSheet);
+        writeXlsx("test", headerSheet);
     }
 }

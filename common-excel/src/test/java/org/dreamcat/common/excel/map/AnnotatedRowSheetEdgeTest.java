@@ -33,8 +33,7 @@ class AnnotatedRowSheetEdgeTest extends BaseTest {
             delegateSheet.setWriteCallback(new FitWidthWriteCallback());
             sheets.add(delegateSheet);
         }
-        writeXlsx("AnnotationRowSheetEdgeTest_test",
-                sheets.toArray(new IExcelSheet[0]));
+        writeXlsx("test", sheets.toArray(new IExcelSheet[0]));
     }
 
     private List<Object> newPojoList() {

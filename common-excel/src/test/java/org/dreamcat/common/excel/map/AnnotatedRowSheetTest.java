@@ -32,7 +32,7 @@ class AnnotatedRowSheetTest extends BaseTest {
         listSheet.addSheet(new AnnotatedRowSheet(newPojo()));
         listSheet.addSheet(new AnnotatedRowSheet(newPojo()));
 
-        writeXlsx("book_AnnotationRowSheetTest_test", listSheet);
+        writeXlsx("test", listSheet);
     }
 
     public static Pojo newPojo() {

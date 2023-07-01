@@ -12,6 +12,8 @@ import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.content.IExcelContent;
+import org.dreamcat.common.excel.style.ExcelFont;
+import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.BeanUtil;
 
 /**
@@ -114,6 +116,16 @@ public class SimpleSheet implements IExcelSheet {
         @Override
         public IExcelContent getContent() {
             return cell.getContent();
+        }
+
+        @Override
+        public ExcelStyle getStyle() {
+            return cell.getStyle();
+        }
+
+        @Override
+        public ExcelFont getFont() {
+            return cell.getFont();
         }
 
         @Override

@@ -1,6 +1,10 @@
 package org.dreamcat.common.excel;
 
+import java.io.File;
+import java.util.List;
+import lombok.SneakyThrows;
 import org.dreamcat.common.excel.content.ExcelStringContent;
+import org.dreamcat.common.util.ClassPathUtil;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -21,11 +25,24 @@ class ExcelWorkbookTest extends BaseTest {
         sheet.getCells().add(new ExcelCell(ExcelStringContent.from("C4"), 3, 2));
         sheet.getCells().add(new ExcelCell(ExcelStringContent.from("D4"), 3, 3));
 
-        writeXlsx("book_ExcelWorkbookTest_export", sheet);
+        writeXlsx("export", sheet);
     }
 
     @Test
-    public void fromAnnotationRowSheetTestTest() {
-        readXlsx("book_AnnotationRowSheetTest_test", this::printSheetVerbose);
+    void fromAnnotationRowSheetTestTest() {
+        readXlsx("export", this::printSheetVerbose);
+    }
+
+    @SneakyThrows
+    @Test
+    void load() {
+        String filename = ClassPathUtil.getResource("all_type.xlsx").getFile();
+        System.out.println(filename);
+        ExcelWorkbook<ExcelSheet> workbook = ExcelWorkbook.from(new File(filename));
+
+        List<ExcelSheet> sheets = workbook.getSheets();
+        for (ExcelSheet sheet : sheets) {
+            printSheetVerbose(sheet);
+        }
     }
 }

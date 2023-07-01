@@ -12,15 +12,15 @@ import org.dreamcat.common.excel.style.ExcelRichString;
 public interface IExcelContent {
 
     static IExcelContent from(Cell cell) {
-        if (DateUtil.isCellDateFormatted(cell)) {
-            return new ExcelDateContent(cell.getDateCellValue());
-        }
         CellType type = cell.getCellType();
         switch (type) {
             case STRING:
                 RichTextString richTextString = cell.getRichStringCellValue();
                 return new ExcelStringContent(ExcelRichString.from(richTextString));
             case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return new ExcelDateContent(cell.getDateCellValue());
+                }
                 return new ExcelNumericContent(cell.getNumericCellValue());
             case BOOLEAN:
                 return new ExcelBooleanContent(cell.getBooleanCellValue());
@@ -32,9 +32,6 @@ public interface IExcelContent {
     }
 
     static Object valueOf(Cell cell) {
-        if (DateUtil.isCellDateFormatted(cell)) {
-            return cell.getDateCellValue();
-        }
         CellType type = cell.getCellType();
         switch (type) {
             case STRING:
@@ -42,6 +39,9 @@ public interface IExcelContent {
                 return cell.getStringCellValue();
             case NUMERIC:
                 // double
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue();
+                }
                 double value = cell.getNumericCellValue();
                 long round = Math.round(value);
                 if (value == (double) round) {

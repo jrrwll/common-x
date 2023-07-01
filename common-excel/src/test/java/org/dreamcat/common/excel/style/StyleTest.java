@@ -50,7 +50,7 @@ class StyleTest extends BaseTest {
         try (XSSFWorkbook workbook = new XSSFWorkbook(filename)) {
             XSSFSheet sheet = workbook.getSheetAt(0);
             XSSFCell cell = sheet.getRow(0).getCell(0);
-            System.out.println(JsonUtil.toJson(ExcelStyle.from(cell.getCellStyle(), null)));
+            System.out.println(JsonUtil.toJson(ExcelStyle.from(cell.getCellStyle())));
         }
     }
 

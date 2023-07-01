@@ -12,7 +12,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.dreamcat.common.Pair;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.util.ListUtil;
 import org.dreamcat.common.util.StringUtil;
@@ -241,5 +243,26 @@ public final class ExcelUtil {
             rowValues.add(columnValues);
         }
         return rowValues;
+    }
+
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
+
+    static Pair<Row, Cell> makeRowCell(IExcelCell excelCell, Sheet sheet) {
+        int ri = excelCell.getRowIndex();
+        int ci = excelCell.getColumnIndex();
+
+        if (excelCell.hasMergedRegion()) {
+            int rs = excelCell.getRowSpan();
+            int cs = excelCell.getColumnSpan();
+            sheet.addMergedRegion(new CellRangeAddress(
+                    ri, ri + rs - 1, ci, ci + cs - 1));
+        }
+
+        Row row = sheet.getRow(ri);
+        if (row == null) {
+            row = sheet.createRow(ri);
+        }
+        Cell cell = row.createCell(ci);
+        return Pair.of(row, cell);
     }
 }

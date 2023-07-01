@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
+import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
 import org.dreamcat.common.excel.style.ExcelStyle;
 
@@ -15,8 +16,8 @@ import org.dreamcat.common.excel.style.ExcelStyle;
 public class ExcelCell implements IExcelCell {
 
     protected IExcelContent content;
-    protected int rowIndex;
-    protected int columnIndex;
+    protected int rowIndex; // 0-based
+    protected int columnIndex; // 0-based
     protected CellPart cellPart;
 
     public ExcelCell(IExcelContent content, int rowIndex, int columnIndex) {
@@ -63,6 +64,11 @@ public class ExcelCell implements IExcelCell {
     }
 
     @Override
+    public ExcelFont getFont() {
+        return cellPart != null ? cellPart.font : null;
+    }
+
+    @Override
     public ExcelHyperLink getHyperLink() {
         return cellPart != null ? cellPart.hyperLink : null;
     }
@@ -73,14 +79,17 @@ public class ExcelCell implements IExcelCell {
     }
 
     @Data
-    @NoArgsConstructor
     public static class CellPart {
 
         public int rowSpan = 1;
         public int columnSpan = 1;
         protected ExcelStyle style;
+        protected ExcelFont font;
         protected ExcelHyperLink hyperLink;
         protected ExcelComment comment;
+
+        public CellPart() {
+        }
 
         public CellPart(int rowSpan, int columnSpan) {
             this.rowSpan = rowSpan;
@@ -95,6 +104,12 @@ public class ExcelCell implements IExcelCell {
     public ExcelCell setStyle(ExcelStyle style) {
         if (cellPart == null) cellPart = new CellPart();
         cellPart.style = style;
+        return this;
+    }
+
+    public ExcelCell setFont(ExcelFont font) {
+        if (cellPart == null) cellPart = new CellPart();
+        cellPart.font = font;
         return this;
     }
 

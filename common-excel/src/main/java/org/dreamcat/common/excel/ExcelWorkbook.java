@@ -11,6 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -20,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dreamcat.common.excel.content.ExcelPicture;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
+import org.dreamcat.common.util.ListUtil;
 
 /**
  * Create by tuke on 2020/7/21
@@ -27,21 +29,23 @@ import org.dreamcat.common.excel.style.ExcelStyle;
 public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
 
     @Getter
-    final List<ExcelPicture> pictures;
-    @Getter
     final List<T> sheets;
     final Map<ExcelFont, Font> fonts;
-    final Map<Font, ExcelFont> reversedFonts;
-    final Map<ExcelStyle, CellStyle> styles;
-    final Map<CellStyle, ExcelStyle> reversedStyles;
+    @Getter
+    final List<ExcelStyle> styles;
+    final List<Font> reservedFonts;
+    final List<CellStyle> reservedStyles;
+
+    @Getter
+    final List<ExcelPicture> pictures;
     boolean date1904;
 
     public ExcelWorkbook() {
         this.sheets = new ArrayList<>();
         this.fonts = new HashMap<>();
-        this.reversedFonts = new HashMap<>();
-        this.styles = new HashMap<>();
-        this.reversedStyles = new HashMap<>();
+        this.reservedFonts = new ArrayList<>();
+        this.styles = new ArrayList<>();
+        this.reservedStyles = new ArrayList<>();
         this.pictures = new ArrayList<>();
     }
 
@@ -73,15 +77,17 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
             Font font = workbook.getFontAt(i);
             ExcelFont excelFont = ExcelFont.from(font);
             self.fonts.put(excelFont, font);
+            self.reservedFonts.add(font);
         }
         // cell style
         int cellStyleNum = workbook.getNumCellStyles();
         for (int i = 0; i < cellStyleNum; i++) {
             CellStyle cellStyle = workbook.getCellStyleAt(i);
-            Font font = ExcelFont.getFont(cellStyle.getFontIndex(), workbook);
-            ExcelStyle excelStyle = ExcelStyle.from(cellStyle, font);
-            self.styles.put(excelStyle, cellStyle);
+            ExcelStyle excelStyle = ExcelStyle.from(cellStyle);
+            self.styles.add(excelStyle);
+            self.reservedStyles.add(cellStyle);
         }
+        workbook.createDataFormat();
         // sheet
         int sheetNum = workbook.getNumberOfSheets();
         for (int i = 0; i < sheetNum; i++) {
@@ -112,23 +118,27 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
         ExcelStyle excelStyle = excelCell.getStyle();
         if (excelStyle == null) return null;
 
-        CellStyle style = styles.get(excelStyle);
+        // style
+        CellStyle style = ListUtil.getOrNull(reservedStyles, excelStyle.getIndex());
         if (style != null) return null;
         style = workbook.createCellStyle();
-        styles.put(excelStyle, style);
-        reversedStyles.put(style, excelStyle);
+        styles.add(excelStyle);
+        reservedStyles.add(style);
 
-        Font font = null;
-        ExcelFont excelFont = excelStyle.getFont();
+        // font
+        ExcelFont excelFont = excelCell.getFont();
         if (excelFont != null) {
-            font = fonts.get(excelFont);
+            Font font = fonts.get(excelFont);
             if (font == null) {
                 font = workbook.createFont();
+                excelFont.fill(font);
                 fonts.put(excelFont, font);
-                reversedFonts.put(font, excelFont);
+                reservedFonts.add(font);
+                style.setFont(font);
             }
         }
-        excelStyle.fill(style, font);
+        DataFormat dataFormat = workbook.createDataFormat();
+        excelStyle.fill(style, dataFormat);
         return style;
     }
 }

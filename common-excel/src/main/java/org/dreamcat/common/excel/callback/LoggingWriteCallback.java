@@ -48,8 +48,8 @@ public class LoggingWriteCallback implements IExcelWriteCallback {
             ExcelFont excelFont = null;
             if (style != null) {
                 Font font = ExcelFont.getFont(style.getFontIndex(), workbook);
-                excelStyle = ExcelStyle.from(style, font);
-                excelFont = excelStyle.getFont();
+                excelStyle = ExcelStyle.from(style);
+                if (font != null) excelFont = ExcelFont.from(font);
             }
             log.debug("IExcelWriteCallback#onFinishCell:\t{}\t{}\t{}\t{}",
                     sheet.getSheetName(), IExcelContent.from(cell),

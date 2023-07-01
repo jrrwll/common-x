@@ -14,6 +14,7 @@ import org.dreamcat.common.excel.annotation.XlsFont;
 @Data
 public class ExcelFont {
 
+    private int index = -1; // unique index number, only for
     private String name;
     private boolean bold;
     private boolean italic;
@@ -41,8 +42,19 @@ public class ExcelFont {
     // font height in points, such as 10 or 14 or 28
     private short height;
 
+    public ExcelFont() {
+        // https://en.wikipedia.org/wiki/Calibri
+        // https://en.wikipedia.org/wiki/Helvetica
+        this("Helvetica");
+    }
+
+    public ExcelFont(String fontName) {
+        this.name = fontName;
+    }
+
     public static ExcelFont from(Font font) {
         ExcelFont excelFont = new ExcelFont();
+        excelFont.index = font.getIndex();
         excelFont.setName(font.getFontName());
         excelFont.setBold(font.getBold());
         excelFont.setItalic(font.getItalic());

@@ -11,7 +11,6 @@ import org.dreamcat.common.util.DateUtil;
 /**
  * Create by tuke on 2020/7/22
  */
-@SuppressWarnings("rawtypes")
 public class ExcelUnionContent implements IExcelContent {
 
     private final ExcelStringContent stringContent = new ExcelStringContent();
@@ -20,6 +19,9 @@ public class ExcelUnionContent implements IExcelContent {
     private final ExcelDateContent dateContent = new ExcelDateContent();
     // transient
     private IExcelContent rawContent = ExcelBlankContent.INSTANCE;
+
+    public ExcelUnionContent(){
+    }
 
     public ExcelUnionContent(String value) {
         setStringContent(value);

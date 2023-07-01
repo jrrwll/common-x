@@ -15,9 +15,7 @@ public class SimpleListWithUtilDemo {
         String excelFile = System.getenv("HOME") + "/Downloads/SimpleListDemo.xlsx";
 
         // build a empty sheet called "Sheet One"
-        SimpleSheet sheet1 = new SimpleSheet("Sheet One");
-        // add a styled header row to the sheet
-        sheet1.addHeader(Pojo.class);
+        SimpleSheet sheet1 = new SimpleSheet(Pojo.class);
         // add many rows to the sheet
         List<Pojo> pojoList = Arrays.asList(new Pojo(), new Pojo());
         sheet1.addAll(pojoList);

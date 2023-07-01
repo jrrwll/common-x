@@ -21,6 +21,7 @@ import org.dreamcat.common.util.BeanUtil;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class SimpleSheet implements IExcelSheet {
 
+    @Setter
     private String name;
     // [Sheet..., T1..., Sheet..., T2...], it mixes Sheet & Pojo up
     private final List schemes;
@@ -36,6 +37,18 @@ public class SimpleSheet implements IExcelSheet {
         this.schemes = schemes;
     }
 
+    public SimpleSheet(Class<?> clazz) {
+        this(clazz.getName());
+        XlsHeaderMeta meta = XlsHeaderMeta.parse(clazz);
+        schemes.add(new ExcelSheet(meta.name, meta.getHeaderCells()));
+        this.name = meta.name;
+    }
+
+    public SimpleSheet(IExcelSheet header) {
+        this(header.getName());
+        schemes.add(header);
+    }
+
     public void addRow(IExcelSheet row) {
         schemes.add(row);
     }
@@ -46,12 +59,6 @@ public class SimpleSheet implements IExcelSheet {
 
     public void addAll(Collection scheme) {
         schemes.addAll(scheme);
-    }
-
-    public void addHeader(Class<?> clazz) {
-        XlsHeaderMeta meta = XlsHeaderMeta.parse(clazz);
-        addRow(new ExcelSheet(meta.name, meta.getHeaderCells()));
-        this.name = meta.name;
     }
 
     @Override

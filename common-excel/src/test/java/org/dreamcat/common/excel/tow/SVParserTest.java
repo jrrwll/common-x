@@ -77,7 +77,7 @@ class SVParserTest {
         }
 
         ExcelSheet sheet = sheetTerm.finish();
-        sheet.setWriteCallback(new AutoWidthWriteCallback());
+        sheet.addWriteCallback(new AutoWidthWriteCallback());
         ExcelWorkbook<ExcelSheet> book = new ExcelWorkbook<>();
         book.addSheet(sheet).writeTo(book1);
     }

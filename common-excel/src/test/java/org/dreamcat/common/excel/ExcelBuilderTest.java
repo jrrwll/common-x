@@ -113,7 +113,7 @@ public class ExcelBuilderTest extends BaseTest {
                                     0, i, 0, i)));
             sheet.getCells().add(cell);
         }
-        sheet.setWriteCallback(new FitWidthWriteCallback());
+        sheet.addWriteCallback(new FitWidthWriteCallback());
 
         book.addSheet(sheet);
         book.writeTo(basePath + "/book.xlsx");
@@ -123,7 +123,7 @@ public class ExcelBuilderTest extends BaseTest {
     void test() {
         SheetTerm sheetTerm = headerSheet();
         ExcelSheet headerSheet = sheetTerm.finish();
-        headerSheet.setWriteCallback(new LoggingWriteCallback());
+        headerSheet.addWriteCallback(new LoggingWriteCallback());
         printSheetVerbose(headerSheet);
         writeXlsx("test", headerSheet);
     }

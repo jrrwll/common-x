@@ -32,8 +32,7 @@ public class AnnotatedSheet implements IExcelSheet {
     // Note that if you set it ture, then that maybe create more than 64000 cell styles on one sheet, which will cause an error
     @Setter
     private boolean annotationStyle;
-    @Setter
-    private IExcelWriteCallback writeCallback;
+    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
 
     public AnnotatedSheet(String name) {
         this(name, new ArrayList<>(0));
@@ -68,11 +67,6 @@ public class AnnotatedSheet implements IExcelSheet {
     @Override
     public Iterator<IExcelCell> iterator() {
         return this.new Iter();
-    }
-
-    @Override
-    public IExcelWriteCallback writeCallback() {
-        return writeCallback;
     }
 
     @Getter

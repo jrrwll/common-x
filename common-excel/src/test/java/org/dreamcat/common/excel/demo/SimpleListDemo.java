@@ -12,7 +12,6 @@ import static org.dreamcat.common.util.RandomUtil.uuid32;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Date;
 import lombok.Data;
@@ -21,6 +20,8 @@ import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.annotation.XlsHeader;
 import org.dreamcat.common.excel.annotation.XlsSheet;
 import org.dreamcat.common.excel.annotation.XlsStyle;
+import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
+import org.dreamcat.common.excel.callback.HeaderCellStyleWriteCallback;
 import org.dreamcat.common.excel.map.SimpleSheet;
 
 /**
@@ -40,16 +41,17 @@ public class SimpleListDemo {
         String c = choose36(randi(3, 7));
         @XlsHeader(header = "Cell boolean", style = @XlsStyle(fgColor = 5))
         boolean d = rand() > 0.5;
-        @XlsHeader(header = "Cell Date", style = @XlsStyle(fgColor = 6))
-        Date e = new Date(System.currentTimeMillis() +
-                randi(-3 * 24 * 3600L, 3 * 24 * 3600L));
-        @XlsHeader(header = "Cell LocalDate", style = @XlsStyle(fgColor = 7))
-        LocalDate f = ofDate(new Date(System.currentTimeMillis() +
-                randi(-3 * 24 * 3600L, 3 * 24 * 3600L))).toLocalDate();
-        @XlsHeader(header = "Cell LocalDateTime", style = @XlsStyle(fgColor = 30))
-        LocalDateTime g = ofDate(new Date(System.currentTimeMillis() +
-                randi(-3 * 24 * 3600L, 3 * 24 * 3600L)));
-        @XlsHeader(header = "null", style = @XlsStyle(fgColor = 10))
+        @XlsHeader(header = "Cell Date", style = @XlsStyle(
+                fgColor = 6, dataFormat = "yyyy-MM-dd hh:mm:ss"))
+        Date e = new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L));
+        @XlsHeader(header = "Cell LocalDate", style = @XlsStyle(
+                fgColor = 7, dataFormat = "yyyy-MM-dd"))
+        LocalDate f = ofDate(
+                new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L))).toLocalDate();
+        @XlsHeader(header = "Cell LocalDateTime", style = @XlsStyle(
+                fgColor = 10, dataFormat = "yyyy-MM-dd hh:mm:ss"))
+        LocalDateTime g = ofDate(new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L)));
+        @XlsHeader(header = "null", style = @XlsStyle(fgColor = 30))
         String _null; // null
     }
 
@@ -62,6 +64,8 @@ public class SimpleListDemo {
         }
         // add many rows to the sheet
         sheet1.addAll(Arrays.asList(new Pojo(), new Pojo()));
+        sheet1.addWriteCallback(new HeaderCellStyleWriteCallback().overwrite(true));
+        sheet1.addWriteCallback(new FitWidthWriteCallback());
 
         // build the second sheet with a specified header
         SimpleSheet sheet2 = new SimpleSheet(sheet("Sheet Two")

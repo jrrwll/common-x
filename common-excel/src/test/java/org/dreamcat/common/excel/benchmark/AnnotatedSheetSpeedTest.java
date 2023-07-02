@@ -73,7 +73,7 @@ class AnnotatedSheetSpeedTest {
         AnnotatedSheet sheet = new AnnotatedSheet("Sheet One");
         sheet.setAnnotationStyle(false);
         sheet.addAll(pojoList);
-        sheet.setWriteCallback(new FitWidthWriteCallback());
+        sheet.addWriteCallback(new FitWidthWriteCallback());
         new ExcelWorkbook<>()
                 .addSheet(sheet)
                 .writeToWithBigGrid("/Users/tuke/Downloads/book2.xlsx");
@@ -112,7 +112,7 @@ class AnnotatedSheetSpeedTest {
             ri += maxRowSpan;
         }
 
-        sheet.setWriteCallback(new FitWidthWriteCallback());
+        sheet.addWriteCallback(new FitWidthWriteCallback());
         new ExcelWorkbook<>()
                 .addSheet(sheet)
                 .writeToWithBigGrid("/Users/tuke/Downloads/book1.xlsx");

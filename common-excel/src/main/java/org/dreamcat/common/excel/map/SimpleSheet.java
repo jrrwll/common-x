@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
+import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
@@ -29,6 +30,7 @@ public class SimpleSheet implements IExcelSheet {
     private final List schemes;
     @Setter
     private Function<Object, List<?>> schemeConverter = BeanUtil::toList;
+    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
 
     public SimpleSheet(String name) {
         this(name, new ArrayList<>(0));

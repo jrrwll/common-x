@@ -28,7 +28,7 @@ class AnnotatedRowSheetEdgeTest extends BaseTest {
             sheet.setName(pojo.getClass().getSimpleName());
 
             DelegateSheet delegateSheet = new DelegateSheet(sheet);
-            delegateSheet.setWriteCallback(new FitWidthWriteCallback());
+            delegateSheet.addWriteCallback(new FitWidthWriteCallback());
             sheets.add(delegateSheet);
         }
         writeXlsx("test", sheets.toArray(new IExcelSheet[0]));

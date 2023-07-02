@@ -1,6 +1,8 @@
 package org.dreamcat.common.excel;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import lombok.Data;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -12,22 +14,12 @@ public class DelegateSheet implements IExcelSheet {
 
     private final IExcelSheet delegate;
     private String name;
-    private IExcelWriteCallback writeCallback;
+    private List<IExcelWriteCallback> writeCallbacks;
 
     public DelegateSheet(IExcelSheet delegate) {
         this.delegate = delegate;
         this.name = delegate.getName();
-        this.writeCallback = delegate.writeCallback();
-    }
-
-    @Override
-    public String getName() {
-        return delegate.getName();
-    }
-
-    @Override
-    public IExcelWriteCallback writeCallback() {
-        return writeCallback;
+        this.writeCallbacks = new ArrayList<>(delegate.getWriteCallbacks());
     }
 
     @Override

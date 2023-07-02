@@ -1,5 +1,8 @@
 package org.dreamcat.common.excel;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,14 +20,17 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
 
     String getName();
 
-    default IExcelWriteCallback writeCallback() {
-        return null;
+    default List<IExcelWriteCallback> getWriteCallbacks() {
+        return new ArrayList<>();
+    }
+
+    default void addWriteCallback(IExcelWriteCallback writeCallback) {
+        getWriteCallbacks().add(writeCallback);
     }
 
     default void fill(Sheet sheet, int sheetIndex, IExcelWorkbook<?> excelWorkbook) {
         Workbook workbook = sheet.getWorkbook();
-        IExcelWriteCallback writeCallback = writeCallback();
-        if (writeCallback != null) {
+        for (IExcelWriteCallback writeCallback : getWriteCallbacks()) {
             writeCallback.onCreateSheet(workbook, sheet, sheetIndex);
         }
         for (IExcelCell excelCell : this) {
@@ -32,7 +38,7 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
             Row row = rowCell.first();
             Cell cell = rowCell.second();
 
-            if (writeCallback != null) {
+            for (IExcelWriteCallback writeCallback : getWriteCallbacks()) {
                 writeCallback.onCreateCell(workbook, sheet, sheetIndex, row, cell);
             }
 
@@ -56,12 +62,12 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
                 excelComment.fill(cell, sheet);
             }
 
-            if (writeCallback != null) {
+            for (IExcelWriteCallback writeCallback : getWriteCallbacks()) {
                 writeCallback.onFinishCell(workbook, sheet, sheetIndex,
                         row, cell, cellContent, style);
             }
         }
-        if (writeCallback != null) {
+        for (IExcelWriteCallback writeCallback : getWriteCallbacks()) {
             writeCallback.onFinishSheet(workbook, sheet, sheetIndex);
         }
     }

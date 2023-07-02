@@ -32,7 +32,7 @@ public class ExcelSheet implements IExcelSheet {
 
     private final String name;
     private final List<IExcelCell> cells;
-    private IExcelWriteCallback writeCallback;
+    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
 
     public ExcelSheet(String name) {
         this.name = name;
@@ -98,8 +98,7 @@ public class ExcelSheet implements IExcelSheet {
     }
 
     private void computeSpans(
-            Map<Integer, Map<Integer, ExcelCell>> cellMap,
-            Sheet sheet) {
+            Map<Integer, Map<Integer, ExcelCell>> cellMap, Sheet sheet) {
         int numMergedRegions = sheet.getNumMergedRegions();
         if (numMergedRegions == 0) return;
 
@@ -130,8 +129,7 @@ public class ExcelSheet implements IExcelSheet {
 
     private static IExcelCell getLeftCell(IExcelCell cell,
             Map<Integer, Map<Integer, ExcelCell>> map) {
-        int ri = cell.getRowIndex();
-        int ci = cell.getColumnIndex();
+        int ri = cell.getRowIndex(), ci = cell.getColumnIndex();
         ExcelCell excelCell;
         while (--ci >= 0) {
             excelCell = map.getOrDefault(ri, Collections.emptyMap()).get(ci);
@@ -142,19 +140,13 @@ public class ExcelSheet implements IExcelSheet {
 
     private static IExcelCell getTopCell(IExcelCell cell,
             Map<Integer, Map<Integer, ExcelCell>> map) {
-        int ri = cell.getRowIndex();
-        int ci = cell.getColumnIndex();
+        int ri = cell.getRowIndex(), ci = cell.getColumnIndex();
         ExcelCell excelCell;
         while (--ri >= 0) {
             excelCell = map.getOrDefault(ri, Collections.emptyMap()).get(ci);
             if (excelCell != null) return excelCell;
         }
         return null;
-    }
-
-    @Override
-    public IExcelWriteCallback writeCallback() {
-        return writeCallback;
     }
 
     @Override

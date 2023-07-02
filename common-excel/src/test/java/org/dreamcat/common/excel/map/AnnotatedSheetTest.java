@@ -24,7 +24,7 @@ class AnnotatedSheetTest extends BaseTest {
         // head + body + head + body + head
         AnnotatedSheet sheet2 = new AnnotatedSheet("Sheet Two");
         sheet2.setAnnotationStyle(true);
-        sheet2.setWriteCallback(new FitWidthWriteCallback());
+        sheet2.addWriteCallback(new FitWidthWriteCallback());
         sheet2.add(ExcelBuilderTest.headerSheet().finish());
         sheet2.add(XlsMetaTest.newPojo());
         sheet2.add(ExcelBuilderTest.headerSheet().finish());
@@ -41,7 +41,7 @@ class AnnotatedSheetTest extends BaseTest {
         AnnotatedSheet sheet1 = new AnnotatedSheet("Sheet One");
         sheet1.setAnnotationStyle(true);
         // sheet1.setWriteCallback(new FitWidthWriteCallback());
-        sheet1.setWriteCallback(new AutoWidthWriteCallback());
+        sheet1.addWriteCallback(new AutoWidthWriteCallback());
 
         for (int i = 0; i < 6; i++) sheet1.add(XlsMetaTest.newPojo());
         for (int i = 0; i < 6; i++) sheet1.add(ExcelBuilderTest.headerSheet().finish());

@@ -12,13 +12,11 @@ import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.annotation.XlsSheet;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.util.ReflectUtil;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * Create by tuke on 2021/2/16
  */
-@Disabled
 class AnnotatedRowSheetEdgeTest extends BaseTest {
 
     @Test
@@ -84,13 +82,14 @@ class AnnotatedRowSheetEdgeTest extends BaseTest {
         }
     }
 
+    private static final String cls = XlsMetaTest.class.getName();
     private static final List<String> FIELD_SOURCES = Arrays.asList(
             "java.lang.String scalar = \"S\";",
-            "java.util.List scalarArray = org.dreamcat.jwrap.excel.map.XlsMetaTest.newStrings();",
-            "org.dreamcat.jwrap.excel.map.XlsMetaTest.Item vector = org.dreamcat.jwrap.excel.map.XlsMetaTest.newItem();",
-            "java.util.List vectorArray = org.dreamcat.jwrap.excel.map.XlsMetaTest.newItems();",
-            "java.util.Map dynamic = org.dreamcat.jwrap.excel.map.XlsMetaTest.newMap();",
-            "java.util.List dynamicArray = org.dreamcat.jwrap.excel.map.XlsMetaTest.newMaps();"
+            "java.util.List scalarArray = " + cls + ".newStrings();",
+            cls + ".Item vector = " + cls + ".newItem();",
+            "java.util.List vectorArray = " + cls + ".newItems();",
+            "java.util.Map dynamic = " + cls + ".newMap();",
+            "java.util.List dynamicArray = " + cls + ".newMaps();"
     );
 
     private static final List<String> FIELDS = Arrays.asList(

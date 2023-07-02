@@ -51,18 +51,18 @@ public class AnnotatedSheet implements IExcelSheet {
         schemes.add(row);
     }
 
-    public void addAll(Collection scheme) {
-        schemes.addAll(scheme);
-    }
-
-    public void addSheet(IExcelSheet sheet) {
-        schemes.add(sheet);
+    public void add(IExcelSheet row) {
+        schemes.add(row);
     }
 
     public void addHeader(Class<?> clazz) {
         XlsHeaderMeta meta = XlsHeaderMeta.parse(clazz);
-        addSheet(meta);
+        add(meta);
         this.name = meta.name;
+    }
+
+    public void addAll(Collection schemes) {
+        this.schemes.addAll(schemes);
     }
 
     @Override

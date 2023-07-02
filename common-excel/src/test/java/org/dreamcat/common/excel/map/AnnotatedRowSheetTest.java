@@ -23,14 +23,13 @@ class AnnotatedRowSheetTest extends BaseTest {
 
     @Test
     void test() {
-        Pojo pojo = newPojo();
-        AnnotatedRowSheet sheet = new AnnotatedRowSheet(pojo);
+        AnnotatedRowSheet sheet = new AnnotatedRowSheet(newPojo());
         printSheetVerbose(sheet);
 
         AnnotatedSheet listSheet = new AnnotatedSheet("Sheet");
-        listSheet.addSheet(sheet);
-        listSheet.addSheet(new AnnotatedRowSheet(newPojo()));
-        listSheet.addSheet(new AnnotatedRowSheet(newPojo()));
+        listSheet.add(sheet);
+        listSheet.add(new AnnotatedRowSheet(newPojo()));
+        listSheet.add(new AnnotatedRowSheet(newPojo()));
 
         writeXlsx("test", listSheet);
     }

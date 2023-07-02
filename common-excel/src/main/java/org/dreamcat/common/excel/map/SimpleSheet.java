@@ -59,8 +59,8 @@ public class SimpleSheet implements IExcelSheet {
         schemes.add(row);
     }
 
-    public void addAll(Collection scheme) {
-        schemes.addAll(scheme);
+    public void addAll(Collection schemes) {
+        this.schemes.addAll(schemes);
     }
 
     @Override

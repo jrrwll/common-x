@@ -17,7 +17,6 @@ import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.map.XlsMeta.Cell;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
-import org.dreamcat.common.util.BeanUtil;
 import org.dreamcat.common.util.FunctionUtil;
 import org.dreamcat.common.util.ObjectUtil;
 import org.dreamcat.common.util.ReflectUtil;
@@ -441,7 +440,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
             }
 
             // va
-            List rectangle = BeanUtil.toList(fieldValue);
+            List rectangle = ReflectUtil.castAsList(fieldValue);
             if (rectangle.isEmpty()) {
                 throw new IllegalArgumentException(
                         "empty list/array field value in " + scheme.getClass());

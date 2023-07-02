@@ -31,11 +31,13 @@ class SVParserTest {
 
     @Test
     void test() throws Exception {
+        if (!book1.exists()) {
+            prepareExcel();
+        }
         SVParser<Dancer, Maid> parser = new SVParser<>(Dancer.class, Maid.class, 1);
         parser.setHeaderIndex(2);
         parser.setVectorFirstHeaderName("maid-bm");
-        List<SVRow<Dancer, Maid>> rows = parser.readSheetAsValue(
-                book1, 0);
+        List<SVRow<Dancer, Maid>> rows = parser.readSheetAsValue(book1, 0);
         rows.forEach(row -> System.out.println(BeanUtil.toPrettyString(row)));
         System.out.println("total " + rows.size());
     }

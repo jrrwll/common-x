@@ -1,7 +1,6 @@
 package org.dreamcat.common.excel;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -34,7 +33,7 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
             writeCallback.onCreateSheet(workbook, sheet, sheetIndex);
         }
         for (IExcelCell excelCell : this) {
-            Pair<Row, Cell> rowCell = ExcelUtil.makeRowCell(excelCell, sheet);
+            Pair<Row, Cell> rowCell = ExcelInternalUtil.makeRowCell(excelCell, sheet);
             Row row = rowCell.first();
             Cell cell = rowCell.second();
 

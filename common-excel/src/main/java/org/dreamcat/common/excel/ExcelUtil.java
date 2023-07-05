@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -121,7 +122,7 @@ public final class ExcelUtil {
     // NOTE THAT: may cause some problem on same sheet names
     public static Map<String, List<List<Object>>> parseAsMap(Workbook workbook) {
         int sheetNum = workbook.getNumberOfSheets();
-        Map<String, List<List<Object>>> sheets = new HashMap<>(sheetNum);
+        Map<String, List<List<Object>>> sheets = new LinkedHashMap<>(sheetNum);
         if (sheetNum == 0) return sheets;
 
         for (int i = 0; i < sheetNum; i++) {
@@ -243,26 +244,5 @@ public final class ExcelUtil {
             rowValues.add(columnValues);
         }
         return rowValues;
-    }
-
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
-
-    static Pair<Row, Cell> makeRowCell(IExcelCell excelCell, Sheet sheet) {
-        int ri = excelCell.getRowIndex();
-        int ci = excelCell.getColumnIndex();
-
-        if (excelCell.hasMergedRegion()) {
-            int rs = excelCell.getRowSpan();
-            int cs = excelCell.getColumnSpan();
-            sheet.addMergedRegion(new CellRangeAddress(
-                    ri, ri + rs - 1, ci, ci + cs - 1));
-        }
-
-        Row row = sheet.getRow(ri);
-        if (row == null) {
-            row = sheet.createRow(ri);
-        }
-        Cell cell = row.createCell(ci);
-        return Pair.of(row, cell);
     }
 }

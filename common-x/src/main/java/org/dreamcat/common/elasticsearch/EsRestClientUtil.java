@@ -34,12 +34,12 @@ public final class EsRestClientUtil {
         return restClientBuilder;
     }
 
-    public static RestClientBuilder restClientBuilder(List<String> uris) {
-        return restClientBuilder(uris, null, null);
+    public static RestClientBuilder restClientBuilder(List<String> addresses) {
+        return restClientBuilder(addresses, null, null);
     }
 
-    public static RestClientBuilder restClientBuilder(List<String> uris, String username, String password) {
-        HttpHost[] hosts = uris.stream().map(HttpHost::create).toArray(HttpHost[]::new);
+    public static RestClientBuilder restClientBuilder(List<String> addresses, String username, String password) {
+        HttpHost[] hosts = addresses.stream().map(HttpHost::create).toArray(HttpHost[]::new);
         RestClientBuilder restClientBuilder = RestClient.builder(hosts);
         configureBasicAuth(restClientBuilder, username, password);
         return restClientBuilder;
@@ -68,13 +68,13 @@ public final class EsRestClientUtil {
     }
 
     public static ElasticsearchClient elasticsearchClient(
-            List<String> uris) {
-        return elasticsearchClient(restClientBuilder(uris));
+            List<String> addresses) {
+        return elasticsearchClient(restClientBuilder(addresses));
     }
 
     public static ElasticsearchClient elasticsearchClient(
-            List<String> uris, String username, String password) {
-        return elasticsearchClient(restClientBuilder(uris, username, password));
+            List<String> addresses, String username, String password) {
+        return elasticsearchClient(restClientBuilder(addresses, username, password));
     }
 
     public static ElasticsearchClient elasticsearchClient(

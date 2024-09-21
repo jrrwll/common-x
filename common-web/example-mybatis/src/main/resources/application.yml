@@ -6,6 +6,6 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/jwrap_mybatis?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8
 
 mybatis:
-  mapper-locations: classpath:org/dreamcat/jwrap/**/*.xml
+  mapper-locations: classpath:org/dreamcat/common/**/*.xml
 
 

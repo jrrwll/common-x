@@ -1,6 +1,6 @@
 ext {
     // https://mvnrepository.com/artifact/org.apache.poi/poi
-    poiVersion = "5.2.3"
+    poiVersion = "5.3.0"
 }
 
 dependencies {

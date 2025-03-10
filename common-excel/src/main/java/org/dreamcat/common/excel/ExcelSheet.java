@@ -23,6 +23,10 @@ import org.dreamcat.common.util.ListUtil;
 
 /**
  * Create by tuke on 2020/7/20
+ *
+ * maximum-rows-and-columns-limits
+ *  XLS = 65536 * 256
+ *  XLSX = 1048576 * 16384
  */
 @Data
 @Slf4j

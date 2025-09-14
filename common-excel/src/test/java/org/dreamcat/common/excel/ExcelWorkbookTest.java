@@ -1,11 +1,12 @@
 package org.dreamcat.common.excel;
 
-import java.io.File;
-import java.util.List;
 import lombok.SneakyThrows;
 import org.dreamcat.common.excel.content.ExcelStringContent;
-import org.dreamcat.common.util.ClassPathUtil;
+import org.dreamcat.common.util.ClassLoaderUtil;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Create by tuke on 2020/7/21
@@ -36,7 +37,7 @@ class ExcelWorkbookTest extends BaseTest {
     @SneakyThrows
     @Test
     void load() {
-        String filename = ClassPathUtil.getResource("all_type.xlsx").getFile();
+        String filename = ClassLoaderUtil.getResource("all_type.xlsx").getFile();
         System.out.println(filename);
         ExcelWorkbook<ExcelSheet> workbook = ExcelWorkbook.from(new File(filename));
 

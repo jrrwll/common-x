@@ -1,12 +1,13 @@
 package org.dreamcat.common.excel.content;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.dreamcat.common.excel.style.ExcelRichString;
+import org.dreamcat.common.util.DateUtil;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
-import org.apache.poi.ss.usermodel.Cell;
-import org.dreamcat.common.excel.style.ExcelRichString;
-import org.dreamcat.common.util.DateUtil;
 
 /**
  * Create by tuke on 2020/7/22
@@ -20,7 +21,7 @@ public class ExcelUnionContent implements IExcelContent {
     // transient
     private IExcelContent rawContent = ExcelBlankContent.INSTANCE;
 
-    public ExcelUnionContent(){
+    public ExcelUnionContent() {
     }
 
     public ExcelUnionContent(String value) {

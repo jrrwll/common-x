@@ -1,10 +1,11 @@
 package org.dreamcat.common.csv;
 
+import lombok.Data;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import lombok.Data;
 
 /**
  * Create by tuke on 2020/8/10

@@ -1,5 +1,13 @@
 package org.dreamcat.common.excel.parse;
 
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.dreamcat.common.reflect.FieldColumn;
+import org.dreamcat.common.util.AssertUtil;
+import org.dreamcat.common.util.ListUtil;
+import org.dreamcat.common.util.ObjectUtil;
+import org.dreamcat.common.util.ReflectUtil;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -7,12 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.dreamcat.common.reflect.FieldColumn;
-import org.dreamcat.common.util.ListUtil;
-import org.dreamcat.common.util.ObjectUtil;
-import org.dreamcat.common.util.ReflectUtil;
 
 /**
  * Create by tuke on 2020/8/27
@@ -188,7 +190,7 @@ public class SVParser<S, V> implements
         }
 
         if (scalarMapSize != -1) {
-            ObjectUtil.requireNotNegative(scalarMapSize, "scalarMapSize");
+            AssertUtil.require(scalarMapSize >= 0, "require scalarMapSize >= 0 but got " + scalarMapSize);
             offset += scalarMapSize;
         } else if (vectorFirstHeaderName != null) {
             int k = offset;

@@ -26,6 +26,7 @@ import org.dreamcat.common.excel.annotation.XlsCell;
 import org.dreamcat.common.excel.annotation.XlsFont;
 import org.dreamcat.common.excel.annotation.XlsSheet;
 import org.dreamcat.common.excel.annotation.XlsStyle;
+import org.dreamcat.common.json.JsonUtil;
 import org.dreamcat.common.util.ArrayUtil;
 import org.dreamcat.common.util.BeanUtil;
 import org.junit.jupiter.api.Test;
@@ -114,7 +115,7 @@ public class XlsMetaTest extends BaseTest {
     void test() {
         XlsMeta metadata = XlsMeta.parse(Pojo.class, true);
         assert metadata != null;
-        System.out.println(BeanUtil.toPrettyString(metadata));
+        System.out.println(JsonUtil.toJsonWithPretty(metadata));
     }
 
     @Data

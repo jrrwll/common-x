@@ -1,11 +1,6 @@
 package org.dreamcat.common.excel.map;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.dreamcat.common.asm.MakeClass;
-import org.dreamcat.common.asm.MakeField;
+import org.dreamcat.common.asm.JavassistMaker;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.DelegateSheet;
 import org.dreamcat.common.excel.IExcelSheet;
@@ -13,6 +8,11 @@ import org.dreamcat.common.excel.annotation.XlsSheet;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.util.ReflectUtil;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Create by tuke on 2021/2/16
@@ -62,20 +62,17 @@ class AnnotatedRowSheetEdgeTest extends BaseTest {
     private void addPojo(List<Object> list, int... indexes) {
         String keyword = Arrays.stream(indexes).mapToObj(FIELDS::get)
                 .collect(Collectors.joining("_"));
-        String className = "Pojo_" + keyword;
-        MakeClass makeClass = MakeClass.make(className)
-                .addAnnotation(XlsSheet.class.getCanonicalName(), "name", className);
+        String className = "com.example.Pojo_" + keyword;
 
+        JavassistMaker maker = new JavassistMaker(className);
+        maker.addAnnotation(XlsSheet.class.getCanonicalName())
+                .setMethodValue("name", className).finish();
         try {
-            List<MakeField> fields = new ArrayList<>();
             for (int index : indexes) {
-                MakeField field = MakeField.make(FIELD_SOURCES.get(index), makeClass)
-                        .toMakeProperty().makeGetter().makeSetter();
-                fields.add(field);
+                maker.addProperty(FIELD_SOURCES.get(index)).addGetter().addSetter();
             }
-            makeClass.addFields(fields);
 
-            Object object = ReflectUtil.newInstance(makeClass.toClass());
+            Object object = ReflectUtil.newInstance(maker.toClass());
             list.add(object);
         } catch (Exception e) {
             throw new RuntimeException(e);

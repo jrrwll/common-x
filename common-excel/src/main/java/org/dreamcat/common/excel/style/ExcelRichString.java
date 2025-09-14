@@ -1,7 +1,5 @@
 package org.dreamcat.common.excel.style;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +8,9 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.dreamcat.common.util.ObjectUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Create by tuke on 2021/2/14

@@ -5,27 +5,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.0' apply false
 }
 
-ext {
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    slf4jVersion = "1.7.36"
-    // https://mvnrepository.com/artifact/org.projectlombok/lombok
-    lombokVersion = "1.18.26"
-    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-    junitVersion = "5.9.2"
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    jacksonVersion = '2.14.2'
-    // https://mvnrepository.com/artifact/org.apache.poi/poi
-    poiVersion = "5.2.3"
-    // https://mvnrepository.com/artifact/com.google.zxing/core
-    zxingVersion = '3.5.1'
-    // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
-    pdfboxVersion = '2.0.28'
-    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
-    thumbnailatorVersion = '0.4.19'
-    // https://mvnrepository.com/artifact/com.hynnet/jacob
-    jacobVersion = '1.18'
-}
-
 subprojects {
     repositories {
         mavenLocal()
@@ -36,30 +15,35 @@ subprojects {
     apply plugin: 'java-library'
     compileJava.options.encoding = 'UTF-8'
     compileTestJava.options.encoding = 'UTF-8'
-    sourceCompatibility = '8'
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
     version = VERSION
     group = GROUP_ID
 
     dependencies {
-        compileOnly "org.projectlombok:lombok:$lombokVersion"
-        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
-        testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
-        implementation "org.slf4j:slf4j-api:$slf4jVersion"
-        testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+        compileOnly libs.lombok
+        annotationProcessor libs.lombok
+        testCompileOnly libs.lombok
+        testAnnotationProcessor libs.lombok
+        implementation libs.slf4j.api
+        testImplementation libs.jupiter.api
+        testRuntimeOnly libs.jupiter.engine
 
-        implementation "org.dreamcat:common:0.4"
+        implementation libs.dreamcat.common
 
-        testImplementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
-        testImplementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-        testImplementation "cglib:cglib:3.3.0"
-        testImplementation "org.javassist:javassist:3.29.2-GA"
+        testImplementation libs.bundles.jackson
+        // https://mvnrepository.com/artifact/org.javassist/javassist
+        testImplementation "org.javassist:javassist:3.30.2-GA"
     }
 
     test {
         useJUnitPlatform()
     }
 
-    apply from: new File(rootDir, 'publish.gradle')
+    if (file("${projectDir}/gradle.properties").exists()) {
+        apply from: new File(rootDir, 'gradle/publish.gradle')
+    }
 }

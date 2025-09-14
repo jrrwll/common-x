@@ -1,12 +1,5 @@
 package org.dreamcat.common.excel.map;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +13,14 @@ import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.FunctionUtil;
 import org.dreamcat.common.util.ObjectUtil;
 import org.dreamcat.common.util.ReflectUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 /**
  * Create by tuke on 2020/7/25
@@ -57,6 +58,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
     public Iterator<IExcelCell> iterator() {
         return this.new Iter();
     }
+
     /// static area
 
     private void checkMetaName(Class clazz) {

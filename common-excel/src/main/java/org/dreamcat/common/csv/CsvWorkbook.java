@@ -1,5 +1,12 @@
 package org.dreamcat.common.csv;
 
+import org.dreamcat.common.csv.CsvMeta.Cell;
+import org.dreamcat.common.io.CloseableIterator;
+import org.dreamcat.common.io.CsvUtil;
+import org.dreamcat.common.util.BeanUtil;
+import org.dreamcat.common.util.ReflectUtil;
+import org.dreamcat.common.util.StringUtil;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,12 +17,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.dreamcat.common.csv.CsvMeta.Cell;
-import org.dreamcat.common.io.CloseableIterator;
-import org.dreamcat.common.io.CsvUtil;
-import org.dreamcat.common.util.BeanUtil;
-import org.dreamcat.common.util.ReflectUtil;
-import org.dreamcat.common.util.StringUtil;
 
 /**
  * Create by tuke on 2020/7/28
@@ -58,7 +59,7 @@ public class CsvWorkbook<T> implements ICsvWorkbook {
     public static <T> CsvWorkbook from(Reader reader, Class<T> clazz) throws IOException {
         if (clazz == null) {
             // nop
-            List<List<String>> values = CsvUtil.parse(reader);
+            List<List<String>> values = CsvUtil.read(reader);
             return new CsvWorkbook<>(values);
         }
 
@@ -66,7 +67,7 @@ public class CsvWorkbook<T> implements ICsvWorkbook {
         CsvWorkbook<T> workbook = new CsvWorkbook<>(values);
         CsvMeta meta = CsvBuilder.parse(clazz);
 
-        try (CloseableIterator<List<String>> iter = CsvUtil.parseAsIter(reader)) {
+        try (CloseableIterator<List<String>> iter = CsvUtil.readAsIter(reader)) {
             while (iter.hasNext()) {
                 List<String> row = iter.next();
 
@@ -94,7 +95,7 @@ public class CsvWorkbook<T> implements ICsvWorkbook {
                         fieldValue = new Date(Long.parseLong(word));
                     }
 
-                    ReflectUtil.setValue(object, field, fieldValue);
+                    ReflectUtil.setFieldValue(object, field, fieldValue);
                 }
             }
         } catch (Exception e) {

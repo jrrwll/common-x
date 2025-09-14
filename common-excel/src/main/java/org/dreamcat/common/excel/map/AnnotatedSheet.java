@@ -1,9 +1,5 @@
 package org.dreamcat.common.excel.map;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.dreamcat.common.excel.IExcelCell;
@@ -12,6 +8,11 @@ import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Create by tuke on 2020/7/26
@@ -29,7 +30,8 @@ public class AnnotatedSheet implements IExcelSheet {
     private String name;
     // [Sheet..., T1..., Sheet..., T2...], it mixes Sheet & Pojo up
     private final List schemes;
-    // Note that if you set it ture, then that maybe create more than 64000 cell styles on one sheet, which will cause an error
+    // Note that if you set it ture, then that maybe create more than 64000 cell styles on one sheet, which will
+    // cause an error
     @Setter
     private boolean annotationStyle;
     private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();

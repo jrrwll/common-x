@@ -1,21 +1,21 @@
 package org.dreamcat.common.excel;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.function.IBiConsumer;
 import org.dreamcat.common.function.IConsumer;
 import org.dreamcat.common.util.SystemUtil;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Create by tuke on 2021/2/15
  */
 public class BaseTest {
 
-    private static final String homeDir = SystemUtil.getEnvOrProperty("HOME", "user.dir", ".");
+    private static final String homeDir = SystemUtil.getPropertyOrEnv("user.home", "HOME", ".");
     protected static final File baseDir = new File(homeDir, "Downloads");
     protected static final String basePath = baseDir.getAbsolutePath();
 
@@ -46,7 +46,7 @@ public class BaseTest {
     @SafeVarargs
     public final <T extends IExcelSheet> void writeExcel(
             String name, String suffix,
-            IBiConsumer<IExcelWorkbook<?>, File, IOException> writer, T... sheets) {
+            IBiConsumer<IExcelWorkbook<?>, File> writer, T... sheets) {
         ExcelWorkbook<T> book = new ExcelWorkbook<>();
         writeExcel(book, name, suffix, writer, sheets);
     }
@@ -54,7 +54,7 @@ public class BaseTest {
     @SafeVarargs
     public final <T extends IExcelSheet> void writeExcel(
             ExcelWorkbook<T> book, String name, String suffix,
-            IBiConsumer<IExcelWorkbook<?>, File, IOException> writer, T... sheets) {
+            IBiConsumer<IExcelWorkbook<?>, File> writer, T... sheets) {
         File file = new File(baseDir, getClass().getSimpleName() + "_" + name + "." + suffix);
         System.out.printf("writing to %s\n", file);
         try {
@@ -64,12 +64,12 @@ public class BaseTest {
         }
     }
 
-    public void readXlsx(String name, IConsumer<ExcelSheet, IOException> callback) {
+    public void readXlsx(String name, IConsumer<ExcelSheet> callback) {
         readExcel(name, "xlsx", callback);
     }
 
     public void readExcel(String name, String suffix,
-            IConsumer<ExcelSheet, IOException> callback) {
+            IConsumer<ExcelSheet> callback) {
         ExcelWorkbook<ExcelSheet> book;
         try {
             book = ExcelWorkbook.from(new File(baseDir, getClass().getSimpleName() + "_" + name + "." + suffix));

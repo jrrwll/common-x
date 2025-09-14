@@ -1,7 +1,5 @@
 package org.dreamcat.common.excel.demo;
 
-
-
 import static org.dreamcat.common.util.RandomUtil.randi;
 
 import org.dreamcat.common.Pair;

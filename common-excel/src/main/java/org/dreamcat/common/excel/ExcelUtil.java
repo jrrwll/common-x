@@ -6,13 +6,16 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.dreamcat.common.Pair;
 import org.dreamcat.common.excel.content.IExcelContent;
+import org.dreamcat.common.excel.map.SimpleSheet;
 import org.dreamcat.common.util.ListUtil;
 import org.dreamcat.common.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -159,11 +162,6 @@ public final class ExcelUtil {
 
     // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 
-    public static List<List<Object>> parse(String filename, int sheetIndex)
-            throws IOException, InvalidFormatException {
-        return parse(new File(filename), sheetIndex);
-    }
-
     public static List<List<Object>> parse(File file, int sheetIndex)
             throws IOException, InvalidFormatException {
         try (Workbook workbook = new XSSFWorkbook(file)) {
@@ -175,11 +173,6 @@ public final class ExcelUtil {
         try (Workbook workbook = new XSSFWorkbook(input)) {
             return parse(workbook, sheetIndex);
         }
-    }
-
-    public static List<List<Object>> parse(String filename, String sheetName)
-            throws IOException, InvalidFormatException {
-        return parse(new File(filename), sheetName);
     }
 
     public static List<List<Object>> parse(File file, String sheetName)
@@ -242,5 +235,68 @@ public final class ExcelUtil {
             rowValues.add(columnValues);
         }
         return rowValues;
+    }
+
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
+
+    public static void writeTo(File file, String sheetName, List<?> sheetData) throws IOException {
+        writeTo(file, Pair.of(sheetName, sheetData));
+    }
+
+    public static <T> void writeTo(File file, Class<T> clazz, String sheetName, List<? extends T> sheetData) throws IOException {
+        writeTo(file, clazz, Pair.of(sheetName, sheetData));
+    }
+
+    public static void writeTo(OutputStream output, String sheetName, List<?> sheetData) throws IOException {
+        writeTo(output, Pair.of(sheetName, sheetData));
+    }
+
+    public static <T> void writeTo(OutputStream output, Class<T> clazz, String sheetName, List<? extends T> sheetData) throws IOException {
+        writeTo(output, clazz, Pair.of(sheetName, sheetData));
+    }
+
+    // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
+
+    @SafeVarargs
+    public static void writeTo(File file, Pair<String, List<?>>... sheets) throws IOException {
+        ExcelWorkbook<SimpleSheet> workbook = buildWorkbook(null,  sheets);
+        workbook.writeTo(file);
+    }
+
+    @SafeVarargs
+    public static <T> void writeTo(File file, Class<T> clazz, Pair<String, List<? extends T>>... sheets) throws IOException {
+        ExcelWorkbook<SimpleSheet> workbook = buildWorkbook(clazz,  sheets);
+        workbook.writeTo(file);
+    }
+
+    @SafeVarargs
+    public static void writeTo(OutputStream output, Pair<String, List<?>>... sheets) throws IOException {
+        ExcelWorkbook<SimpleSheet> workbook = buildWorkbook(null,  sheets);
+        workbook.writeTo(output);
+    }
+
+    @SafeVarargs
+    public static <T> void writeTo(OutputStream output, Class<T> clazz, Pair<String, List<? extends T>>... sheets) throws IOException {
+        ExcelWorkbook<SimpleSheet> workbook = buildWorkbook(clazz,  sheets);
+        workbook.writeTo(output);
+    }
+
+    @SafeVarargs
+    private static <T> ExcelWorkbook<SimpleSheet> buildWorkbook(
+            Class<T> clazz, Pair<String, List<? extends T>>... sheets) {
+        ExcelWorkbook<SimpleSheet> workbook = new ExcelWorkbook<>();
+        for (Pair<String, List<? extends T>> pair : sheets) {
+            SimpleSheet sheet;
+            if (clazz != null) {
+                sheet = new SimpleSheet(clazz);
+                sheet.setName(pair.first());
+            } else {
+                sheet = new SimpleSheet(pair.first());
+            }
+
+            sheet.addAll(pair.second());
+            workbook.addSheet(sheet);
+        }
+        return workbook;
     }
 }

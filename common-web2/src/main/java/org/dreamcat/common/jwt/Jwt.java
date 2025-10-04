@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.dreamcat.common.crypto.SignUtil;
 import org.dreamcat.common.json.JsonUtil;
-import org.dreamcat.common.util.Base64Util;
+import org.dreamcat.common.codec.Base64Util;
 import org.dreamcat.common.util.ObjectUtil;
 
 /**

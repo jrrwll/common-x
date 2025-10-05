@@ -6,28 +6,30 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 
 /**
- * @author Jerry Will
- * @version 2025-10-04
+ * Create by tuke on 2019-02-02
+ * <p>
+ * When I try to compliance with common rules of restful arch,
+ * I find out it's difficult to unite the response structures of vendors.
+ * So I believe in the saying: <h3>less is more</h3>,
+ * and keep it as my custom response structure.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+//@JsonSerialize(using = RestBody.Serializer.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResult<T> {
 
-    public static final String DEFAULT_OK_CODE = "ok";
-    public static final String DEFAULT_ERROR_CODE = "err";
-    public static final String DEFAULT_ERROR_ARG_NAME = "msg";
-    
+    public static final int DEFAULT_OK_CODE = 0;
+    public static final int DEFAULT_ERROR_CODE = 1;
+
     public static final ApiResult<?> OK = ok();
 
-    private String errCode;
-    private Map<String, Object> errArgs;
+    private int code;
+    private String msg;
     private T data;
 
     public static <T> ApiResult<T> ok() {
@@ -41,23 +43,15 @@ public class ApiResult<T> {
     // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 
     public static <T, R> ApiResult<R> error(ApiResult<T> body) {
-        return error(body.getErrCode(), body.getErrArgs());
+        return error(body.getCode(), body.getMsg());
     }
 
     public static <T> ApiResult<T> error(String message) {
         return error(DEFAULT_ERROR_CODE, message);
     }
 
-    public static <T> ApiResult<T> error(String code, String message) {
-        return error(code, Collections.singletonMap(DEFAULT_ERROR_ARG_NAME, message));
-    }
-
-    public static <T> ApiResult<T> error(String code, Map<String, Object> errArgs) {
-        if (Objects.equals(code, DEFAULT_OK_CODE)) {
-            throw new IllegalArgumentException(
-                    "code must not be " + DEFAULT_OK_CODE + " in error case");
-        }
-        return create(code, errArgs, null);
+    public static <T> ApiResult<T> error(int code, String message) {
+        return create(code, message, null);
     }
 
     // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
@@ -65,19 +59,19 @@ public class ApiResult<T> {
     /**
      * create restful response body
      *
-     * @param errCode code field
-     * @param errArgs  must not null when code is not ok
-     * @param data must not null when code is ok
-     * @param <T>  data type
+     * @param code code field
+     * @param msg must not null when code is not ok
+     * @param data    must not null when code is ok
+     * @param <T>     data type
      * @return restful response body
      */
-    private static <T> ApiResult<T> create(String errCode, Map<String, Object> errArgs, T data) {
-        return new ApiResult<>(errCode, errArgs, data);
+    private static <T> ApiResult<T> create(int code, String msg, T data) {
+        return new ApiResult<>(code, msg, data);
     }
 
     @JsonIgnore
     public boolean isSuccess() {
-        return Objects.equals(errCode, DEFAULT_OK_CODE);
+        return Objects.equals(code, DEFAULT_OK_CODE);
     }
 
     @JsonIgnore

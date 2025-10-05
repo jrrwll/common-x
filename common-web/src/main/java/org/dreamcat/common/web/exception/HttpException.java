@@ -1,7 +1,7 @@
 package org.dreamcat.common.web.exception;
 
 import lombok.Getter;
-import org.dreamcat.common.web.result.CommonResult;
+import org.dreamcat.common.web.result.ApiResult;
 
 /**
  * Create by tuke on 2019-04-18
@@ -32,19 +32,19 @@ public class HttpException extends RuntimeException {
     }
 
     public HttpException() {
-        this(CommonResult.DEFAULT_ERROR_CODE);
+        this(ApiResult.DEFAULT_ERROR_CODE);
     }
 
     public HttpException(String message) {
-        this(CommonResult.DEFAULT_ERROR_CODE, message);
+        this(ApiResult.DEFAULT_ERROR_CODE, message);
     }
 
     public HttpException(String message, Throwable cause) {
-        this(CommonResult.DEFAULT_ERROR_CODE, message, cause);
+        this(ApiResult.DEFAULT_ERROR_CODE, message, cause);
     }
 
     public HttpException(Throwable cause) {
-        this(CommonResult.DEFAULT_ERROR_CODE, cause);
+        this(ApiResult.DEFAULT_ERROR_CODE, cause);
     }
 
     public int getStatusCode() {

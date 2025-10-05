@@ -1,0 +1,29 @@
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir '../common-web/src/main/java'
+        }
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+version = VERSION
+group = GROUP_ID
+
+ext {
+    ritaVersion = '0.1-SNAPSHOT'
+}
+
+archivesBaseName = ARTIFACT_ID
+
+dependencies {
+    compileOnly "org.dreamcat:rita-boot:$ritaVersion"
+    compileOnly "org.dreamcat:rita-core:$ritaVersion"
+}
+
+apply from: new File(rootDir, 'common-web/build.gradle')

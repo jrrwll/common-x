@@ -76,7 +76,7 @@ publishing {
             }
 
             groupId project.group
-            artifactId project.name
+            artifactId findProperty('ARTIFACT_ID') ?: project.name
             version project.version
 
             pom.withXml {

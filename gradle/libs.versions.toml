@@ -13,6 +13,20 @@ jackson = "2.17.2"
 poi = "5.3.0"
 # https://mvnrepository.com/artifact/com.google.zxing/core
 zxing = "3.5.1"
+# https://central.sonatype.com/artifact/org.springframework/spring-web/versions
+spring = '5.3.39'
+# https://central.sonatype.com/artifact/org.springframework/spring-web/versions
+spring-boot = '2.6.15'
+# https://central.sonatype.com/artifact/org.springframework.security/spring-security-core
+spring-security = '5.6.12'
+# https://central.sonatype.com/artifact/javax.servlet/javax.servlet-api/versions
+servlet = '3.1.0'
+# https://central.sonatype.com/artifact/javax.persistence/javax.persistence-api/versions
+jpa = '2.2'
+# https://mvnrepository.com/artifact/org.mybatis/mybatis
+mybatis = "3.5.13"
+# https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
+aspectj = "1.9.22.1"
 # https://mvnrepository.com/artifact/co.elastic.clients/elasticsearch-java
 elasticsearch = "8.8.1"
 
@@ -28,6 +42,18 @@ poi = { module = "org.apache.poi:poi", version.ref = "poi"}
 poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi"}
 zxing-core = { module = "com.google.zxing:core", version.ref = "zxing"}
 zxing-javase = { module = "com.google.zxing:javase", version.ref = "zxing"}
+spring-web = { module = "org.springframework:spring-web", version.ref = "spring"}
+spring-webmvc = { module = "org.springframework:spring-webmvc", version.ref = "spring"}
+spring-webflux = { module = "org.springframework:spring-webflux", version.ref = "spring"}
+spring-context = { module = "org.springframework:spring-context", version.ref = "spring"}
+spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "spring-boot"}
+spring-security-core = { module = "org.springframework.security:spring-security-core", version.ref = "spring-security"}
+spring-security-config = { module = "org.springframework.security:spring-security-config", version.ref = "spring-security"}
+spring-security-web = { module = "org.springframework.security:spring-security-web", version.ref = "spring-security"}
+servlet = { module = "javax.servlet:javax.servlet-api", version.ref = "servlet"}
+jpa = { module = "javax.persistence:javax.persistence-api", version.ref = "jpa"}
+mybatis = { module = "org.mybatis:mybatis", version.ref = "mybatis"}
+aspectj-weaver = { module = "org.aspectj:aspectjweaver", version.ref = "aspectj"}
 elasticsearch-java = { module = "co.elastic.clients:elasticsearch-java", version.ref = "elasticsearch"}
 
 [bundles]

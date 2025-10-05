@@ -1,6 +1,6 @@
-package org.dreamcat.common.webflux;
+package org.dreamcat.common.web;
 
-import org.dreamcat.common.spring.security.reactive.JwtReactiveSecurityConfig;
+import org.dreamcat.common.web.spring.security.JwtServletSecurityConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Import;
 /**
  * Create by tuke on 2021/5/6
  */
-@Import({JwtReactiveSecurityConfig.class})
+@Import({JwtServletSecurityConfig.class})
 @SpringBootApplication
-public class WebfluxApplication {
+public class WebApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebfluxApplication.class, args);
+        SpringApplication.run(WebApplication.class, args);
     }
 }

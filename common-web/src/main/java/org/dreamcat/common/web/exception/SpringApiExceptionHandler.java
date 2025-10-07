@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RequiredArgsConstructor
 @RestControllerAdvice
-public class SpringExceptionHandler {
+public class SpringApiExceptionHandler {
 
     /**
      * thrown manually
@@ -27,9 +27,9 @@ public class SpringExceptionHandler {
      * @param e include {@link HttpStatus}, the custom error code and i18n messages
      * @return response wrapped with {@link ApiResult}
      */
-    @ExceptionHandler(HttpException.class)
+    @ExceptionHandler(ApiException.class)
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public ResponseEntity<ApiResult<?>> handleHttpException(HttpException e) {
+    public ResponseEntity<ApiResult<?>> handleHttpException(ApiException e) {
         int code = e.getCode();
         String message = e.getMessage();
         int status = e.getStatusCode();

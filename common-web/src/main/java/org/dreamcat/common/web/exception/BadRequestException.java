@@ -1,11 +1,9 @@
 package org.dreamcat.common.web.exception;
 
-import org.springframework.http.HttpStatus;
-
 /**
  * Create by tuke on 2019-02-02
  */
-public class BadRequestException extends HttpException {
+public class BadRequestException extends ApiException {
 
     @Override
     public int getStatusCode() {

@@ -7,47 +7,47 @@ import org.dreamcat.common.web.result.ApiResult;
  * Create by tuke on 2019-04-18
  */
 @Getter
-public class HttpException extends RuntimeException {
+public class ApiException extends RuntimeException {
 
-    private final int code;
+    private final int code; // error code, not http status code
 
-    public HttpException(int code) {
+    public ApiException(int code) {
         super();
         this.code = code;
     }
 
-    public HttpException(int code, String message) {
+    public ApiException(int code, String message) {
         super(message);
         this.code = code;
     }
 
-    public HttpException(int code, String message, Throwable cause) {
+    public ApiException(int code, String message, Throwable cause) {
         super(message, cause);
         this.code = code;
     }
 
-    public HttpException(int code, Throwable cause) {
+    public ApiException(int code, Throwable cause) {
         super(cause);
         this.code = code;
     }
 
-    public HttpException() {
+    public ApiException() {
         this(ApiResult.DEFAULT_ERROR_CODE);
     }
 
-    public HttpException(String message) {
+    public ApiException(String message) {
         this(ApiResult.DEFAULT_ERROR_CODE, message);
     }
 
-    public HttpException(String message, Throwable cause) {
+    public ApiException(String message, Throwable cause) {
         this(ApiResult.DEFAULT_ERROR_CODE, message, cause);
     }
 
-    public HttpException(Throwable cause) {
+    public ApiException(Throwable cause) {
         this(ApiResult.DEFAULT_ERROR_CODE, cause);
     }
 
     public int getStatusCode() {
-        return 500;
+        return 200;
     }
 }

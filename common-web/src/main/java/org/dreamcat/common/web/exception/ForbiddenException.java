@@ -3,7 +3,7 @@ package org.dreamcat.common.web.exception;
 /**
  * Create by tuke on 2020/2/23
  */
-public class ForbiddenException extends HttpException {
+public class ForbiddenException extends ApiException {
 
     @Override
     public int getStatusCode() {

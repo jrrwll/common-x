@@ -3,7 +3,7 @@ package org.dreamcat.common.web.exception;
 /**
  * Create by tuke on 2019-04-18
  */
-public class NotFoundException extends HttpException {
+public class NotFoundException extends ApiException {
 
     @Override
     public int getStatusCode() {

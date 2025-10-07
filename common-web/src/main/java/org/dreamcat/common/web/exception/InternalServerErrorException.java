@@ -3,7 +3,7 @@ package org.dreamcat.common.web.exception;
 /**
  * Create by tuke on 2020/3/21
  */
-public class InternalServerErrorException extends HttpException {
+public class InternalServerErrorException extends ApiException {
 
     public InternalServerErrorException(int code) {
         super(code);
@@ -35,5 +35,10 @@ public class InternalServerErrorException extends HttpException {
 
     public InternalServerErrorException(Throwable cause) {
         this(-1, cause);
+    }
+
+    @Override
+    public int getStatusCode() {
+        return 500;
     }
 }

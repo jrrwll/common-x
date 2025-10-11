@@ -1,5 +1,5 @@
 dependencies {
-    implementation libs.bundles.poi
+    api libs.bundles.poi
 
     testImplementation 'com.opencsv:opencsv:5.7.1'
 }

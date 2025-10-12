@@ -1,9 +1,10 @@
 package org.dreamcat.common.elasticsearch;
 
-import java.util.List;
-import java.util.Map;
 import lombok.Data;
 import org.dreamcat.common.elasticsearch.param.EsMappingParam;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Create by tuke on 2021/1/22

@@ -8,11 +8,12 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import org.dreamcat.common.image.ImageUtil;
+
 import java.awt.image.BufferedImage;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.dreamcat.common.image.ImageUtil;
 
 /**
  * Create by tuke on 2020/5/27

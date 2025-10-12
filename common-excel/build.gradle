@@ -3,5 +3,3 @@ dependencies {
 
     testImplementation 'com.opencsv:opencsv:5.7.1'
 }
-
-apply from: new File(rootDir, 'gradle/publish.gradle')

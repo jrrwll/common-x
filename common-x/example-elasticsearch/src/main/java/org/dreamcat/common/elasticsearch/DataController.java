@@ -1,10 +1,5 @@
 package org.dreamcat.common.elasticsearch;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Resource;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.dreamcat.common.Pair;
@@ -12,12 +7,18 @@ import org.dreamcat.common.Triple;
 import org.dreamcat.common.elasticsearch.param.EsMappingParam;
 import org.dreamcat.common.elasticsearch.param.EsSearchParam;
 import org.dreamcat.common.json.JsonUtil;
-import org.dreamcat.common.util.ClassPathUtil;
+import org.dreamcat.common.util.ClassLoaderUtil;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Create by tuke on 2021/1/15
@@ -41,7 +42,7 @@ public class DataController {
         if (esIndexClient.existsIndex(index)) {
             return false;
         }
-        String settings = ClassPathUtil.getResourceAsString("settings.json");
+        String settings = ClassLoaderUtil.getResourceAsString("settings.json");
         Map<String, Object> mappings = EsMappingParam.mappings(json);
         log.info("mappings: {}", JsonUtil.toJson(mappings));
         return esIndexClient.createIndex(index, mappings, settings);

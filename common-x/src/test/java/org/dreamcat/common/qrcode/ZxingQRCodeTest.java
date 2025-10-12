@@ -1,8 +1,9 @@
 package org.dreamcat.common.qrcode;
 
-import java.awt.image.BufferedImage;
 import org.dreamcat.common.image.ImageUtil;
 import org.junit.jupiter.api.Test;
+
+import java.awt.image.BufferedImage;
 
 /**
  * Create by tuke on 2020/5/31

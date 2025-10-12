@@ -18,5 +18,3 @@ dependencies {
     compileOnly libs.mybatis
     compileOnly libs.aspectj.weaver
 }
-
-apply from: new File(rootDir, 'gradle/publish.gradle')

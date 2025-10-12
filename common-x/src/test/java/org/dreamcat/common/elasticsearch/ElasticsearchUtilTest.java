@@ -5,9 +5,10 @@ import co.elastic.clients.elasticsearch._types.analysis.TokenChar;
 import co.elastic.clients.elasticsearch._types.analysis.Tokenizer;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.json.JsonData;
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.Date;
-import org.junit.jupiter.api.Test;
 
 /**
  * @author Jerry Will

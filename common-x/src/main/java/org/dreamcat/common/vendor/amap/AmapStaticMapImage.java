@@ -1,5 +1,11 @@
 package org.dreamcat.common.vendor.amap;
 
+import lombok.Data;
+import org.dreamcat.common.Pair;
+import org.dreamcat.common.io.IOUtil;
+import org.dreamcat.common.util.ObjectUtil;
+import org.dreamcat.common.util.StringUtil;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -7,11 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import lombok.Data;
-import org.dreamcat.common.Pair;
-import org.dreamcat.common.io.IOUtil;
-import org.dreamcat.common.util.ObjectUtil;
-import org.dreamcat.common.util.StringUtil;
 
 /**
  * @author Jerry Will

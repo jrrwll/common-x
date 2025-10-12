@@ -1,4 +1,6 @@
 dependencies {
+    implementation libs.bundles.jackson
+
     compileOnly libs.bundles.zxing
     testImplementation libs.bundles.zxing
 

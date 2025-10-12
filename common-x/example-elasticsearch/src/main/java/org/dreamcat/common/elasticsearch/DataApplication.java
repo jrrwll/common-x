@@ -1,10 +1,11 @@
 package org.dreamcat.common.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import javax.annotation.Resource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import javax.annotation.Resource;
 
 /**
  * Create by tuke on 2021/1/15

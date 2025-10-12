@@ -14,10 +14,11 @@ import co.elastic.clients.json.JsonpSerializable;
 import co.elastic.clients.json.jackson.JacksonJsonpGenerator;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.json.jackson.JacksonJsonpParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.json.stream.JsonGenerator;
 import jakarta.json.stream.JsonParser;
+import lombok.extern.slf4j.Slf4j;
+import org.dreamcat.common.json.DataMapper;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -27,7 +28,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Jerry Will
@@ -101,18 +101,12 @@ public class ElasticsearchUtil {
 
     // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final JacksonJsonpMapper jsonpMapper = new JacksonJsonpMapper(objectMapper);
+    private static final DataMapper dataMapper = DataMapper.build().useDefaultConfig().build();
+    private static final JacksonJsonpMapper jsonpMapper = new JacksonJsonpMapper(dataMapper.getObjectMapper());
 
-    static {
-        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-    }
-
-    public static <T> T deserialize(String json, JsonpDeserializer<T> deserializer)
-            throws IOException {
-
+    public static <T> T deserialize(String json, JsonpDeserializer<T> deserializer) {
         try (JsonParser jsonParser = new JacksonJsonpParser(
-                objectMapper.getFactory().createParser(json), jsonpMapper)) {
+                dataMapper.createParser(json), jsonpMapper)) {
             return deserializer.deserialize(jsonParser, jsonpMapper);
         }
     }
@@ -149,7 +143,7 @@ public class ElasticsearchUtil {
             T serializableLike, BiConsumer<T, JsonGenerator> serializer) throws IOException {
         try (StringWriter s = new StringWriter()) {
             try (JsonGenerator jsonGenerator = new JacksonJsonpGenerator(
-                    objectMapper.getFactory().createGenerator(s))) {
+                    dataMapper.createGenerator(s))) {
                 serializer.accept(serializableLike, jsonGenerator);
             }
             return s.toString();

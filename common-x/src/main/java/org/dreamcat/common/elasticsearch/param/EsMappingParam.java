@@ -1,9 +1,5 @@
 package org.dreamcat.common.elasticsearch.param;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.dreamcat.common.json.GenericDeserialize;
 import org.dreamcat.common.json.GenericSerialize;
 import org.dreamcat.common.util.ObjectUtil;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Create by tuke on 2021/1/19

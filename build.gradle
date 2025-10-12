@@ -40,6 +40,12 @@ subprojects {
     }
 
     test {
-        useJUnitPlatform()
+        useJUnitPlatform {
+            excludeTags 'slow', 'integration'
+        }
+    }
+
+    if (file("${projectDir}/gradle.properties").exists()) {
+        apply from: new File(rootDir, 'gradle/publish.gradle')
     }
 }

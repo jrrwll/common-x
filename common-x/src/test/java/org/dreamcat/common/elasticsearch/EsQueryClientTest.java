@@ -3,10 +3,11 @@ package org.dreamcat.common.elasticsearch;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import java.util.Arrays;
 import org.dreamcat.common.elasticsearch.param.EsSearchParam;
 import org.dreamcat.common.elasticsearch.param.EsSortParam;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 /**
  * @author Jerry Will

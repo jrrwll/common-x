@@ -1,6 +1,6 @@
 package org.dreamcat.common.vendor.amap;
 
-import org.dreamcat.common.util.Base64Util;
+import org.dreamcat.common.codec.Base64Util;
 import org.dreamcat.common.util.SystemUtil;
 import org.dreamcat.common.vendor.amap.AmapStaticMapImage.Marker;
 import org.dreamcat.common.vendor.amap.AmapStaticMapImage.Path;

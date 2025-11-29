@@ -81,11 +81,11 @@ public class ExcelUnionContent implements IExcelContent {
     }
 
     public void setDateContent(LocalDate value) {
-        setDateContent(DateUtil.asDate(value.atStartOfDay()));
+        setDateContent(DateUtil.toDate(value.atStartOfDay()));
     }
 
     public void setDateContent(LocalDateTime value) {
-        setDateContent(DateUtil.asDate(value));
+        setDateContent(DateUtil.toDate(value));
     }
 
     public void setRawContent(IExcelContent rawContent) {

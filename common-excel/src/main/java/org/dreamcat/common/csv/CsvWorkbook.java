@@ -1,7 +1,7 @@
 package org.dreamcat.common.csv;
 
 import org.dreamcat.common.csv.CsvMeta.Cell;
-import org.dreamcat.common.io.CloseableIterator;
+import org.dreamcat.common.CloseableIterator;
 import org.dreamcat.common.io.CsvUtil;
 import org.dreamcat.common.util.BeanUtil;
 import org.dreamcat.common.util.ReflectUtil;

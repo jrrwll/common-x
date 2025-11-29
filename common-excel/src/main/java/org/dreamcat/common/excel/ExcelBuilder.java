@@ -52,9 +52,9 @@ public final class ExcelBuilder {
             return new ExcelDateContent(((Calendar) value).getTime());
         } else if (value instanceof LocalDate) {
             LocalDateTime localDateTime = ((LocalDate) value).atStartOfDay();
-            return new ExcelDateContent(DateUtil.asDate(localDateTime));
+            return new ExcelDateContent(DateUtil.toDate(localDateTime));
         } else if (value instanceof LocalDateTime) {
-            return new ExcelDateContent(DateUtil.asDate((LocalDateTime) value));
+            return new ExcelDateContent(DateUtil.toDate((LocalDateTime) value));
         } else if (value instanceof IExcelContent) {
             return (IExcelContent) value;
         } else {

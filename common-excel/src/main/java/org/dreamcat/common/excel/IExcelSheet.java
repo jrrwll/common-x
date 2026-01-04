@@ -6,11 +6,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.dreamcat.common.Pair;
+import org.dreamcat.common.excel.content.ExcelPicture;
+import org.dreamcat.common.excel.content.ExcelPictureData;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -70,5 +73,22 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
         for (IExcelWriteCallback writeCallback : getWriteCallbacks()) {
             writeCallback.onFinishSheet(workbook, sheet, sheetIndex);
         }
+        for (ExcelPicture picture : getPictures()) {
+            // nop
+        }
+    }
+
+    default List<ExcelPicture> getPictures() {
+        return new ArrayList<>();
+    }
+
+    default IExcelSheet addPicture(ExcelPicture picture) {
+        getPictures().add(picture);
+        return this;
+    }
+
+    default <T extends Collection<ExcelPicture>>IExcelSheet addPictures(T pictures) {
+        getPictures().addAll(pictures);
+        return this;
     }
 }

@@ -66,7 +66,7 @@ class AnnotatedRowSheetEdgeTest extends BaseTest {
 
         JavassistMaker maker = new JavassistMaker(className);
         maker.addAnnotation(XlsSheet.class.getCanonicalName())
-                .setMethodValue("name", className).finish();
+                .setMethodValue("name", className).end();
         try {
             for (int index : indexes) {
                 maker.addProperty(FIELD_SOURCES.get(index)).addGetter().addSetter();

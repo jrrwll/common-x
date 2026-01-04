@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.dreamcat.common.excel.content.ExcelPicture;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
@@ -36,6 +38,7 @@ public class ExcelSheet implements IExcelSheet {
     private final String name;
     private final List<IExcelCell> cells;
     private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
+    private final List<ExcelPicture> pictures = new ArrayList<>();
 
     public ExcelSheet(String name) {
         this.name = name;
@@ -49,6 +52,11 @@ public class ExcelSheet implements IExcelSheet {
 
     public static ExcelSheet from(Sheet sheet, ExcelWorkbook<?> excelWorkbook) {
         ExcelSheet excelSheet = new ExcelSheet(sheet.getSheetName());
+
+        Drawing<?> drawing = sheet.getDrawingPatriarch();
+        if (drawing != null) {
+            excelSheet.getPictures().addAll(ExcelPicture.from(drawing));
+        }
 
         int rowNum = sheet.getPhysicalNumberOfRows();
         Map<Integer, Map<Integer, ExcelCell>> cellMap = new TreeMap<>();

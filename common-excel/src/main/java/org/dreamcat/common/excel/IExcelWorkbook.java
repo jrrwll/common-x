@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.dreamcat.common.excel.content.ExcelPicture;
+import org.dreamcat.common.excel.content.ExcelPictureData;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,15 +41,15 @@ public interface IExcelWorkbook<T extends IExcelSheet> extends Iterable<T> {
         return this;
     }
 
-    List<ExcelPicture> getPictures();
+    List<ExcelPictureData> getPictureDatas();
 
-    default IExcelWorkbook<T> addPicture(ExcelPicture picture) {
-        getPictures().add(picture);
+    default IExcelWorkbook<T> addPictureData(ExcelPictureData picture) {
+        getPictureDatas().add(picture);
         return this;
     }
 
-    default IExcelWorkbook<T> addPictures(Collection<ExcelPicture> pictures) {
-        getPictures().addAll(pictures);
+    default IExcelWorkbook<T> addPictureDatas(Collection<ExcelPictureData> pictures) {
+        getPictureDatas().addAll(pictures);
         return this;
     }
 
@@ -82,11 +82,6 @@ public interface IExcelWorkbook<T extends IExcelSheet> extends Iterable<T> {
         for (T excelSheet : this) {
             Sheet sheet = workbook.createSheet(excelSheet.getName());
             excelSheet.fill(sheet, sheetIndex++, this);
-        }
-        // picture
-        List<ExcelPicture> pictures = getPictures();
-        for (ExcelPicture picture : pictures) {
-            picture.fill(workbook);
         }
         return workbook;
     }

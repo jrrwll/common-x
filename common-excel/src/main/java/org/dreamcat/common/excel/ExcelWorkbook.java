@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.dreamcat.common.excel.content.ExcelPicture;
+import org.dreamcat.common.excel.content.ExcelPictureData;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.ListUtil;
@@ -36,9 +36,9 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
     final List<ExcelStyle> styles;
     final List<Font> reservedFonts;
     final List<CellStyle> reservedStyles;
-
     @Getter
-    final List<ExcelPicture> pictures;
+    final List<ExcelPictureData> pictureDatas;
+
     boolean date1904;
 
     public ExcelWorkbook() {
@@ -47,7 +47,7 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
         this.reservedFonts = new ArrayList<>();
         this.styles = new ArrayList<>();
         this.reservedStyles = new ArrayList<>();
-        this.pictures = new ArrayList<>();
+        this.pictureDatas = new ArrayList<>();
     }
 
     public static ExcelWorkbook<ExcelSheet> from(File file)
@@ -71,47 +71,47 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
     }
 
     public static ExcelWorkbook<ExcelSheet> from(Workbook workbook) {
-        ExcelWorkbook<ExcelSheet> self = new ExcelWorkbook<>();
+        ExcelWorkbook<ExcelSheet> book = new ExcelWorkbook<>();
         // font
         int fontNum = workbook.getNumberOfFonts();
         for (int i = 0; i < fontNum; i++) {
             Font font = workbook.getFontAt(i);
             ExcelFont excelFont = ExcelFont.from(font);
-            self.fonts.put(excelFont, font);
-            self.reservedFonts.add(font);
+            book.fonts.put(excelFont, font);
+            book.reservedFonts.add(font);
         }
         // cell style
         int cellStyleNum = workbook.getNumCellStyles();
         for (int i = 0; i < cellStyleNum; i++) {
             CellStyle cellStyle = workbook.getCellStyleAt(i);
             ExcelStyle excelStyle = ExcelStyle.from(cellStyle);
-            self.styles.add(excelStyle);
-            self.reservedStyles.add(cellStyle);
+            book.styles.add(excelStyle);
+            book.reservedStyles.add(cellStyle);
         }
         workbook.createDataFormat();
         // sheet
         int sheetNum = workbook.getNumberOfSheets();
         for (int i = 0; i < sheetNum; i++) {
             Sheet sheet = workbook.getSheetAt(i);
-            self.sheets.add(ExcelSheet.from(sheet, self));
+            book.sheets.add(ExcelSheet.from(sheet, book));
         }
-        // picture
+        // picture data
         List<? extends PictureData> pictures = workbook.getAllPictures();
         for (PictureData picture : pictures) {
-            self.pictures.add(ExcelPicture.from(picture));
+            book.pictureDatas.add(ExcelPictureData.from(picture));
         }
         // extra
         if (workbook instanceof XSSFWorkbook) {
             XSSFWorkbook xssfWorkbook = (XSSFWorkbook) workbook;
-            self.date1904 = xssfWorkbook.isDate1904();
+            book.date1904 = xssfWorkbook.isDate1904();
         } else if (workbook instanceof HSSFWorkbook) {
             HSSFWorkbook hssfWorkbook = (HSSFWorkbook) workbook;
-            self.date1904 = hssfWorkbook.getWorkbook().isUsing1904DateWindowing();
+            book.date1904 = hssfWorkbook.getWorkbook().isUsing1904DateWindowing();
         } else if (workbook instanceof SXSSFWorkbook) {
             SXSSFWorkbook sxssfWorkbook = (SXSSFWorkbook) workbook;
-            self.date1904 = sxssfWorkbook.getXSSFWorkbook().isDate1904();
+            book.date1904 = sxssfWorkbook.getXSSFWorkbook().isDate1904();
         }
-        return self;
+        return book;
     }
 
     @Override

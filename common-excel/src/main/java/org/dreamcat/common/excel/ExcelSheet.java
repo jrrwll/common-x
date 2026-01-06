@@ -7,10 +7,15 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFPicture;
+import org.apache.poi.xssf.usermodel.XSSFPictureData;
 import org.dreamcat.common.excel.content.ExcelPicture;
+import org.dreamcat.common.excel.content.ExcelPictureData;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
@@ -18,6 +23,7 @@ import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.ListUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -55,7 +61,26 @@ public class ExcelSheet implements IExcelSheet {
 
         Drawing<?> drawing = sheet.getDrawingPatriarch();
         if (drawing != null) {
-            excelSheet.getPictures().addAll(ExcelPicture.from(drawing));
+            List<Picture> pictures = ExcelPicture.getPictures(drawing);
+            for (Picture picture : pictures) {
+                PictureData pictureData = picture.getPictureData();
+                String pictureDataId;
+                if (pictureData instanceof XSSFPictureData) {
+                    pictureDataId = ((XSSFPictureData) pictureData).getPackagePart().getPartName().getName();
+                } else {
+                    pictureDataId = String.valueOf(Arrays.hashCode(pictureData.getData()));
+                }
+
+                ExcelPictureData excelPictureData = new ExcelPictureData();
+                excelPictureData.setId(pictureDataId);
+                if (!excelWorkbook.pictureDatas.containsKey(excelPictureData)) {
+                    log.error("undefined picture data {}: {}", pictureDataId, pictureData);
+                    continue;
+                }
+
+                ExcelPicture excelPicture = new ExcelPicture(excelPictureData, picture);
+                excelSheet.getPictures().add(excelPicture);
+            }
         }
 
         int rowNum = sheet.getPhysicalNumberOfRows();

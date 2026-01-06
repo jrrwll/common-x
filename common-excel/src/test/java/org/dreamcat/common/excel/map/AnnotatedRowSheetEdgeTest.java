@@ -2,7 +2,6 @@ package org.dreamcat.common.excel.map;
 
 import org.dreamcat.common.asm.JavassistMaker;
 import org.dreamcat.common.excel.BaseTest;
-import org.dreamcat.common.excel.DelegateSheet;
 import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.annotation.XlsSheet;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
@@ -26,10 +25,9 @@ class AnnotatedRowSheetEdgeTest extends BaseTest {
         for (Object pojo : list) {
             AnnotatedRowSheet sheet = new AnnotatedRowSheet(pojo);
             sheet.setName(pojo.getClass().getSimpleName());
+            sheet.addWriteCallback(new FitWidthWriteCallback());
 
-            DelegateSheet delegateSheet = new DelegateSheet(sheet);
-            delegateSheet.addWriteCallback(new FitWidthWriteCallback());
-            sheets.add(delegateSheet);
+            sheets.add(sheet);
         }
         writeXlsx("test", sheets.toArray(new IExcelSheet[0]));
     }

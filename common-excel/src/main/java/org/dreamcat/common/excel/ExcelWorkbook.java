@@ -20,7 +20,9 @@ import org.dreamcat.common.util.ListUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,25 +32,15 @@ import java.util.Map;
 public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
 
     @Getter
-    final List<T> sheets;
-    final Map<ExcelFont, Font> fonts;
+    final List<T> sheets = new ArrayList<>();
+    final Map<ExcelFont, Font> fonts = new HashMap<>();
     @Getter
-    final List<ExcelStyle> styles;
-    final List<Font> reservedFonts;
-    final List<CellStyle> reservedStyles;
-    @Getter
-    final List<ExcelPictureData> pictureDatas;
+    final List<ExcelStyle> styles = new ArrayList<>();
+    final List<Font> reservedFonts = new ArrayList<>();
+    final List<CellStyle> reservedStyles = new ArrayList<>();
+    final Map<ExcelPictureData, Integer> pictureDatas = new LinkedHashMap<>();
 
     boolean date1904;
-
-    public ExcelWorkbook() {
-        this.sheets = new ArrayList<>();
-        this.fonts = new HashMap<>();
-        this.reservedFonts = new ArrayList<>();
-        this.styles = new ArrayList<>();
-        this.reservedStyles = new ArrayList<>();
-        this.pictureDatas = new ArrayList<>();
-    }
 
     public static ExcelWorkbook<ExcelSheet> from(File file)
             throws IOException, InvalidFormatException {
@@ -88,18 +80,21 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
             book.styles.add(excelStyle);
             book.reservedStyles.add(cellStyle);
         }
-        workbook.createDataFormat();
+        // picture data
+        List<? extends PictureData> pictures = workbook.getAllPictures();
+        int pictureIndex = 1;
+        for (PictureData picture : pictures) {
+            ExcelPictureData data = ExcelPictureData.from(picture);
+            book.pictureDatas.put(data, pictureIndex++);
+        }
+
         // sheet
         int sheetNum = workbook.getNumberOfSheets();
         for (int i = 0; i < sheetNum; i++) {
             Sheet sheet = workbook.getSheetAt(i);
             book.sheets.add(ExcelSheet.from(sheet, book));
         }
-        // picture data
-        List<? extends PictureData> pictures = workbook.getAllPictures();
-        for (PictureData picture : pictures) {
-            book.pictureDatas.add(ExcelPictureData.from(picture));
-        }
+
         // extra
         if (workbook instanceof XSSFWorkbook) {
             XSSFWorkbook xssfWorkbook = (XSSFWorkbook) workbook;
@@ -121,7 +116,8 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
 
         // style
         CellStyle style = ListUtil.getOrNull(reservedStyles, excelStyle.getIndex());
-        if (style != null) return null;
+        if (style != null) return style;
+
         style = workbook.createCellStyle();
         styles.add(excelStyle);
         reservedStyles.add(style);
@@ -141,5 +137,20 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
         DataFormat dataFormat = workbook.createDataFormat();
         excelStyle.fill(style, dataFormat);
         return style;
+    }
+
+    @Override
+    public Collection<ExcelPictureData> getPictureDatas() {
+        return pictureDatas.keySet();
+    }
+
+    @Override
+    public int makePictureData(ExcelPictureData pictureData, Workbook workbook) {
+        Integer index = pictureDatas.get(pictureData);
+        if (index != null) return index;
+
+        index = workbook.addPicture(pictureData.getData(), pictureData.getPictureType());
+        pictureDatas.put(pictureData, index);
+        return index;
     }
 }

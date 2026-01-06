@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
+import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.content.ExcelUnionContent;
 import org.dreamcat.common.util.BeanUtil;
 import org.dreamcat.common.util.ReflectUtil;
@@ -28,6 +29,8 @@ public class SimpleRowSheet implements IExcelSheet {
     private Object scheme;
     @Setter
     private Function<Object, List<?>> schemeConverter = BeanUtil::toList;
+
+    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
 
     public SimpleRowSheet(String name, Object scheme) {
         this.name = name;

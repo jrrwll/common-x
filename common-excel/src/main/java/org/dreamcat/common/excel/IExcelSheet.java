@@ -2,18 +2,19 @@ package org.dreamcat.common.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.dreamcat.common.Pair;
 import org.dreamcat.common.excel.content.ExcelPicture;
-import org.dreamcat.common.excel.content.ExcelPictureData;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -23,9 +24,7 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
 
     String getName();
 
-    default List<IExcelWriteCallback> getWriteCallbacks() {
-        return new ArrayList<>();
-    }
+    List<IExcelWriteCallback> getWriteCallbacks();
 
     default void addWriteCallback(IExcelWriteCallback writeCallback) {
         getWriteCallbacks().add(writeCallback);
@@ -36,6 +35,7 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
         for (IExcelWriteCallback writeCallback : getWriteCallbacks()) {
             writeCallback.onCreateSheet(workbook, sheet, sheetIndex);
         }
+
         for (IExcelCell excelCell : this) {
             Pair<Row, Cell> rowCell = ExcelInternalUtil.makeRowCell(excelCell, sheet);
             Row row = rowCell.first();
@@ -70,11 +70,20 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
                         row, cell, cellContent, style);
             }
         }
+
         for (IExcelWriteCallback writeCallback : getWriteCallbacks()) {
             writeCallback.onFinishSheet(workbook, sheet, sheetIndex);
         }
-        for (ExcelPicture picture : getPictures()) {
-            // nop
+
+        for (ExcelPicture excelPicture : getPictures()) {
+            int pictureDataIndex = excelWorkbook.makePictureData(excelPicture.getPictureData(), workbook);
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
+            ClientAnchor clientAnchor = excelPicture.getAnchor().createClientAnchor(drawing);
+
+            Picture picture = drawing.createPicture(clientAnchor, pictureDataIndex);
+            if (excelPicture.getScaleX() > 0 || excelPicture.getScaleY() > 0) {
+                picture.resize(excelPicture.getScaleX(), excelPicture.getScaleY());
+            }
         }
     }
 
@@ -82,13 +91,7 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
         return new ArrayList<>();
     }
 
-    default IExcelSheet addPicture(ExcelPicture picture) {
+    default void addPicture(ExcelPicture picture) {
         getPictures().add(picture);
-        return this;
-    }
-
-    default <T extends Collection<ExcelPicture>>IExcelSheet addPictures(T pictures) {
-        getPictures().addAll(pictures);
-        return this;
     }
 }

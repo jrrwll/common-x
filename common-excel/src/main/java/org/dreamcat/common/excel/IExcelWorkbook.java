@@ -41,18 +41,6 @@ public interface IExcelWorkbook<T extends IExcelSheet> extends Iterable<T> {
         return this;
     }
 
-    List<ExcelPictureData> getPictureDatas();
-
-    default IExcelWorkbook<T> addPictureData(ExcelPictureData picture) {
-        getPictureDatas().add(picture);
-        return this;
-    }
-
-    default IExcelWorkbook<T> addPictureDatas(Collection<ExcelPictureData> pictures) {
-        getPictureDatas().addAll(pictures);
-        return this;
-    }
-
     /**
      * make a {@link CellStyle} or return an existed one
      *
@@ -61,6 +49,10 @@ public interface IExcelWorkbook<T extends IExcelSheet> extends Iterable<T> {
      * @return the cell style for the cell
      */
     CellStyle makeCellStyle(IExcelCell excelCell, Workbook workbook);
+
+    Collection<ExcelPictureData> getPictureDatas();
+
+    int makePictureData(ExcelPictureData pictureData, Workbook workbook);
 
     // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 

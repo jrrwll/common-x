@@ -15,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dreamcat.common.excel.content.ExcelPictureData;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
+import org.dreamcat.common.io.FileUtil;
 import org.dreamcat.common.util.ListUtil;
 
 import java.io.File;
@@ -44,6 +45,9 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
 
     public static ExcelWorkbook<ExcelSheet> from(File file)
             throws IOException, InvalidFormatException {
+        if (FileUtil.suffix(file.getName()).equalsIgnoreCase("xls")) {
+            return from2003(file);
+        }
         try (Workbook workbook = new XSSFWorkbook(file)) {
             return from(workbook);
         }
@@ -82,7 +86,7 @@ public class ExcelWorkbook<T extends IExcelSheet> implements IExcelWorkbook<T> {
         }
         // picture data
         List<? extends PictureData> pictures = workbook.getAllPictures();
-        int pictureIndex = 1;
+        int pictureIndex = (workbook instanceof HSSFWorkbook) ? 1 : 0; // 0 for xls, 1 for xlsx
         for (PictureData picture : pictures) {
             ExcelPictureData data = ExcelPictureData.from(picture);
             book.pictureDatas.put(data, pictureIndex++);

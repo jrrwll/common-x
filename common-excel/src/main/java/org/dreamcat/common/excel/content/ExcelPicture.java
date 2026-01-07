@@ -34,36 +34,6 @@ public class ExcelPicture {
         this.scaleY = scaleY;
     }
 
-    public static List<Picture> getPictures(Drawing<?> drawing) {
-        List<Picture> pictures = new ArrayList<>();
-        if (drawing instanceof XSSFDrawing) {
-            XSSFDrawing xssfDrawing = (XSSFDrawing) drawing;
-            List<XSSFShape> shapes = xssfDrawing.getShapes();
-            for (XSSFShape shape : shapes) {
-                if (shape instanceof XSSFPicture) {
-                    long id = ((XSSFPicture)shape).getCTPicture().getNvPicPr().getCNvPr().getId();
-                    pictures.add((XSSFPicture)shape);
-                }
-            }
-        } else if (drawing instanceof SXSSFDrawing) {
-            SXSSFDrawing sxssfDrawing = (SXSSFDrawing) drawing;
-            for (XSSFShape shape : sxssfDrawing) {
-                if (shape instanceof XSSFPicture) {
-                    pictures.add((XSSFPicture)shape);
-                }
-            }
-        } else if (drawing instanceof HSSFPatriarch){
-            HSSFPatriarch hssfPatriarch = (HSSFPatriarch) drawing;
-            for (HSSFShape shape : hssfPatriarch) {
-                if (shape instanceof HSSFPicture) {
-                    ((HSSFPicture)shape).getShapeId();
-                    pictures.add((HSSFPicture)shape);
-                }
-            }
-        }
-        return pictures;
-    }
-
     public ExcelPicture(ExcelPictureData pictureData, Picture picture) {
         this.pictureData = pictureData;
 

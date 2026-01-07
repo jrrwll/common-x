@@ -2,6 +2,9 @@ package org.dreamcat.common.excel;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFPicture;
+import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
@@ -12,8 +15,11 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFPictureData;
+import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.dreamcat.common.excel.content.ExcelPicture;
 import org.dreamcat.common.excel.content.ExcelPictureData;
 import org.dreamcat.common.excel.content.IExcelContent;
@@ -26,8 +32,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
@@ -61,8 +69,8 @@ public class ExcelSheet implements IExcelSheet {
 
         Drawing<?> drawing = sheet.getDrawingPatriarch();
         if (drawing != null) {
-            List<Picture> pictures = ExcelPicture.getPictures(drawing);
-            for (Picture picture : pictures) {
+            List<Picture> pictures = extractPictures(drawing);
+            for (Picture picture: pictures) {
                 PictureData pictureData = picture.getPictureData();
                 String pictureDataId;
                 if (pictureData instanceof XSSFPictureData) {
@@ -183,6 +191,36 @@ public class ExcelSheet implements IExcelSheet {
             if (excelCell != null) return excelCell;
         }
         return null;
+    }
+
+    private static List<Picture> extractPictures(Drawing<?> drawing) {
+        List<Picture> pictures = new ArrayList<>();
+        if (drawing instanceof XSSFDrawing) {
+            XSSFDrawing xssfDrawing = (XSSFDrawing) drawing;
+            List<XSSFShape> shapes = xssfDrawing.getShapes();
+            for (XSSFShape shape : shapes) {
+                if (shape instanceof XSSFPicture) {
+                    long id = ((XSSFPicture)shape).getCTPicture().getNvPicPr().getCNvPr().getId();
+                    pictures.add((XSSFPicture)shape);
+                }
+            }
+        } else if (drawing instanceof SXSSFDrawing) {
+            SXSSFDrawing sxssfDrawing = (SXSSFDrawing) drawing;
+            for (XSSFShape shape : sxssfDrawing) {
+                if (shape instanceof XSSFPicture) {
+                    pictures.add((XSSFPicture)shape);
+                }
+            }
+        } else if (drawing instanceof HSSFPatriarch){
+            HSSFPatriarch hssfPatriarch = (HSSFPatriarch) drawing;
+            for (HSSFShape shape : hssfPatriarch) {
+                if (shape instanceof HSSFPicture) {
+                    ((HSSFPicture)shape).getShapeId();
+                    pictures.add((HSSFPicture)shape);
+                }
+            }
+        }
+        return pictures;
     }
 
     @Override

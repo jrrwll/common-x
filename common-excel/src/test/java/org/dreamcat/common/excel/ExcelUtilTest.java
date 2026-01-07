@@ -12,6 +12,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFPictureData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dreamcat.common.excel.content.ExcelPicture;
+import org.dreamcat.common.excel.content.ExcelPictureData;
+import org.dreamcat.common.json.JsonUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -47,25 +49,22 @@ class ExcelUtilTest {
         }
 
         System.out.println("\n\n" + file1);
-        try (Workbook workbook = new XSSFWorkbook(file1)) {
-            List<? extends PictureData> allPictures = workbook.getAllPictures();
-            for (PictureData pictureData : allPictures) {
-                XSSFPictureData xssfPictureData = (XSSFPictureData) pictureData;
-                String partName = xssfPictureData.getPackagePart().getPartName().getName();
-                System.out.println(pictureData.hashCode() + " = " + pictureData + " = " + partName);
-            }
+        ExcelWorkbook<ExcelSheet> book1 = ExcelWorkbook.from(file1);
+        System.out.println("pictureData:");
+        for (ExcelPictureData pictureData : book1.getPictureDatas()) {
+            System.out.println(pictureData.hashCode() + " = " + pictureData);
+        }
+        for (ExcelSheet sheet : book1.getSheets()) {
+            System.out.println("\n\nsheet " + sheet.getName());
 
-            int numberOfSheets = workbook.getNumberOfSheets();
-            for (int i = 0; i < numberOfSheets; i++) {
-                Sheet sheet = workbook.getSheetAt(i);
-                System.out.println("\nsheet " + sheet.getSheetName());
-                Drawing<?> drawing = sheet.getDrawingPatriarch();
-                List<Picture> pictures = ExcelPicture.getPictures(drawing);
-                for (Picture picture : pictures) {
-                    System.out.println(picture.getPictureData().hashCode() + " = " + picture.getPictureData());
-                }
+            for (ExcelPicture picture : sheet.getPictures()) {
+                System.out.println("picture:");
+                System.out.println(picture.hashCode() + " = " + picture.getPictureData());
+                System.out.println(JsonUtil.toJson(picture.getAnchor()));
             }
         }
+        // write back
+        book1.writeTo(new File(file1.getParentFile(), "pic_test1_back.xlsx"));
 
         File file2 = new File(System.getenv("HOME") + "/Movies/pic_test2.xls");
         if (!file2.exists()) {
@@ -74,22 +73,21 @@ class ExcelUtilTest {
         }
 
         System.out.println("\n\n" + file2);
-        try (Workbook workbook = new HSSFWorkbook(new POIFSFileSystem(file2, true))) {
-            List<? extends PictureData> allPictures = workbook.getAllPictures();
-            for (PictureData pictureData : allPictures) {
-                System.out.println(pictureData.hashCode() + " = " + pictureData + " = " + Arrays.hashCode(pictureData.getData()));
-            }
+        ExcelWorkbook<ExcelSheet> book2 = ExcelWorkbook.from(file2);
+        System.out.println("pictureData:");
+        for (ExcelPictureData pictureData : book2.getPictureDatas()) {
+            System.out.println(pictureData.hashCode() + " = " + pictureData);
+        }
+        for (ExcelSheet sheet : book2.getSheets()) {
+            System.out.println("\n\nsheet " + sheet.getName());
 
-            int numberOfSheets = workbook.getNumberOfSheets();
-            for (int i = 0; i < numberOfSheets; i++) {
-                Sheet sheet = workbook.getSheetAt(i);
-                System.out.println("\nsheet " + sheet.getSheetName());
-                Drawing<?> drawing = sheet.getDrawingPatriarch();
-                List<Picture> pictures = ExcelPicture.getPictures(drawing);
-                for (Picture picture : pictures) {
-                    System.out.println(picture.getPictureData().hashCode() + " = " + Arrays.hashCode(picture.getPictureData().getData()));
-                }
+            for (ExcelPicture picture : sheet.getPictures()) {
+                System.out.println("picture:");
+                System.out.println(picture.hashCode() + " = " + picture.getPictureData());
+                System.out.println(JsonUtil.toJson(picture.getAnchor()));
             }
         }
+        // write back
+        book2.writeTo2003(new File(file2.getParentFile(), "pic_test2_back.xls"));
     }
 }

@@ -69,6 +69,11 @@ public interface IExcelWorkbook<T extends IExcelSheet> extends Iterable<T> {
     }
 
     default <W extends Workbook> W toWorkbook(W workbook) {
+        // picture data
+        for (ExcelPictureData pictureData : getPictureDatas()) {
+            workbook.addPicture(pictureData.getData(), pictureData.getPictureType());
+        }
+
         // sheet
         int sheetIndex = 0;
         for (T excelSheet : this) {

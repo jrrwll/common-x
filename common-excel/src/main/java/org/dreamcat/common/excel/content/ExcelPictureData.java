@@ -1,9 +1,9 @@
 package org.dreamcat.common.excel.content;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFPictureData;
@@ -14,7 +14,8 @@ import java.util.Objects;
 /**
  * Create by tuke on 2021/2/14
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class ExcelPictureData {
 
@@ -51,5 +52,13 @@ public class ExcelPictureData {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof ExcelPictureData)) return false;
+        ExcelPictureData that = (ExcelPictureData) obj;
+        return Objects.equals(this.id, that.id);
     }
 }

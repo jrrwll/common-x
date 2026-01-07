@@ -223,12 +223,20 @@ public class ExcelSheet implements IExcelSheet {
         return pictures;
     }
 
+    public void addCell(IExcelCell cell) {
+        cells.add(cell);
+    }
+
+    public void addPicture(ExcelPicture picture) {
+        pictures.add(picture);
+    }
+
     @Override
     public Iterator<IExcelCell> iterator() {
         return cells.iterator();
     }
 
-    public void addCell(IExcelCell cell) {
-        cells.add(cell);
+    public void addWriteCallback(IExcelWriteCallback writeCallback) {
+        writeCallbacks.add(writeCallback);
     }
 }

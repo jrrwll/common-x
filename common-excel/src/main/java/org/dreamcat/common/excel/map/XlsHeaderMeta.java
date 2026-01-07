@@ -7,7 +7,6 @@ import lombok.Getter;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
-import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.annotation.XlsHeader;
 import org.dreamcat.common.excel.annotation.XlsHeader.SubheaderStyle;
 import org.dreamcat.common.excel.annotation.XlsSheet;
@@ -40,9 +39,6 @@ public class XlsHeaderMeta implements IExcelSheet {
     List<IExcelCell> headerCells;
     // transient
     List<Integer> fieldIndexes;
-
-    @Getter
-    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
 
     public synchronized List<Integer> getFieldIndexes() {
         if (fieldIndexes == null) {

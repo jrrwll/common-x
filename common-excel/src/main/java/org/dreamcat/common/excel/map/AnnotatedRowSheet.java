@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
-import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.content.ExcelUnionContent;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.map.XlsMeta.Cell;
@@ -38,8 +37,6 @@ public class AnnotatedRowSheet implements IExcelSheet {
     private Object scheme;
     private XlsMeta meta;
     private List<Integer> indexes;
-
-    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
 
     public AnnotatedRowSheet(Object scheme) {
         reset(scheme);

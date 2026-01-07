@@ -1,6 +1,7 @@
 package org.dreamcat.common.excel.style;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -8,10 +9,13 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.dreamcat.common.excel.annotation.XlsFont;
 
+import java.util.Objects;
+
 /**
  * Create by tuke on 2020/7/21
  */
-@Data
+@Getter
+@Setter
 public class ExcelFont {
 
     private int index = -1; // unique index number, only for
@@ -117,5 +121,18 @@ public class ExcelFont {
             return workbook.getFontAt(fontIndex);
         }
         return null;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(index);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof ExcelFont)) return false;
+        ExcelFont that = (ExcelFont) obj;
+        return Objects.equals(this.index, that.index);
     }
 }

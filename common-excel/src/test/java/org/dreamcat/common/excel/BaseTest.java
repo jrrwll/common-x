@@ -23,12 +23,12 @@ public class BaseTest {
 
     @SafeVarargs
     public final <T extends IExcelSheet> void writeXlsxWithBigGrid(String name, T... sheets) {
-        writeExcel(name, "xlsx", IExcelWorkbook::writeToWithBigGrid, sheets);
+        writeExcel(name, "xlsx", ExcelWorkbook::writeToWithBigGrid, sheets);
     }
 
     @SafeVarargs
     public final <T extends IExcelSheet> void writeXlsx(String name, T... sheets) {
-        writeExcel(name, "xlsx", IExcelWorkbook::writeTo, sheets);
+        writeExcel(name, "xlsx", ExcelWorkbook::writeTo, sheets);
     }
 
     @SafeVarargs
@@ -40,13 +40,13 @@ public class BaseTest {
     @SafeVarargs
     public final <T extends IExcelSheet> void writeExcel(
             ExcelWorkbook<T> book, String name, String suffix, T... sheets) {
-        writeExcel(book, name, suffix, IExcelWorkbook::writeTo, sheets);
+        writeExcel(book, name, suffix, ExcelWorkbook::writeTo, sheets);
     }
 
     @SafeVarargs
     public final <T extends IExcelSheet> void writeExcel(
             String name, String suffix,
-            IBiConsumer<IExcelWorkbook<?>, File> writer, T... sheets) {
+            IBiConsumer<ExcelWorkbook<?>, File> writer, T... sheets) {
         ExcelWorkbook<T> book = new ExcelWorkbook<>();
         writeExcel(book, name, suffix, writer, sheets);
     }
@@ -54,7 +54,7 @@ public class BaseTest {
     @SafeVarargs
     public final <T extends IExcelSheet> void writeExcel(
             ExcelWorkbook<T> book, String name, String suffix,
-            IBiConsumer<IExcelWorkbook<?>, File> writer, T... sheets) {
+            IBiConsumer<ExcelWorkbook<?>, File> writer, T... sheets) {
         File file = new File(baseDir, getClass().getSimpleName() + "_" + name + "." + suffix);
         System.out.printf("writing to %s\n", file);
         try {

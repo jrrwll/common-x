@@ -71,6 +71,10 @@ public class AnnotatedSheet implements IExcelSheet {
         return this.new Iter();
     }
 
+    public void addWriteCallback(IExcelWriteCallback writeCallback) {
+        writeCallbacks.add(writeCallback);
+    }
+
     @Getter
     private class Iter implements Iterator<IExcelCell>,
             IExcelCell {

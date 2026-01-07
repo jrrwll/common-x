@@ -36,7 +36,7 @@ new ExcelWorkbook<>().addSheet(sheet).writeTo(excelFile);
 
 ==== `Workbook`
 
-Corresponding to an Excel file, _Interface_：`IExcelWorkbook`
+Corresponding to an Excel file, _Class_：`ExcelWorkbook`
 
 Including sheets, fonts, cell styles, pictures and so on
 

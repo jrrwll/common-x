@@ -36,7 +36,7 @@ new ExcelWorkbook<>().addSheet(sheet).writeTo(excelFile);
 
 ==== `Workbook`
 
-对应一个Excel文件，抽象接口：`IExcelWorkbook`
+对应一个Excel文件，实现类：`ExcelWorkbook`
 
 包含Sheet页(Sheets)、字体(Fonts)、样式(CellStyles)、图片(Pictures)等
 

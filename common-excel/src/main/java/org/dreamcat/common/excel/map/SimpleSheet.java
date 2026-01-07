@@ -71,6 +71,10 @@ public class SimpleSheet implements IExcelSheet {
         return this.new Iter();
     }
 
+    public void addWriteCallback(IExcelWriteCallback writeCallback) {
+        writeCallbacks.add(writeCallback);
+    }
+
     private class Iter implements Iterator<IExcelCell>, IExcelCell {
 
         // as row index offset since row based structure

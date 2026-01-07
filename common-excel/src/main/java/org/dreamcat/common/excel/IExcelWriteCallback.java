@@ -34,11 +34,11 @@ public interface IExcelWriteCallback {
         // nop
     }
 
-    static IExcelSheet delegateTo(IExcelSheet sheet, IExcelWriteCallback... writeCallbacks) {
-        return delegateTo(sheet, Arrays.asList(writeCallbacks));
+    static IExcelSheet bind(IExcelSheet sheet, IExcelWriteCallback... writeCallbacks) {
+        return bind(sheet, Arrays.asList(writeCallbacks));
     }
 
-    static IExcelSheet delegateTo(IExcelSheet sheet, List<IExcelWriteCallback> writeCallbacks) {
+    static IExcelSheet bind(IExcelSheet sheet, List<IExcelWriteCallback> writeCallbacks) {
 
         return new IExcelSheet() {
 

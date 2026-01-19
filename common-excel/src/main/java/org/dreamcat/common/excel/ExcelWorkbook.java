@@ -53,7 +53,7 @@ public class ExcelWorkbook<T extends IExcelSheet> {
     boolean date1904;
 
     public ExcelWorkbook<T> addSheet(T sheet) {
-        getSheets().add(sheet);
+        sheets.add(sheet);
         return this;
     }
 

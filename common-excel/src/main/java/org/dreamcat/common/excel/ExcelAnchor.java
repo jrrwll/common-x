@@ -27,7 +27,7 @@ public class ExcelAnchor {
 
     private int anchorType;
 
-    public static ExcelAnchor from (ClientAnchor anchor) {
+    public static ExcelAnchor from(ClientAnchor anchor) {
         ExcelAnchor excelAnchor = new ExcelAnchor();
 
         excelAnchor.col1 = anchor.getCol1();

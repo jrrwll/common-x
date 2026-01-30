@@ -1,18 +1,14 @@
 package org.dreamcat.common.excel.tow;
 
-import static org.dreamcat.common.excel.ExcelBuilder.sheet;
 import static org.dreamcat.common.util.RandomUtil.choose36;
 import static org.dreamcat.common.util.RandomUtil.randi;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.dreamcat.common.excel.ExcelBuilder;
+import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelUtil;
 import org.dreamcat.common.excel.ExcelWorkbook;
@@ -21,6 +17,10 @@ import org.dreamcat.common.excel.parse.SVParser;
 import org.dreamcat.common.excel.parse.SVRow;
 import org.dreamcat.common.util.BeanUtil;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Create by tuke on 2020/8/19
@@ -44,39 +44,37 @@ class SVParserTest {
 
     @Test
     void prepareExcel() throws IOException {
-        ExcelBuilder.SheetTerm sheetTerm = newSheetTerm();
-
+        ExcelSheet sheet = newSheetWithHeaders();
         int offset = 3;
         for (int i = 0; i++ < randi(6, 12); ) {
-            sheetTerm.cell(choose36(3), offset, 1);
-            sheetTerm.cell(randi(10), offset, 2);
-            sheetTerm.cell(choose36(randi(1, 4)), offset, 3);
-            sheetTerm.cell(choose36(randi(1, 4)), offset, 4);
-            sheetTerm.cell(choose36(randi(1, 4)), offset, 5);
+            sheet.addCell(choose36(3), offset, 1);
+            sheet.addCell(randi(10), offset, 2);
+            sheet.addCell(choose36(randi(1, 4)), offset, 3);
+            sheet.addCell(choose36(randi(1, 4)), offset, 4);
+            sheet.addCell(choose36(randi(1, 4)), offset, 5);
 
-            sheetTerm.cell(choose36(randi(1, 2)), offset, 6);
-            sheetTerm.cell(randi(2, 10), offset, 7);
+            sheet.addCell(choose36(randi(1, 2)), offset, 6);
+            sheet.addCell(randi(2, 10), offset, 7);
 
-            sheetTerm.cell(choose36(randi(3, 6)), offset, 8);
-            sheetTerm.cell(choose36(randi(3, 6)), offset, 9);
-            sheetTerm.cell(choose36(randi(3, 6)), offset, 10);
-            sheetTerm.cell(choose36(randi(3, 6)), offset, 11);
+            sheet.addCell(choose36(randi(3, 6)), offset, 8);
+            sheet.addCell(choose36(randi(3, 6)), offset, 9);
+            sheet.addCell(choose36(randi(3, 6)), offset, 10);
+            sheet.addCell(choose36(randi(3, 6)), offset, 11);
 
             for (int j = -1; j++ < randi(1, 6); ) {
                 offset++;
 
-                sheetTerm.cell(choose36(randi(1, 2)), offset, 6);
-                sheetTerm.cell(randi(2, 10), offset, 7);
+                sheet.addCell(choose36(randi(1, 2)), offset, 6);
+                sheet.addCell(randi(2, 10), offset, 7);
 
-                sheetTerm.cell(choose36(randi(3, 6)), offset, 8);
-                sheetTerm.cell(choose36(randi(3, 6)), offset, 9);
-                sheetTerm.cell(choose36(randi(3, 6)), offset, 10);
-                sheetTerm.cell(choose36(randi(3, 6)), offset, 11);
+                sheet.addCell(choose36(randi(3, 6)), offset, 8);
+                sheet.addCell(choose36(randi(3, 6)), offset, 9);
+                sheet.addCell(choose36(randi(3, 6)), offset, 10);
+                sheet.addCell(choose36(randi(3, 6)), offset, 11);
             }
             offset++;
         }
 
-        ExcelSheet sheet = sheetTerm.finish();
         sheet.addWriteCallback(new AutoWidthWriteCallback());
         ExcelWorkbook<ExcelSheet> book = new ExcelWorkbook<>();
         book.addSheet(sheet).writeTo(book1);
@@ -115,24 +113,21 @@ class SVParserTest {
         private String message;
     }
 
-    static ExcelBuilder.SheetTerm newSheetTerm() {
-        return sheet("Sheet Cell")
-                .cell("errorMessage", 2, 0)
-
-                .cell("dancer", 2, 1)
-                .cell("dancer(rita) height", 2, 2)
-
-                .cell("wind-1", 2, 3)
-                .cell("$$$", 2, 4)
-                .cell("wind-xxx", 2, 5)
-
-                .cell("maid-bm", 2, 6)
-                .cell("maid-version", 2, 7)
-
-                .cell("water-start", 2, 8)
-                .cell("dancer", 2, 9)
-                .cell("maid", 2, 10)
-                .cell("water-end", 2, 11);
+    static ExcelSheet newSheetWithHeaders() {
+        ExcelSheet sheet = new ExcelSheet("Sheet Cell");
+        sheet.addCell(new ExcelCell("errorMessage", 2, 0));
+        sheet.addCell(new ExcelCell("dancer", 2, 1));
+        sheet.addCell(new ExcelCell("dancer(rita) height", 2, 2));
+        sheet.addCell(new ExcelCell("wind-1", 2, 3));
+        sheet.addCell(new ExcelCell("$$$", 2, 4));
+        sheet.addCell(new ExcelCell("wind-xxx", 2, 5));
+        sheet.addCell(new ExcelCell("maid-bm", 2, 6));
+        sheet.addCell(new ExcelCell("maid-version", 2, 7));
+        sheet.addCell(new ExcelCell("water-start", 2, 8));
+        sheet.addCell(new ExcelCell("dancer", 2, 9));
+        sheet.addCell(new ExcelCell("maid", 2, 10));
+        sheet.addCell(new ExcelCell("water-end", 2, 11));
+        return sheet;
     }
 
 }

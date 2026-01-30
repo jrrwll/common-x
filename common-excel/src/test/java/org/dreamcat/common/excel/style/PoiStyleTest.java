@@ -1,20 +1,13 @@
 package org.dreamcat.common.excel.style;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Date;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -23,12 +16,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.json.JsonUtil;
 import org.junit.jupiter.api.Test;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Date;
 
 /**
  * Create by tuke on 2021/2/14
  */
-class StyleTest extends BaseTest {
+class PoiStyleTest extends BaseTest {
 
     @SneakyThrows
     @Test
@@ -68,24 +66,25 @@ class StyleTest extends BaseTest {
 
     @Test
     void printIndexedColors() throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("IndexedColors");
-        int ri = 0;
-        for (IndexedColors indexedColor : IndexedColors.values()) {
-            Row row = sheet.createRow(ri++);
-            Cell cell1 = row.createCell(0);
-            Cell cell2 = row.createCell(1);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("IndexedColors");
+            int ri = 0;
+            for (IndexedColors indexedColor : IndexedColors.values()) {
+                Row row = sheet.createRow(ri++);
+                Cell cell1 = row.createCell(0);
+                Cell cell2 = row.createCell(1);
 
-            CellStyle style = workbook.createCellStyle();
-            style.setFillForegroundColor(indexedColor.getIndex());
-            style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            cell1.setCellStyle(style);
+                CellStyle style = workbook.createCellStyle();
+                style.setFillForegroundColor(indexedColor.getIndex());
+                style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                cell1.setCellStyle(style);
 
-            cell2.setCellValue(indexedColor.name());
+                cell2.setCellValue(indexedColor.name());
+            }
+            sheet.setColumnWidth(0, 64 * 255);
+            sheet.setColumnWidth(1, 64 * 255);
+            workbook.write(Files.newOutputStream(Paths.get(basePath +
+                    "/book_StyleTest_printIndexedColors.xlsx")));
         }
-        sheet.setColumnWidth(0, 64 * 255);
-        sheet.setColumnWidth(1, 64 * 255);
-        workbook.write(new FileOutputStream(basePath +
-                "/book_StyleTest_printIndexedColors.xlsx"));
     }
 }

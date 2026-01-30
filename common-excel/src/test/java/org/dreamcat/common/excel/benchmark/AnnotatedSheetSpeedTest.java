@@ -1,19 +1,12 @@
 package org.dreamcat.common.excel.benchmark;
 
-import static org.dreamcat.common.excel.ExcelBuilder.term;
 import static org.dreamcat.common.excel.map.XlsMetaTest.Item;
 import static org.dreamcat.common.excel.map.XlsMetaTest.Pojo;
 import static org.dreamcat.common.util.RandomUtil.choose26;
 import static org.dreamcat.common.util.RandomUtil.rand;
 import static org.dreamcat.common.util.RandomUtil.randi;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.dreamcat.common.Timeit;
-import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
@@ -21,6 +14,12 @@ import org.dreamcat.common.excel.map.AnnotatedSheet;
 import org.dreamcat.common.util.BeanUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Create by tuke on 2020/7/27
@@ -92,21 +91,21 @@ class AnnotatedSheetSpeedTest {
             int maxRowSpan = sa.size();
             maxRowSpan = Math.max(maxRowSpan, va.size());
 
-            sheet.getCells().add(new ExcelCell(term(s), ri, 0, maxRowSpan, 1));
+            sheet.addCell(s, ri, 0, maxRowSpan, 1);
             int k = ri;
             for (Double n : sa) {
-                sheet.getCells().add(new ExcelCell(term(n), k++, 1, 1, 1));
+                sheet.addCell(n, k++, 1, 1, 1);
             }
 
             List<Object> vi = BeanUtil.toList(v);
-            sheet.getCells().add(new ExcelCell(term(vi.get(0)), ri, 2, maxRowSpan, 1));
-            sheet.getCells().add(new ExcelCell(term(vi.get(1)), ri, 3, maxRowSpan, 1));
+            sheet.addCell(vi.get(0), ri, 2, maxRowSpan, 1);
+            sheet.addCell(vi.get(1), ri, 3, maxRowSpan, 1);
 
             k = ri;
             for (Item a : va) {
                 List<Object> vai = BeanUtil.toList(a);
-                sheet.getCells().add(new ExcelCell(term(vai.get(0)), k, 4, 1, 1));
-                sheet.getCells().add(new ExcelCell(term(vai.get(1)), k++, 5, 1, 1));
+                sheet.addCell(vai.get(0), k, 4, 1, 1);
+                sheet.addCell(vai.get(1), k++, 5, 1, 1);
             }
 
             ri += maxRowSpan;

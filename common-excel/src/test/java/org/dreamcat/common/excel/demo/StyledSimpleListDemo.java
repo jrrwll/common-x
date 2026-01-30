@@ -1,7 +1,5 @@
 package org.dreamcat.common.excel.demo;
 
-import static org.dreamcat.common.excel.ExcelBuilder.sheet;
-import static org.dreamcat.common.excel.ExcelBuilder.style;
 import static org.dreamcat.common.util.DateUtil.addDay;
 import static org.dreamcat.common.util.DateUtil.ofDate;
 import static org.dreamcat.common.util.RandomUtil.choose36;
@@ -9,13 +7,10 @@ import static org.dreamcat.common.util.RandomUtil.rand;
 import static org.dreamcat.common.util.RandomUtil.randi;
 import static org.dreamcat.common.util.RandomUtil.uuid32;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Date;
 import lombok.Data;
 import org.dreamcat.common.Triple;
+import org.dreamcat.common.excel.ExcelCell;
+import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.annotation.XlsHeader;
 import org.dreamcat.common.excel.annotation.XlsSheet;
@@ -23,6 +18,13 @@ import org.dreamcat.common.excel.annotation.XlsStyle;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.excel.callback.HeaderCellStyleWriteCallback;
 import org.dreamcat.common.excel.map.SimpleSheet;
+import org.dreamcat.common.excel.style.ExcelStyle;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Create by tuke on 2021/2/16
@@ -68,13 +70,15 @@ public class StyledSimpleListDemo {
         sheet1.addWriteCallback(new FitWidthWriteCallback());
 
         // build the second sheet with a specified header
-        SimpleSheet sheet2 = new SimpleSheet(sheet("Sheet Two")
-                .richCell("cell_a", 0, 0)
-                .style(style().bgColor((short) 2).finish()).finishCell()
-                .cell("cell_b", 0, 1)
-                .richCell("cell_c", 0, 2)
-                .style(style().bgColor((short) 3).finish()).finishCell()
-                .finish());
+
+        ExcelSheet headerSheet = new ExcelSheet("Sheet Two");
+        headerSheet.addCell(new ExcelCell("cell_a", 0, 0)
+                .setStyle(new ExcelStyle().setBgColor((short) 2)));
+        headerSheet.addCell(new ExcelCell("cell_b", 0, 1));
+        headerSheet.addCell(new ExcelCell("cell_c", 0, 2)
+                .setStyle(new ExcelStyle().setBgColor((short) 3)));
+
+        SimpleSheet sheet2 = new SimpleSheet(headerSheet);
         for (int i = 0; i < randi(1, 17); i++) {
             sheet2.addRow(Triple.of(uuid32(), rand(10), addDay(new Date(), -i - 1)));
         }

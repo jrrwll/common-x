@@ -1,7 +1,5 @@
 package org.dreamcat.common.excel.map;
 
-import static org.dreamcat.common.excel.ExcelBuilder.term;
-
 import lombok.Data;
 import lombok.Getter;
 import org.dreamcat.common.excel.ExcelCell;
@@ -65,7 +63,7 @@ public class XlsHeaderMeta implements IExcelSheet {
             Cell cell = headers.get(fieldIndex);
 
             String header = cell.getHeader();
-            ExcelCell excelCell = term(header, 0, offset);
+            ExcelCell excelCell = new ExcelCell(header, 0, offset);
             headerCells.add(excelCell);
 
             ExcelStyle style = cell.style;

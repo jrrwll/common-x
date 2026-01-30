@@ -1,6 +1,7 @@
 package org.dreamcat.common.excel.style;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -15,9 +16,11 @@ import org.dreamcat.common.util.ObjectUtil;
  * Create by tuke on 2020/7/21
  */
 @Data
+@Accessors(chain = true)
 public class ExcelStyle {
 
-    private int index = -1; // unique index number
+    private ExcelFont font;
+
     private String dataFormat;
     private int fontIndex = -1;
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
@@ -53,7 +56,6 @@ public class ExcelStyle {
 
     public static ExcelStyle from(CellStyle style) {
         ExcelStyle excelStyle = new ExcelStyle();
-        excelStyle.index = style.getIndex();
         excelStyle.dataFormat = style.getDataFormatString();
         excelStyle.fontIndex = style.getFontIndex();
         excelStyle.setHorizontalAlignment(style.getAlignment());
@@ -174,4 +176,49 @@ public class ExcelStyle {
         return color != -1 && color != IndexedColors.AUTOMATIC.getIndex();
     }
 
+    public ExcelStyle fgColor(IndexedColors color) {
+        this.fgColor = color.getIndex();
+        return this;
+    }
+
+    public ExcelStyle bgColor(IndexedColors color) {
+        this.bgColor = color.getIndex();
+        return this;
+    }
+
+    public ExcelStyle borderColor(IndexedColors color) {
+        this.bottomBorderColor = color.getIndex();
+        this.leftBorderColor = color.getIndex();
+        this.topBorderColor = color.getIndex();
+        this.rightBorderColor = color.getIndex();
+        return this;
+    }
+
+    public ExcelStyle borderColor(IndexedColors color, BorderStyle style) {
+        this.bottomBorderColor = color.getIndex();
+        this.leftBorderColor = color.getIndex();
+        this.topBorderColor = color.getIndex();
+        this.rightBorderColor = color.getIndex();
+        this.borderBottom = style;
+        this.borderLeft = style;
+        this.borderTop = style;
+        this.borderRight = style;
+        return this;
+    }
+
+    public ExcelStyle fontHeight(int height) {
+        if (this.font == null) {
+            this.font = new ExcelFont();
+        }
+        this.font.setHeight((short) height);
+        return this;
+    }
+
+    public ExcelStyle fontName(String fontName) {
+        if (this.font == null) {
+            this.font = new ExcelFont();
+        }
+        this.font.setName(fontName);
+        return this;
+    }
 }

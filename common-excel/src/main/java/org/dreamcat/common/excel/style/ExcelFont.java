@@ -1,24 +1,22 @@
 package org.dreamcat.common.excel.style;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.dreamcat.common.excel.annotation.XlsFont;
 
-import java.util.Objects;
-
 /**
  * Create by tuke on 2020/7/21
  */
-@Getter
-@Setter
+@Data
+@Accessors(chain = true)
 public class ExcelFont {
 
-    private int index = -1; // unique index number, only for
     private String name;
     private boolean bold;
     private boolean italic;
@@ -58,7 +56,6 @@ public class ExcelFont {
 
     public static ExcelFont from(Font font) {
         ExcelFont excelFont = new ExcelFont();
-        excelFont.index = font.getIndex();
         excelFont.setName(font.getFontName());
         excelFont.setBold(font.getBold());
         excelFont.setItalic(font.getItalic());
@@ -123,16 +120,13 @@ public class ExcelFont {
         return null;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(index);
+    public ExcelFont color(IndexedColors color) {
+        this.color = color.getIndex();
+        return this;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (!(obj instanceof ExcelFont)) return false;
-        ExcelFont that = (ExcelFont) obj;
-        return Objects.equals(this.index, that.index);
+    public ExcelFont height(int height) {
+        this.height = (short) height;
+        return this;
     }
 }

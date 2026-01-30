@@ -31,7 +31,6 @@ public class XlsMeta {
     // @XlsSheet
     public String name;
     public ExcelStyle defaultStyle;
-    public ExcelFont defaultFont;
     public final Map<Integer, Cell> cells = new HashMap<>();
     // transient
     List<Integer> fieldIndexes;
@@ -60,7 +59,10 @@ public class XlsMeta {
     }
 
     private void setDefaultFont(XlsFont xlsFont) {
-        defaultFont = ExcelFont.from(xlsFont);
+        if (defaultStyle == null) {
+            defaultStyle = new ExcelStyle();
+        }
+        defaultStyle.setFont(ExcelFont.from(xlsFont));
     }
 
     /**
@@ -148,7 +150,10 @@ public class XlsMeta {
     private static void parseXlsFont(Cell cell, Field field) {
         XlsFont xlsFont = field.getDeclaredAnnotation(XlsFont.class);
         if (xlsFont == null) return;
-        cell.setFont(ExcelFont.from(xlsFont));
+        if (cell.style == null) {
+            cell.style = new ExcelStyle();
+        }
+        cell.style.setFont(ExcelFont.from(xlsFont));
     }
 
     private static void parseXlsStyle(Cell cell, Field field) {

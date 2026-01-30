@@ -20,6 +20,15 @@ public class ExcelCell implements IExcelCell {
     protected int columnIndex; // 0-based
     protected CellPart cellPart;
 
+    public ExcelCell(Object content, int rowIndex, int columnIndex) {
+        this(IExcelContent.from(content), rowIndex, columnIndex);
+    }
+
+    public ExcelCell(Object content, int rowIndex, int columnIndex,
+            int rowSpan, int columnSpan) {
+        this(IExcelContent.from(content), rowIndex, columnIndex, rowSpan, columnSpan);
+    }
+
     public ExcelCell(IExcelContent content, int rowIndex, int columnIndex) {
         this.content = content;
         this.rowIndex = rowIndex;
@@ -64,11 +73,6 @@ public class ExcelCell implements IExcelCell {
     }
 
     @Override
-    public ExcelFont getFont() {
-        return cellPart != null ? cellPart.font : null;
-    }
-
-    @Override
     public ExcelHyperLink getHyperLink() {
         return cellPart != null ? cellPart.hyperLink : null;
     }
@@ -84,7 +88,6 @@ public class ExcelCell implements IExcelCell {
         public int rowSpan = 1;
         public int columnSpan = 1;
         protected ExcelStyle style;
-        protected ExcelFont font;
         protected ExcelHyperLink hyperLink;
         protected ExcelComment comment;
 
@@ -104,12 +107,6 @@ public class ExcelCell implements IExcelCell {
     public ExcelCell setStyle(ExcelStyle style) {
         if (cellPart == null) cellPart = new CellPart();
         cellPart.style = style;
-        return this;
-    }
-
-    public ExcelCell setFont(ExcelFont font) {
-        if (cellPart == null) cellPart = new CellPart();
-        cellPart.font = font;
         return this;
     }
 

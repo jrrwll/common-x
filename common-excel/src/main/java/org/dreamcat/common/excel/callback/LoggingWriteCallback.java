@@ -36,7 +36,7 @@ public class LoggingWriteCallback implements IExcelWriteCallback {
     public void onCreateCell(Workbook workbook, Sheet sheet, int sheetIndex, Row row, Cell cell) {
         if (log.isDebugEnabled()) {
             log.debug("IExcelWriteCallback#onCreateCell:\t{}\t{}",
-                    sheet.getSheetName(), IExcelContent.from(cell));
+                    sheet.getSheetName(), IExcelContent.fromCell(cell));
         }
     }
 
@@ -52,7 +52,7 @@ public class LoggingWriteCallback implements IExcelWriteCallback {
                 if (font != null) excelFont = ExcelFont.from(font);
             }
             log.debug("IExcelWriteCallback#onFinishCell:\t{}\t{}\t{}\t{}",
-                    sheet.getSheetName(), IExcelContent.from(cell),
+                    sheet.getSheetName(), IExcelContent.fromCell(cell),
                     excelFont, excelStyle);
         }
     }

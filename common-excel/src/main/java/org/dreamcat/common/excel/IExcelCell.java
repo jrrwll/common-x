@@ -37,10 +37,6 @@ public interface IExcelCell {
         return null;
     }
 
-    default ExcelFont getFont() {
-        return null;
-    }
-
     default ExcelHyperLink getHyperLink() {
         return null;
     }

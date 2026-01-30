@@ -1,5 +1,6 @@
 package org.dreamcat.common.excel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -25,7 +26,6 @@ import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.io.FileUtil;
-import org.dreamcat.common.util.ListUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -42,13 +42,19 @@ import java.util.Map;
 /**
  * Create by tuke on 2020/7/21
  */
+@Slf4j
 public class ExcelWorkbook<T extends IExcelSheet> {
 
     final List<T> sheets = new ArrayList<>();
-    final Map<ExcelFont, Font> fonts = new LinkedHashMap<>();
-    final List<ExcelStyle> styles = new ArrayList<>();
-    final List<CellStyle> reservedStyles = new ArrayList<>();
+
+    final Map<Integer, ExcelFont> fonts = new LinkedHashMap<>();
+    final Map<ExcelFont, Font> reservedFonts = new LinkedHashMap<>();
+
+    final Map<Short, ExcelStyle> styles = new LinkedHashMap<>();
+    final Map<ExcelStyle, CellStyle> reservedStyles = new LinkedHashMap<>();
+
     final Map<ExcelPictureData, Integer> pictureDatas = new LinkedHashMap<>();
+    final Map<PictureData, ExcelPictureData> reservedPictureDatas = new LinkedHashMap<>();
 
     boolean date1904;
 
@@ -69,15 +75,15 @@ public class ExcelWorkbook<T extends IExcelSheet> {
     }
 
     public Collection<ExcelFont> getFonts() {
-        return Collections.unmodifiableCollection(fonts.keySet());
+        return fonts.values(); // unmodifiable collection
     }
 
     public Collection<ExcelStyle> getStyles() {
-        return Collections.unmodifiableCollection(styles);
+        return styles.values(); // unmodifiable collection
     }
 
     public Collection<ExcelPictureData> getPictureDatas() {
-        return Collections.unmodifiableCollection(pictureDatas.keySet());
+        return pictureDatas.keySet(); // unmodifiable collection
     }
 
     // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
@@ -112,22 +118,28 @@ public class ExcelWorkbook<T extends IExcelSheet> {
         for (int i = 0; i < fontNum; i++) {
             Font font = workbook.getFontAt(i);
             ExcelFont excelFont = ExcelFont.from(font);
-            book.fonts.put(excelFont, font);
+
+            book.fonts.put(font.getIndex(), excelFont);
+            book.reservedFonts.put(excelFont, font);
         }
+
         // cell style
         int cellStyleNum = workbook.getNumCellStyles();
         for (int i = 0; i < cellStyleNum; i++) {
             CellStyle cellStyle = workbook.getCellStyleAt(i);
             ExcelStyle excelStyle = ExcelStyle.from(cellStyle);
-            book.styles.add(excelStyle);
-            book.reservedStyles.add(cellStyle);
+
+            book.styles.put(cellStyle.getIndex(), excelStyle);
+            book.reservedStyles.put(excelStyle, cellStyle);
         }
+
         // picture data
         List<? extends PictureData> pictures = workbook.getAllPictures();
         int pictureIndex = (workbook instanceof HSSFWorkbook) ? 1 : 0; // 0 for xls, 1 for xlsx
         for (PictureData picture : pictures) {
-            ExcelPictureData data = ExcelPictureData.from(picture);
-            book.pictureDatas.put(data, pictureIndex++);
+            ExcelPictureData data = new ExcelPictureData(picture.getData(), picture.getPictureType());
+            book.pictureDatas.put(data, pictureIndex);
+            book.reservedPictureDatas.put(picture, data);
         }
 
         // sheet
@@ -165,7 +177,7 @@ public class ExcelWorkbook<T extends IExcelSheet> {
         return toWorkbook(new HSSFWorkbook());
     }
 
-    public <W extends Workbook> W toWorkbook(W workbook) {
+    private  <W extends Workbook> W toWorkbook(W workbook) {
         // picture data
         for (ExcelPictureData pictureData : getPictureDatas()) {
             workbook.addPicture(pictureData.getData(), pictureData.getPictureType());
@@ -175,13 +187,13 @@ public class ExcelWorkbook<T extends IExcelSheet> {
         int sheetIndex = 0;
         for (T excelSheet : sheets) {
             Sheet sheet = workbook.createSheet(excelSheet.getName());
-            fillSheet(excelSheet, sheet, sheetIndex++);
+            fillSheet(excelSheet, sheet, sheetIndex++, workbook);
         }
         return workbook;
     }
 
-    private void fillSheet(IExcelSheet excelSheet, Sheet sheet, int sheetIndex) {
-        Workbook workbook = sheet.getWorkbook();
+    private void fillSheet(IExcelSheet excelSheet, Sheet sheet, int sheetIndex,
+            Workbook workbook) {
         for (IExcelWriteCallback writeCallback : excelSheet.getWriteCallbacks()) {
             writeCallback.onCreateSheet(workbook, sheet, sheetIndex);
         }
@@ -242,27 +254,42 @@ public class ExcelWorkbook<T extends IExcelSheet> {
         if (excelStyle == null) return null;
 
         // style
-        CellStyle style = ListUtil.getOrNull(reservedStyles, excelStyle.getIndex());
-        if (style != null) return style;
+        CellStyle style = reservedStyles.get(excelStyle);
+        if (style != null) {
+            return style;
+        }
 
         style = workbook.createCellStyle();
-        styles.add(excelStyle);
-        reservedStyles.add(style);
+        styles.put(style.getIndex(), excelStyle);
+        reservedStyles.put(excelStyle, style);
 
         // font
-        ExcelFont excelFont = excelCell.getFont();
-        if (excelFont != null) {
-            Font font = fonts.get(excelFont);
-            if (font == null) {
-                font = workbook.createFont();
-                excelFont.fill(font);
-                fonts.put(excelFont, font);
-                style.setFont(font);
-            }
+        ExcelFont excelFont = excelStyle.getFont();
+        Font font = makeFont(excelFont, workbook);
+        if (font != null) {
+            style.setFont(font);
         }
+
         DataFormat dataFormat = workbook.createDataFormat();
         excelStyle.fill(style, dataFormat);
         return style;
+    }
+
+    private Font makeFont(ExcelFont excelFont, Workbook workbook) {
+        if (excelFont == null) {
+            return null;
+        }
+        Font font = reservedFonts.get(excelFont);
+        if (font != null) {
+            return font;
+        }
+
+        font = workbook.createFont();
+        fonts.put(font.getIndex(), excelFont);
+        reservedFonts.put(excelFont, font);
+
+        excelFont.fill(font);
+        return font;
     }
 
     private int makePictureData(ExcelPictureData pictureData, Workbook workbook) {

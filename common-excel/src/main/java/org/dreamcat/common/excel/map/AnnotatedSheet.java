@@ -131,12 +131,6 @@ public class AnnotatedSheet implements IExcelSheet {
         }
 
         @Override
-        public ExcelFont getFont() {
-            if ((nextInRowSheetIterCase || inSwitchIterCase) && !annotationStyle) return null;
-            return cell.getFont();
-        }
-
-        @Override
         public boolean hasNext() {
             if (schemeSize == 0) return false;
             if (maxRowOffset < 0) {

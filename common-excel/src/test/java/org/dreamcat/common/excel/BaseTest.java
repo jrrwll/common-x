@@ -102,8 +102,8 @@ public class BaseTest {
 
     public void printSheetVerbose(IExcelSheet sheet) {
         for (IExcelCell cell : sheet) {
-            ExcelFont font = cell.getFont();
             ExcelStyle style = cell.getStyle();
+            ExcelFont font = style != null ? style.getFont() : null;
 
             System.out.printf("[%d, %d, %d, %d] %s\n%s\n%s\n\n",
                     cell.getRowIndex(), cell.getColumnIndex(),

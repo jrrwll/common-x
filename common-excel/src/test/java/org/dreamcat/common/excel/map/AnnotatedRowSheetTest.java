@@ -1,13 +1,8 @@
 package org.dreamcat.common.excel.map;
 
+import static org.dreamcat.common.util.RandomUtil.rand;
 import static org.dreamcat.common.util.RandomUtil.randi;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +10,13 @@ import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.annotation.XlsCell;
 import org.dreamcat.common.excel.annotation.XlsSheet;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Create by tuke on 2020/7/26
@@ -40,9 +42,9 @@ class AnnotatedRowSheetTest extends BaseTest {
         pojo.setSA(Stream.of(1, 2, 3, 4)
                 .map(it -> "SA" + it)
                 .collect(Collectors.toList()));
-        pojo.setV(new Item("V1", "V2"));
+        pojo.setV(new Item("V1", "V2", rand(100)));
         pojo.setVA(Stream.of(1, 2, 3)
-                .map(it -> new Item("VA1-" + it, "VA2-" + it))
+                .map(it -> new Item("VA1-" + it, "VA2-" + it, rand(100)))
                 .collect(Collectors.toList()));
         // D
         int width = randi(2, 5);
@@ -87,6 +89,7 @@ class AnnotatedRowSheetTest extends BaseTest {
 
         String r1;
         String r2;
+        Double r3;
 
         @Override
         public String toString() {

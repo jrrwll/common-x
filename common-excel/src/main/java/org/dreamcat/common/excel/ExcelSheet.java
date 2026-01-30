@@ -18,7 +18,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFPicture;
-import org.apache.poi.xssf.usermodel.XSSFPictureData;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.dreamcat.common.excel.content.ExcelPicture;
 import org.dreamcat.common.excel.content.ExcelPictureData;
@@ -26,16 +25,12 @@ import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
 import org.dreamcat.common.excel.style.ExcelStyle;
-import org.dreamcat.common.util.ListUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
@@ -72,21 +67,13 @@ public class ExcelSheet implements IExcelSheet {
             List<Picture> pictures = extractPictures(drawing);
             for (Picture picture: pictures) {
                 PictureData pictureData = picture.getPictureData();
-                String pictureDataId;
-                if (pictureData instanceof XSSFPictureData) {
-                    pictureDataId = ((XSSFPictureData) pictureData).getPackagePart().getPartName().getName();
-                } else {
-                    pictureDataId = String.valueOf(Arrays.hashCode(pictureData.getData()));
-                }
-
-                ExcelPictureData excelPictureData = new ExcelPictureData();
-                excelPictureData.setId(pictureDataId);
-                if (!excelWorkbook.pictureDatas.containsKey(excelPictureData)) {
-                    log.error("undefined picture data {}: {}", pictureDataId, pictureData);
+                ExcelPictureData excelPictureData = excelWorkbook.reservedPictureDatas.get(pictureData);
+                if (excelPictureData == null) {
+                    log.error("undefined picture data {}: {}", picture.getShapeName(), picture.hashCode());
                     continue;
                 }
 
-                ExcelPicture excelPicture = new ExcelPicture(excelPictureData, picture);
+                ExcelPicture excelPicture = ExcelPicture.from(excelPictureData, picture);
                 excelSheet.getPictures().add(excelPicture);
             }
         }
@@ -115,14 +102,14 @@ public class ExcelSheet implements IExcelSheet {
     private void fillCellMap(
             Map<Integer, Map<Integer, ExcelCell>> cellMap,
             Cell cell, int i, int j, ExcelWorkbook<?> excelWorkbook) {
-        IExcelContent content = IExcelContent.from(cell);
+        IExcelContent content = IExcelContent.fromCell(cell);
         ExcelCell excelCell = new ExcelCell(content, i, j);
 
         CellStyle style = cell.getCellStyle();
         Hyperlink hyperlink = cell.getHyperlink();
         Comment comment = cell.getCellComment();
         if (style != null) {
-            ExcelStyle excelStyle = ListUtil.getOrNull(excelWorkbook.styles, style.getIndex());
+            ExcelStyle excelStyle = excelWorkbook.styles.get(style.getIndex());
             if (excelStyle == null) {
                 log.error("undefined cell style: {}", ExcelStyle.from(style));
             } else {
@@ -200,7 +187,6 @@ public class ExcelSheet implements IExcelSheet {
             List<XSSFShape> shapes = xssfDrawing.getShapes();
             for (XSSFShape shape : shapes) {
                 if (shape instanceof XSSFPicture) {
-                    long id = ((XSSFPicture)shape).getCTPicture().getNvPicPr().getCNvPr().getId();
                     pictures.add((XSSFPicture)shape);
                 }
             }
@@ -215,7 +201,6 @@ public class ExcelSheet implements IExcelSheet {
             HSSFPatriarch hssfPatriarch = (HSSFPatriarch) drawing;
             for (HSSFShape shape : hssfPatriarch) {
                 if (shape instanceof HSSFPicture) {
-                    ((HSSFPicture)shape).getShapeId();
                     pictures.add((HSSFPicture)shape);
                 }
             }
@@ -225,6 +210,15 @@ public class ExcelSheet implements IExcelSheet {
 
     public void addCell(IExcelCell cell) {
         cells.add(cell);
+    }
+
+    public void addCell(Object content, int rowIndex, int columnIndex) {
+        cells.add(new ExcelCell(content, rowIndex, columnIndex));
+    }
+
+    public void addCell(Object content, int rowIndex, int columnIndex,
+            int rowSpan, int columnSpan) {
+        cells.add(new ExcelCell(content, rowIndex, columnIndex, rowSpan, columnSpan));
     }
 
     public void addPicture(ExcelPicture picture) {

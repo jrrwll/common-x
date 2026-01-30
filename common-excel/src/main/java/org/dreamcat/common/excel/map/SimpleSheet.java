@@ -131,11 +131,6 @@ public class SimpleSheet implements IExcelSheet {
         }
 
         @Override
-        public ExcelFont getFont() {
-            return cell.getFont();
-        }
-
-        @Override
         public boolean hasNext() {
             return schemeIndex < schemeSize;
         }

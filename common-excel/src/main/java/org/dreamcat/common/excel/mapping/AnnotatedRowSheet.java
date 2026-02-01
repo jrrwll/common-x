@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.map;
+package org.dreamcat.common.excel.mapping;
 
 import static org.dreamcat.common.util.FunctionUtil.firstNotNull;
 
@@ -9,7 +9,7 @@ import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.content.ExcelUnionContent;
 import org.dreamcat.common.excel.content.IExcelContent;
-import org.dreamcat.common.excel.map.XlsMeta.Cell;
+import org.dreamcat.common.excel.mapping.XlsMeta.Cell;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.ObjectUtil;
 import org.dreamcat.common.util.ReflectUtil;

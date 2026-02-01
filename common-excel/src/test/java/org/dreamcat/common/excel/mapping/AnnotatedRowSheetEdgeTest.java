@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.map;
+package org.dreamcat.common.excel.mapping;
 
 import org.dreamcat.common.asm.JavassistMaker;
 import org.dreamcat.common.excel.BaseTest;

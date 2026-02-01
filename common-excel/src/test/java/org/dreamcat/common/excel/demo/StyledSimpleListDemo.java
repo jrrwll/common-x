@@ -17,7 +17,7 @@ import org.dreamcat.common.excel.annotation.XlsSheet;
 import org.dreamcat.common.excel.annotation.XlsStyle;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.excel.callback.HeaderCellStyleWriteCallback;
-import org.dreamcat.common.excel.map.SimpleSheet;
+import org.dreamcat.common.excel.mapping.SimpleSheet;
 import org.dreamcat.common.excel.style.ExcelStyle;
 
 import java.io.IOException;

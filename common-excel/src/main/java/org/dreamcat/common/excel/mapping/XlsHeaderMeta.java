@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.map;
+package org.dreamcat.common.excel.mapping;
 
 import lombok.Data;
 import lombok.Getter;

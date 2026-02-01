@@ -359,14 +359,6 @@ public class ExcelWorkbook<T extends IExcelSheet> {
         }
     }
 
-    public byte[] toByteArrayWithBigGrid() throws IOException {
-        try (ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-                Workbook workbook = toWorkbookWithBigGrid()) {
-            workbook.write(ostream);
-            return ostream.toByteArray();
-        }
-    }
-
     public byte[] toByteArray2003() throws IOException {
         try (ByteArrayOutputStream ostream = new ByteArrayOutputStream();
                 Workbook workbook = toWorkbook2003()) {

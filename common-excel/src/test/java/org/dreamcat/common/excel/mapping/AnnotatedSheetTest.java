@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.map;
+package org.dreamcat.common.excel.mapping;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;

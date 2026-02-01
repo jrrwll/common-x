@@ -1,7 +1,7 @@
 package org.dreamcat.common.excel.benchmark;
 
-import static org.dreamcat.common.excel.map.XlsMetaTest.Item;
-import static org.dreamcat.common.excel.map.XlsMetaTest.Pojo;
+import static org.dreamcat.common.excel.mapping.XlsMetaTest.Item;
+import static org.dreamcat.common.excel.mapping.XlsMetaTest.Pojo;
 import static org.dreamcat.common.util.RandomUtil.choose26;
 import static org.dreamcat.common.util.RandomUtil.rand;
 import static org.dreamcat.common.util.RandomUtil.randi;
@@ -10,7 +10,7 @@ import org.dreamcat.common.Timeit;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
-import org.dreamcat.common.excel.map.AnnotatedSheet;
+import org.dreamcat.common.excel.mapping.AnnotatedSheet;
 import org.dreamcat.common.util.BeanUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

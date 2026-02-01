@@ -8,7 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dreamcat.common.Pair;
 import org.dreamcat.common.excel.content.IExcelContent;
-import org.dreamcat.common.excel.map.SimpleSheet;
+import org.dreamcat.common.excel.mapping.SimpleSheet;
 import org.dreamcat.common.util.ListUtil;
 import org.dreamcat.common.util.StringUtil;
 

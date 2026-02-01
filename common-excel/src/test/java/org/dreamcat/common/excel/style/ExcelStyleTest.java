@@ -10,7 +10,7 @@ import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelWriteCallback;
-import org.dreamcat.common.excel.map.SimpleSheet;
+import org.dreamcat.common.excel.mapping.SimpleSheet;
 import org.dreamcat.common.util.BeanUtil;
 import org.dreamcat.common.util.DateUtil;
 import org.junit.jupiter.api.Test;

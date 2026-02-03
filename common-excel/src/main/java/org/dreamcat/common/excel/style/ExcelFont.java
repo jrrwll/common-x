@@ -1,6 +1,9 @@
 package org.dreamcat.common.excel.style;
 
+import static org.dreamcat.common.excel.style.ExcelStyle.hasColor;
+
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -15,11 +18,14 @@ import org.dreamcat.common.excel.annotation.XlsFont;
  */
 @Data
 @Accessors(chain = true)
+@NoArgsConstructor
 public class ExcelFont {
 
+    // https://en.wikipedia.org/wiki/Calibri
+    // https://en.wikipedia.org/wiki/Helvetica
     private String name;
-    private boolean bold;
-    private boolean italic;
+    private Boolean bold;
+    private Boolean italic;
     /**
      * @see Font#U_NONE
      * @see Font#U_SINGLE
@@ -27,31 +33,62 @@ public class ExcelFont {
      * @see Font#U_SINGLE_ACCOUNTING
      * @see Font#U_DOUBLE_ACCOUNTING
      */
-    private byte underline;
+    private byte underline = -1;
     // use a strikeout horizontal line through the text or not
-    private boolean strikeout;
+    private Boolean strikeout;
     /**
      * @see Font#SS_NONE
      * @see Font#SS_SUPER
      * @see Font#SS_SUB
      */
-    private short typeOffset;
+    private short typeOffset = -1;
     /**
      * @see Font#COLOR_NORMAL
      * @see Font#COLOR_RED
      */
-    private short color;
+    private short color = -1;
     // font height in points, such as 10 or 14 or 28
-    private short height;
-
-    public ExcelFont() {
-        // https://en.wikipedia.org/wiki/Calibri
-        // https://en.wikipedia.org/wiki/Helvetica
-        this("Helvetica");
-    }
+    private short height = 0;
 
     public ExcelFont(String fontName) {
         this.name = fontName;
+    }
+
+    public static ExcelFont merge(ExcelFont font, ExcelFont defaultFont) {
+        ExcelFont newFont = new ExcelFont();
+        newFont.name = defaultFont.name;
+        if (font.name != null) {
+            newFont.name = font.name;
+        }
+        newFont.bold = defaultFont.bold;
+        if (font.bold != null) {
+            newFont.bold = font.bold;
+        }
+        newFont.italic = defaultFont.italic;
+        if (font.italic != null) {
+            newFont.italic = font.italic;
+        }
+        newFont.underline = defaultFont.underline;
+        if (font.underline != -1) {
+            newFont.underline = font.underline;
+        }
+        newFont.strikeout = defaultFont.strikeout;
+        if (font.strikeout != null) {
+            newFont.strikeout = font.strikeout;
+        }
+        newFont.typeOffset = defaultFont.typeOffset;
+        if (font.typeOffset != -1) {
+            newFont.typeOffset = font.typeOffset;
+        }
+        newFont.color = defaultFont.color;
+        if (hasColor(font.color)) {
+            newFont.color = font.color;
+        }
+        newFont.height = defaultFont.height;
+        if (font.height != 0) {
+            newFont.height = font.height;
+        }
+        return newFont;
     }
 
     public static ExcelFont from(Font font) {
@@ -102,14 +139,14 @@ public class ExcelFont {
     }
 
     public void fill(Font font) {
-        font.setFontName(name);
-        font.setBold(bold);
-        font.setItalic(italic);
-        font.setUnderline(underline);
-        font.setStrikeout(strikeout);
-        font.setColor(color);
-        font.setTypeOffset(typeOffset);
-        font.setFontHeightInPoints(height);
+        if (name != null) font.setFontName(name);
+        if (bold != null) font.setBold(bold);
+        if (italic != null) font.setItalic(italic);
+        if (underline != -1) font.setUnderline(underline);
+        if (strikeout != null) font.setStrikeout(strikeout);
+        if (typeOffset != -1) font.setTypeOffset(typeOffset);
+        if (hasColor(color)) font.setColor(color);
+        if (height != 0) font.setFontHeightInPoints(height);
     }
 
     public static Font getFont(int fontIndex, Workbook workbook) {

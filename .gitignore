@@ -7,6 +7,7 @@
 *.ipr
 out/
 .gradle
-build/
+common-*/build/
+common-*/example-*/build/
 .DS_Store
 http-client.private.env.json

@@ -1,7 +1,9 @@
 package org.dreamcat.common.excel;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelComment;
 import org.dreamcat.common.excel.style.ExcelHyperLink;
@@ -10,7 +12,8 @@ import org.dreamcat.common.excel.style.ExcelStyle;
 /**
  * Create by tuke on 2020/7/21
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class ExcelCell implements IExcelCell {
 

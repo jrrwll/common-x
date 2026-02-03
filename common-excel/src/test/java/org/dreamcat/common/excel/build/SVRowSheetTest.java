@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.mapping;
+package org.dreamcat.common.excel.build;
 
 import static org.dreamcat.common.util.RandomUtil.rand;
 import static org.dreamcat.common.util.RandomUtil.randi;
@@ -21,17 +21,17 @@ import java.util.stream.Stream;
 /**
  * Create by tuke on 2020/7/26
  */
-class AnnotatedRowSheetTest extends BaseTest {
+class SVRowSheetTest extends BaseTest {
 
     @Test
     void test() {
-        AnnotatedRowSheet sheet = new AnnotatedRowSheet(newPojo());
+        SVRowSheet sheet = new SVRowSheet(newPojo());
         printSheetVerbose(sheet);
 
-        AnnotatedSheet listSheet = new AnnotatedSheet("Sheet");
+        SVSheet listSheet = new SVSheet("Sheet");
         listSheet.add(sheet);
-        listSheet.add(new AnnotatedRowSheet(newPojo()));
-        listSheet.add(new AnnotatedRowSheet(newPojo()));
+        listSheet.add(new SVRowSheet(newPojo()));
+        listSheet.add(new SVRowSheet(newPojo()));
 
         writeXlsx("test", listSheet);
     }

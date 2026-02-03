@@ -22,16 +22,15 @@ public class ExcelStyle {
     private ExcelFont font;
 
     private String dataFormat;
-    private int fontIndex = -1;
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
     private VerticalAlignment verticalAlignment = VerticalAlignment.CENTER;
-    private boolean hidden;
-    private boolean wrapText;
-    private boolean locked;
+    private Boolean hidden;
+    private Boolean wrapText;
+    private Boolean locked;
 
-    private boolean quotePrefix;
+    private Boolean quotePrefix;
     // Controls if the Cell should be auto-sized to shrink to fit if the text is too long
-    private boolean shrinkToFit;
+    private Boolean shrinkToFit;
 
     /// rich style
 
@@ -54,10 +53,113 @@ public class ExcelStyle {
     private short topBorderColor = -1;
     private short rightBorderColor = -1;
 
+    public static ExcelStyle merge(ExcelStyle style, ExcelStyle defaultStyle) {
+        ExcelStyle newStyle = new ExcelStyle();
+
+        newStyle.font = defaultStyle.font;
+        if (style.font != null) {
+            if (defaultStyle.font == null) {
+                newStyle.font = style.font;
+            } else {
+                newStyle.font = ExcelFont.merge(style.font, defaultStyle.font);
+            }
+        }
+
+        newStyle.dataFormat = defaultStyle.dataFormat;
+        if (style.dataFormat != null) {
+            newStyle.dataFormat = style.dataFormat;
+        }
+        newStyle.horizontalAlignment = defaultStyle.horizontalAlignment;
+        if (style.horizontalAlignment != null) {
+            newStyle.horizontalAlignment = style.horizontalAlignment;
+        }
+        newStyle.verticalAlignment = defaultStyle.verticalAlignment;
+        if (style.verticalAlignment != null) {
+            newStyle.verticalAlignment = style.verticalAlignment;
+        }
+        newStyle.hidden = defaultStyle.hidden;
+        if (style.hidden != null) {
+            newStyle.hidden = style.hidden;
+        }
+        newStyle.wrapText = defaultStyle.wrapText;
+        if (style.wrapText != null) {
+            newStyle.wrapText = style.wrapText;
+        }
+        newStyle.locked = defaultStyle.locked;
+        if (style.locked != null) {
+            newStyle.locked = style.locked;
+        }
+
+        newStyle.quotePrefix = defaultStyle.quotePrefix;
+        if (style.quotePrefix != null) {
+            newStyle.quotePrefix = style.quotePrefix;
+        }
+        newStyle.shrinkToFit = defaultStyle.shrinkToFit;
+        if (style.shrinkToFit != null) {
+            newStyle.shrinkToFit = style.shrinkToFit;
+        }
+
+        newStyle.indent = defaultStyle.indent;
+        if (style.indent != -1) {
+            newStyle.indent = style.indent;
+        }
+        newStyle.rotation = defaultStyle.rotation;
+        if (style.rotation != 0) {
+            newStyle.rotation = style.rotation;
+        }
+
+        newStyle.bgColor = defaultStyle.bgColor;
+        if (hasColor(style.bgColor)) {
+            newStyle.bgColor = style.bgColor;
+        }
+        newStyle.fgColor = defaultStyle.fgColor;
+        if (hasColor(style.fgColor)) {
+            newStyle.fgColor = style.fgColor;
+        }
+        newStyle.fillPattern = defaultStyle.fillPattern;
+        if (style.fillPattern != null) {
+            newStyle.fillPattern = style.fillPattern;
+        }
+
+        newStyle.borderBottom = defaultStyle.borderBottom;
+        if (style.borderBottom != null) {
+            newStyle.borderBottom = style.borderBottom;
+        }
+        newStyle.borderLeft = defaultStyle.borderLeft;
+        if (style.borderLeft != null) {
+            newStyle.borderLeft = style.borderLeft;
+        }
+        newStyle.borderTop = defaultStyle.borderTop;
+        if (style.borderTop != null) {
+            newStyle.borderTop = style.borderTop;
+        }
+        newStyle.borderRight = defaultStyle.borderRight;
+        if (style.borderRight != null) {
+            newStyle.borderRight = style.borderRight;
+        }
+
+        newStyle.bottomBorderColor = defaultStyle.bottomBorderColor;
+        if (hasColor(style.bottomBorderColor)) {
+            newStyle.bottomBorderColor = style.bottomBorderColor;
+        }
+        newStyle.leftBorderColor = defaultStyle.leftBorderColor;
+        if (hasColor(style.leftBorderColor)) {
+            newStyle.leftBorderColor = style.leftBorderColor;
+        }
+        newStyle.topBorderColor = defaultStyle.topBorderColor;
+        if (hasColor(style.topBorderColor)) {
+            newStyle.topBorderColor = style.topBorderColor;
+        }
+        newStyle.rightBorderColor = defaultStyle.rightBorderColor;
+        if (hasColor(style.rightBorderColor)) {
+            newStyle.rightBorderColor = style.rightBorderColor;
+        }
+        return newStyle;
+    }
+
     public static ExcelStyle from(CellStyle style) {
         ExcelStyle excelStyle = new ExcelStyle();
         excelStyle.dataFormat = style.getDataFormatString();
-        excelStyle.fontIndex = style.getFontIndex();
         excelStyle.setHorizontalAlignment(style.getAlignment());
         excelStyle.setVerticalAlignment(style.getVerticalAlignment());
         excelStyle.setHidden(style.getHidden());
@@ -143,11 +245,11 @@ public class ExcelStyle {
         }
         if (horizontalAlignment != null) style.setAlignment(horizontalAlignment);
         if (verticalAlignment != null) style.setVerticalAlignment(verticalAlignment);
-        style.setLocked(locked);
-        style.setQuotePrefixed(quotePrefix);
-        style.setShrinkToFit(shrinkToFit);
-        style.setHidden(hidden);
-        style.setWrapText(wrapText);
+        if (locked != null) style.setLocked(locked);
+        if (quotePrefix != null) style.setQuotePrefixed(quotePrefix);
+        if (shrinkToFit != null) style.setShrinkToFit(shrinkToFit);
+        if (hidden != null) style.setHidden(hidden);
+        if (wrapText != null) style.setWrapText(wrapText);
 
         if (indent != -1) style.setIndention(indent);
         if (rotation != 0) style.setRotation(rotation);
@@ -172,7 +274,7 @@ public class ExcelStyle {
         if (hasColor(rightBorderColor)) style.setRightBorderColor(rightBorderColor);
     }
 
-    private static boolean hasColor(int color) {
+    static boolean hasColor(int color) {
         return color != -1 && color != IndexedColors.AUTOMATIC.getIndex();
     }
 
@@ -219,6 +321,14 @@ public class ExcelStyle {
             this.font = new ExcelFont();
         }
         this.font.setName(fontName);
+        return this;
+    }
+
+    public ExcelStyle fontBold(boolean fontBold) {
+        if (this.font == null) {
+            this.font = new ExcelFont();
+        }
+        this.font.setBold(true);
         return this;
     }
 }

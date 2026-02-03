@@ -10,7 +10,9 @@ import java.util.List;
  */
 public interface IExcelSheet extends Iterable<IExcelCell> {
 
-    String getName();
+    default String getName() {
+        return null;
+    }
 
     default List<IExcelWriteCallback> getWriteCallbacks() {
         return Collections.emptyList();

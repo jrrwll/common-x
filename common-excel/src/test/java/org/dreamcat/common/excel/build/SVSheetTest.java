@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.mapping;
+package org.dreamcat.common.excel.build;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -15,12 +15,12 @@ import org.junit.jupiter.api.Test;
 /**
  * Create by tuke on 2020/7/26
  */
-class AnnotatedSheetTest extends BaseTest {
+class SVSheetTest extends BaseTest {
 
     @Test
     void testSmall() {
         // body + head + body + head + body
-        AnnotatedSheet sheet1 = new AnnotatedSheet("Sheet One");
+        SVSheet sheet1 = new SVSheet("Sheet One");
         sheet1.add(XlsMetaTest.newPojo());
         sheet1.add(headerSheet());
         sheet1.add(XlsMetaTest.newPojo());
@@ -28,7 +28,7 @@ class AnnotatedSheetTest extends BaseTest {
         sheet1.add(XlsMetaTest.newPojo());
 
         // head + body + head + body + head
-        AnnotatedSheet sheet2 = new AnnotatedSheet("Sheet Two");
+        SVSheet sheet2 = new SVSheet("Sheet Two");
         sheet2.setAnnotationStyle(true);
         sheet2.addWriteCallback(new FitWidthWriteCallback());
         sheet2.add(headerSheet());
@@ -44,7 +44,7 @@ class AnnotatedSheetTest extends BaseTest {
     @Test
     void test() {
         // body + head + body + head + body
-        AnnotatedSheet sheet1 = new AnnotatedSheet("Sheet One");
+        SVSheet sheet1 = new SVSheet("Sheet One");
         sheet1.setAnnotationStyle(true);
         // sheet1.setWriteCallback(new FitWidthWriteCallback());
         sheet1.addWriteCallback(new AutoWidthWriteCallback());
@@ -56,7 +56,7 @@ class AnnotatedSheetTest extends BaseTest {
         for (int i = 0; i < 6; i++) sheet1.add(XlsMetaTest.newPojo());
 
         // head + body + head + body + head
-        AnnotatedSheet sheet2 = new AnnotatedSheet("Sheet Two");
+        SVSheet sheet2 = new SVSheet("Sheet Two");
         for (int i = 0; i < 6; i++) sheet2.add(headerSheet());
         for (int i = 0; i < 6; i++) sheet2.add(XlsMetaTest.newPojo());
         for (int i = 0; i < 6; i++) sheet2.add(headerSheet());

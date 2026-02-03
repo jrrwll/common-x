@@ -10,7 +10,7 @@ import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelWriteCallback;
-import org.dreamcat.common.excel.mapping.SimpleSheet;
+import org.dreamcat.common.excel.build.MixedSheet2;
 import org.dreamcat.common.util.BeanUtil;
 import org.dreamcat.common.util.DateUtil;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ public class ExcelStyleTest {
         sheetData1.add(Arrays.asList("rst", "1.414", new Date(), BigDecimal.valueOf(3.14158265357989)));
         sheetData1.add(Arrays.asList("uvw", "65537", DateUtil.parse("2015-12-12 00:00"), BigDecimal.valueOf(2.71828)));
 
-        SimpleSheet sheet1 = new SimpleSheet(headerSheet(false));
+        MixedSheet2 sheet1 = new MixedSheet2(headerSheet(false));
         sheet1.addAll(sheetData1);
         sheet1.addWriteCallback(new IExcelWriteCallback() {
 
@@ -67,12 +67,12 @@ public class ExcelStyleTest {
                     Math.random() * 1000));
             if (i > 10) break;
         }
-        SimpleSheet sheet2 = new SimpleSheet(headerSheet(true));
+        MixedSheet2 sheet2 = new MixedSheet2(headerSheet(true));
         sheet2.setName("Sheet 2");
         sheet2.addAll(sheetData2);
 
         File file = new File(System.getenv("HOME"), "Downloads/common_excel_test.xlsx");
-        ExcelWorkbook<SimpleSheet> workbook = new ExcelWorkbook<>();
+        ExcelWorkbook<MixedSheet2> workbook = new ExcelWorkbook<>();
         workbook.addSheet(sheet1).addSheet(sheet2).writeTo(file);
     }
 

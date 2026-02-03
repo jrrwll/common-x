@@ -8,7 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dreamcat.common.Pair;
 import org.dreamcat.common.excel.content.IExcelContent;
-import org.dreamcat.common.excel.mapping.SimpleSheet;
+import org.dreamcat.common.excel.build.MixedSheet2;
 import org.dreamcat.common.util.ListUtil;
 import org.dreamcat.common.util.StringUtil;
 
@@ -259,39 +259,39 @@ public final class ExcelUtil {
 
     @SafeVarargs
     public static void writeTo(File file, Pair<String, List<?>>... sheets) throws IOException {
-        ExcelWorkbook<SimpleSheet> workbook = buildWorkbook(null,  sheets);
+        ExcelWorkbook<MixedSheet2> workbook = buildWorkbook(null,  sheets);
         workbook.writeTo(file);
     }
 
     @SafeVarargs
     public static <T> void writeTo(File file, Class<T> clazz, Pair<String, List<? extends T>>... sheets) throws IOException {
-        ExcelWorkbook<SimpleSheet> workbook = buildWorkbook(clazz,  sheets);
+        ExcelWorkbook<MixedSheet2> workbook = buildWorkbook(clazz,  sheets);
         workbook.writeTo(file);
     }
 
     @SafeVarargs
     public static void writeTo(OutputStream output, Pair<String, List<?>>... sheets) throws IOException {
-        ExcelWorkbook<SimpleSheet> workbook = buildWorkbook(null,  sheets);
+        ExcelWorkbook<MixedSheet2> workbook = buildWorkbook(null,  sheets);
         workbook.writeTo(output);
     }
 
     @SafeVarargs
     public static <T> void writeTo(OutputStream output, Class<T> clazz, Pair<String, List<? extends T>>... sheets) throws IOException {
-        ExcelWorkbook<SimpleSheet> workbook = buildWorkbook(clazz,  sheets);
+        ExcelWorkbook<MixedSheet2> workbook = buildWorkbook(clazz,  sheets);
         workbook.writeTo(output);
     }
 
     @SafeVarargs
-    private static <T> ExcelWorkbook<SimpleSheet> buildWorkbook(
+    private static <T> ExcelWorkbook<MixedSheet2> buildWorkbook(
             Class<T> clazz, Pair<String, List<? extends T>>... sheets) {
-        ExcelWorkbook<SimpleSheet> workbook = new ExcelWorkbook<>();
+        ExcelWorkbook<MixedSheet2> workbook = new ExcelWorkbook<>();
         for (Pair<String, List<? extends T>> pair : sheets) {
-            SimpleSheet sheet;
+            MixedSheet2 sheet;
             if (clazz != null) {
-                sheet = new SimpleSheet(clazz);
+                sheet = new MixedSheet2(clazz);
                 sheet.setName(pair.first());
             } else {
-                sheet = new SimpleSheet(pair.first());
+                sheet = new MixedSheet2(pair.first());
             }
 
             sheet.addAll(pair.second());

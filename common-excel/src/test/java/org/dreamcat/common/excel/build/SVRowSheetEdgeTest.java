@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.mapping;
+package org.dreamcat.common.excel.build;
 
 import org.dreamcat.common.asm.JavassistMaker;
 import org.dreamcat.common.excel.BaseTest;
@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 /**
  * Create by tuke on 2021/2/16
  */
-class AnnotatedRowSheetEdgeTest extends BaseTest {
+class SVRowSheetEdgeTest extends BaseTest {
 
     @Test
     void test() {
         List<IExcelSheet> sheets = new ArrayList<>();
         List<Object> list = newPojoList();
         for (Object pojo : list) {
-            AnnotatedRowSheet sheet = new AnnotatedRowSheet(pojo);
+            SVRowSheet sheet = new SVRowSheet(pojo);
             sheet.setName(pojo.getClass().getSimpleName());
             sheets.add(IExcelWriteCallback.bind(sheet, new FitWidthWriteCallback()));
         }

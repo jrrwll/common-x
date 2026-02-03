@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.mapping;
+package org.dreamcat.common.excel.build;
 
 import static org.dreamcat.common.util.RandomUtil.choose26;
 import static org.dreamcat.common.util.RandomUtil.choose72;
@@ -20,11 +20,11 @@ import java.util.List;
 /**
  * Create by tuke on 2020/7/22
  */
-class SimpleSheetTest extends BaseTest {
+class MixedSheet2Test extends BaseTest {
 
     @Test
     void testSmall() {
-        SimpleSheet sheet = new SimpleSheet("Sheet One");
+        MixedSheet2 sheet = new MixedSheet2("Sheet One");
 
         List<ExcelCell> cells1 = new ArrayList<>();
         cells1.add(new ExcelCell("A1:C2", 0, 0, 2, 3)
@@ -62,7 +62,7 @@ class SimpleSheetTest extends BaseTest {
 
     @Test
     void test() {
-        SimpleSheet sheet = new SimpleSheet("Sheet One");
+        MixedSheet2 sheet = new MixedSheet2("Sheet One");
         // list1
         List<ExcelCell> cells1 = new ArrayList<>();
         cells1.add(new ExcelCell("A1:C2", 0, 0, 2, 3)
@@ -121,7 +121,7 @@ class SimpleSheetTest extends BaseTest {
     void testHuge() {
         //Thread.sleep(30_000);
 
-        SimpleSheet sheet = new SimpleSheet("Sheet One");
+        MixedSheet2 sheet = new MixedSheet2("Sheet One");
         // list1
         List<ExcelCell> cells1 = new ArrayList<>();
         cells1.add(new ExcelCell("A1:C2", 0, 0, 2, 3));

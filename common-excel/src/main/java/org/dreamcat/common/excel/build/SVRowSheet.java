@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.mapping;
+package org.dreamcat.common.excel.build;
 
 import static org.dreamcat.common.util.FunctionUtil.firstNotNull;
 
@@ -9,7 +9,7 @@ import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.content.ExcelUnionContent;
 import org.dreamcat.common.excel.content.IExcelContent;
-import org.dreamcat.common.excel.mapping.XlsMeta.Cell;
+import org.dreamcat.common.excel.build.XlsMeta.Cell;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.ObjectUtil;
 import org.dreamcat.common.util.ReflectUtil;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class AnnotatedRowSheet implements IExcelSheet {
+public class SVRowSheet implements IExcelSheet {
 
     private final Map<Class, MetaCacheLine> metaMap = new HashMap<>();
     @Setter
@@ -38,7 +38,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
     private XlsMeta meta;
     private List<Integer> indexes;
 
-    public AnnotatedRowSheet(Object scheme) {
+    public SVRowSheet(Object scheme) {
         reset(scheme);
     }
 
@@ -124,7 +124,7 @@ public class AnnotatedRowSheet implements IExcelSheet {
         }
 
         public void reset(Object scheme) {
-            AnnotatedRowSheet.this.reset(scheme);
+            SVRowSheet.this.reset(scheme);
 
             subMeta = null;
             subIndexes = null;

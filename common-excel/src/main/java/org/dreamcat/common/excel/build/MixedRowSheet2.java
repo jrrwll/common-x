@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.mapping;
+package org.dreamcat.common.excel.build;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +21,7 @@ import java.util.function.Function;
  */
 @Getter
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class SimpleRowSheet implements IExcelSheet {
+public class MixedRowSheet2 implements IExcelSheet {
 
     @Setter
     private String name;
@@ -29,7 +29,7 @@ public class SimpleRowSheet implements IExcelSheet {
     @Setter
     private Function<Object, List<?>> schemeConverter = BeanUtil::toList;
 
-    public SimpleRowSheet(String name, Object scheme) {
+    public MixedRowSheet2(String name, Object scheme) {
         this.name = name;
         reset(scheme);
     }

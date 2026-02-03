@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.mapping;
+package org.dreamcat.common.excel.build;
 
 import static org.dreamcat.common.util.RandomUtil.choose10;
 import static org.dreamcat.common.util.RandomUtil.choose36;

@@ -1,56 +1,36 @@
-package org.dreamcat.common.excel.mapping;
+package org.dreamcat.common.excel.build;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
-import org.dreamcat.common.excel.IExcelWriteCallback;
-import org.dreamcat.common.excel.content.IExcelContent;
-import org.dreamcat.common.excel.style.ExcelStyle;
-import org.dreamcat.common.util.BeanUtil;
+import org.dreamcat.common.util.ObjectUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 
 /**
  * Create by tuke on 2020/7/22
  */
 @Getter
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class SimpleSheet implements IExcelSheet {
+public class MixedSheet implements IExcelSheet {
 
     @Setter
     private String name;
-    // [Sheet..., T1..., Sheet..., T2...], it mixes Sheet & Pojo up
+    // [Sheet..., T1..., Sheet..., T2...], it mixes Sheet & Pojo up, and treat Pojo as a Sheet
     private final List schemes;
-    @Setter
-    private Function<Object, List<?>> schemeConverter = BeanUtil::toList;
-    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
 
-    public SimpleSheet(String name) {
+    public MixedSheet(String name) {
         this(name, new ArrayList<>(0));
     }
 
-    public SimpleSheet(String name, List schemes) {
+    public MixedSheet(String name, List schemes) {
         this.name = name;
         this.schemes = schemes;
-    }
-
-    public SimpleSheet(Class<?> clazz) {
-        this(clazz.getName());
-        XlsHeaderMeta meta = XlsHeaderMeta.parse(clazz);
-        schemes.add(new ExcelSheet(meta.name, meta.getHeaderCells()));
-        this.name = meta.name;
-    }
-
-    public SimpleSheet(IExcelSheet header) {
-        this(header.getName());
-        schemes.add(header);
     }
 
     public void addRow(IExcelSheet row) {
@@ -61,7 +41,7 @@ public class SimpleSheet implements IExcelSheet {
         schemes.add(row);
     }
 
-    public void addAll(Collection schemes) {
+    public <C extends Collection<?>> void addAll(C schemes) {
         this.schemes.addAll(schemes);
     }
 
@@ -70,26 +50,18 @@ public class SimpleSheet implements IExcelSheet {
         return this.new Iter();
     }
 
-    public void addWriteCallback(IExcelWriteCallback writeCallback) {
-        writeCallbacks.add(writeCallback);
-    }
+    private class Iter extends ExcelCellWithOffset implements Iterator<IExcelCell> {
 
-    private class Iter implements Iterator<IExcelCell>, IExcelCell {
-
-        // as row index offset since row based structure
-        int offset;
         int schemeSize;
         int schemeIndex;
 
-        IExcelCell cell;
         Iterator<IExcelCell> sheetIter;
-        SimpleRowSheet sheet;
+        SchemaIter sheet;
         int maxRowOffset;
         boolean inSwitchOffsetCase;
 
         private Iter() {
-            offset = 0;
-            if (schemes.isEmpty()) {
+            if (ObjectUtil.isEmpty(schemes)) {
                 clear();
                 return;
             }
@@ -97,36 +69,6 @@ public class SimpleSheet implements IExcelSheet {
             schemeIndex = 0;
             schemeSize = schemes.size();
             move();
-        }
-
-        @Override
-        public int getRowIndex() {
-            return cell.getRowIndex() + offset;
-        }
-
-        @Override
-        public int getColumnIndex() {
-            return cell.getColumnIndex();
-        }
-
-        @Override
-        public int getRowSpan() {
-            return cell.getRowSpan();
-        }
-
-        @Override
-        public int getColumnSpan() {
-            return cell.getColumnSpan();
-        }
-
-        @Override
-        public IExcelContent getContent() {
-            return cell.getContent();
-        }
-
-        @Override
-        public ExcelStyle getStyle() {
-            return cell.getStyle();
         }
 
         @Override
@@ -173,13 +115,13 @@ public class SimpleSheet implements IExcelSheet {
                 if (rawRow instanceof IExcelSheet) {
                     sheetIter = ((IExcelSheet) rawRow).iterator();
                 } else {
-                    if (sheet != null) {
-                        sheet.reset(rawRow);
-                    } else {
-                        sheet = new SimpleRowSheet(name, rawRow);
-                        sheet.setSchemeConverter(schemeConverter);
-                    }
-                    sheetIter = sheet.iterator();
+                    // if (sheet != null) {
+                    //     sheet.reset(rawRow);
+                    // } else {
+                    //     sheet = new MixedRowSheet2(name, rawRow);
+                    //     sheet.setSchemeConverter(schemeConverter);
+                    // }
+                    // sheetIter = sheet.iterator();
                 }
                 if (sheetIter.hasNext()) break;
 
@@ -193,4 +135,16 @@ public class SimpleSheet implements IExcelSheet {
         }
     }
 
+    private static class SchemaIter implements Iterator<IExcelCell> {
+
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public IExcelCell next() {
+            return null;
+        }
+    }
 }

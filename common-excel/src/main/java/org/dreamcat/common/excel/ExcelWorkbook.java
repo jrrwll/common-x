@@ -186,7 +186,13 @@ public class ExcelWorkbook<T extends IExcelSheet> {
         // sheet
         int sheetIndex = 0;
         for (T excelSheet : sheets) {
-            Sheet sheet = workbook.createSheet(excelSheet.getName());
+            String sheetName = excelSheet.getName();
+            Sheet sheet;
+            if (sheetName == null) {
+                sheet = workbook.createSheet();
+            } else {
+                sheet = workbook.createSheet(sheetName);
+            }
             fillSheet(excelSheet, sheet, sheetIndex++, workbook);
         }
         return workbook;

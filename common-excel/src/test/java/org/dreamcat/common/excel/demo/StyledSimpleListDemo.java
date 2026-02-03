@@ -17,7 +17,7 @@ import org.dreamcat.common.excel.annotation.XlsSheet;
 import org.dreamcat.common.excel.annotation.XlsStyle;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.excel.callback.HeaderCellStyleWriteCallback;
-import org.dreamcat.common.excel.mapping.SimpleSheet;
+import org.dreamcat.common.excel.build.MixedSheet2;
 import org.dreamcat.common.excel.style.ExcelStyle;
 
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class StyledSimpleListDemo {
 
     public static void main(String[] args) throws IOException {
         // build a sheet with a styled header row
-        SimpleSheet sheet1 = new SimpleSheet(Pojo.class);
+        MixedSheet2 sheet1 = new MixedSheet2(Pojo.class);
         for (int i = 0; i < randi(2, 17); i++) {
             // add one row to the sheet
             sheet1.addRow(new Pojo());
@@ -78,7 +78,7 @@ public class StyledSimpleListDemo {
         headerSheet.addCell(new ExcelCell("cell_c", 0, 2)
                 .setStyle(new ExcelStyle().setBgColor((short) 3)));
 
-        SimpleSheet sheet2 = new SimpleSheet(headerSheet);
+        MixedSheet2 sheet2 = new MixedSheet2(headerSheet);
         for (int i = 0; i < randi(1, 17); i++) {
             sheet2.addRow(Triple.of(uuid32(), rand(10), addDay(new Date(), -i - 1)));
         }

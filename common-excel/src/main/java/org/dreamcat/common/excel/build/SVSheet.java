@@ -1,4 +1,4 @@
-package org.dreamcat.common.excel.mapping;
+package org.dreamcat.common.excel.build;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Getter
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class AnnotatedSheet implements IExcelSheet {
+public class SVSheet implements IExcelSheet {
 
     private String name;
     // [Sheet..., T1..., Sheet..., T2...], it mixes Sheet & Pojo up
@@ -35,14 +35,14 @@ public class AnnotatedSheet implements IExcelSheet {
     private boolean annotationStyle;
     private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
 
-    public AnnotatedSheet(String name) {
+    public SVSheet(String name) {
         this(name, new ArrayList<>(0));
     }
 
     /**
      * A scheme is one of Sheet or Pojo (support annotations especially)
      */
-    public AnnotatedSheet(String name, List schemes) {
+    public SVSheet(String name, List schemes) {
         this.name = name;
         this.schemes = schemes;
     }
@@ -90,7 +90,7 @@ public class AnnotatedSheet implements IExcelSheet {
         boolean nextInRowSheetIterCase;
         // just switch row sheet to iterator
         boolean inSwitchIterCase;
-        AnnotatedRowSheet.Iter rowSheetIter;
+        SVRowSheet.Iter rowSheetIter;
 
         private Iter() {
             schemeSize = schemes.size();
@@ -183,7 +183,7 @@ public class AnnotatedSheet implements IExcelSheet {
                 nextInRowSheetIterCase = false;
             } else {
                 if (rowSheetIter == null) {
-                    AnnotatedRowSheet rowSheet = new AnnotatedRowSheet(rawScheme);
+                    SVRowSheet rowSheet = new SVRowSheet(rawScheme);
                     rowSheetIter = rowSheet.new Iter();
                 } else {
                     rowSheetIter.reset(rawScheme);

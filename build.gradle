@@ -43,6 +43,7 @@ subprojects {
         useJUnitPlatform {
             excludeTags 'slow', 'integration'
         }
+        jvmArgs '-Xmx2g', '-Xms512m'
     }
 
     if (file("${projectDir}/gradle.properties").exists()) {

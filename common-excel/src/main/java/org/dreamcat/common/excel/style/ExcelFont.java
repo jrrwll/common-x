@@ -55,6 +55,9 @@ public class ExcelFont {
     }
 
     public static ExcelFont merge(ExcelFont font, ExcelFont defaultFont) {
+        if (font == null) return defaultFont;
+        if (defaultFont == null) return font;
+
         ExcelFont newFont = new ExcelFont();
         newFont.name = defaultFont.name;
         if (font.name != null) {

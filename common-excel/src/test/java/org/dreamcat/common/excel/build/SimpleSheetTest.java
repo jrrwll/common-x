@@ -58,7 +58,7 @@ class SimpleSheetTest extends BaseTest {
         sheet3.setBody(buildBody());
         sheet3.setColumnStyles(Arrays.asList(style1, null, style2));
 
-        writeXlsx(getClass().getSimpleName() + "_testSmall", sheet1, sheet2, sheet3);
+        writeXlsx("testSmall", sheet1, sheet2, sheet3);
     }
 
     private List<List<Object>> buildBody() {

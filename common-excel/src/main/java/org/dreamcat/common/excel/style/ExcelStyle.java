@@ -54,8 +54,10 @@ public class ExcelStyle {
     private short rightBorderColor = -1;
 
     public static ExcelStyle merge(ExcelStyle style, ExcelStyle defaultStyle) {
-        ExcelStyle newStyle = new ExcelStyle();
+        if (style == null) return defaultStyle;
+        if (defaultStyle == null) return style;
 
+        ExcelStyle newStyle = new ExcelStyle();
         newStyle.font = defaultStyle.font;
         if (style.font != null) {
             if (defaultStyle.font == null) {

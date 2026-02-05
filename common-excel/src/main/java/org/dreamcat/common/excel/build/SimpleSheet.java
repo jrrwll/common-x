@@ -71,16 +71,12 @@ public class SimpleSheet implements IExcelSheet {
         bodyStyles = mergeStyles(columnStyles, defaultStyle);
 
         // add default data format for body
-        if (!disableDefaultDataFormat && ObjectUtil.isNotEmpty(body)) {
-            List<Object> firstRow = null;
+        if (!disableDefaultDataFormat && body != null && !body.isEmpty()) {
             for (List<Object> row : body) {
-                if (ObjectUtil.isNotEmpty(row)) {
-                    firstRow = row;
+                if (row != null && !row.isEmpty()) {
+                    bodyStyles = computeDataFormat(bodyStyles, row);
                     break;
                 }
-            }
-            if (firstRow != null) {
-                bodyStyles = computeDataFormat(bodyStyles, firstRow);
             }
         }
 
@@ -88,20 +84,22 @@ public class SimpleSheet implements IExcelSheet {
     }
 
     private static List<ExcelStyle> mergeStyles(List<ExcelStyle> columnStyles, ExcelStyle style) {
-        if (ObjectUtil.isEmpty(columnStyles)) {
+        if (columnStyles == null || columnStyles.isEmpty()) {
             return null;
         }
-        return columnStyles.stream().map(columnStyle -> {
-            ExcelStyle defaultStyle = style != null ? style.copy() : null;
+        List<ExcelStyle> result = new ArrayList<>(columnStyles.size());
+        for (ExcelStyle columnStyle : columnStyles) {
+            ExcelStyle mergedStyle = style != null ? style.copy() : null;
             if (columnStyle == null) {
-                return defaultStyle;
-            } else if (defaultStyle == null) {
-                return columnStyle.copy();
+                result.add(mergedStyle);
+            } else if (mergedStyle == null) {
+                result.add(columnStyle.copy());
             } else {
-                defaultStyle.merge(columnStyle);
-                return defaultStyle;
+                mergedStyle.merge(columnStyle);
+                result.add(mergedStyle);
             }
-        }).collect(Collectors.toList());
+        }
+        return result;
     }
 
     private List<ExcelStyle> computeDataFormat(List<ExcelStyle> styles, List<Object> row) {
@@ -124,24 +122,30 @@ public class SimpleSheet implements IExcelSheet {
         if (dataFormatMap.isEmpty()) {
             return styles;
         }
-        if (ObjectUtil.isEmpty(styles)) {
-            return ArrayUtil.mapRangeToList(0, n, i -> {
+        if (styles == null || styles.isEmpty()) {
+            List<ExcelStyle> newStyles = new ArrayList<>(n);
+            for (int i = 0; i < n; i++) {
                 String dataFormat = dataFormatMap.get(i);
-                if (dataFormat == null) return null;
-                else return new ExcelStyle().setDataFormat(dataFormat);
-            });
+                if (dataFormat != null) {
+                    newStyles.add(new ExcelStyle().setDataFormat(dataFormat));
+                } else {
+                    newStyles.add(null);
+                }
+            }
+            return newStyles;
         }
+
         int m = Math.max(styles.size(), n);
         List<ExcelStyle> newStyles = new ArrayList<>(m);
         for (int i = 0; i < m; i++) {
-            ExcelStyle style = ListUtil.getOrNull(styles, i);
-            String dataFormat = dataFormatMap.get(i);
-            if (dataFormat == null) continue;
-
-            if (style == null) {
-                style = new ExcelStyle();
+            ExcelStyle style = i < styles.size() ? styles.get(i) : null;
+            String dataFormat = i < n ? dataFormatMap.get(i) : null;
+            if (dataFormat != null) {
+                if (style == null) {
+                    style = new ExcelStyle();
+                }
+                style.setDataFormat(dataFormat);
             }
-            style.setDataFormat(dataFormat);
             newStyles.add(style);
         }
         return newStyles;
@@ -158,24 +162,29 @@ public class SimpleSheet implements IExcelSheet {
         int nextOffset;
 
         private Iter() {
-            if (body != null) {
-                this.size = body.size();
-            }
+            size = body != null ? body.size() : 0;
 
-            if (ObjectUtil.isNotEmpty(header)) {
+            if (header != null && !header.isEmpty()) {
                 headerIter = new ListIter(header, headerStyles, defaultHeaderStyle);
-                this.hasData = true;
+                hasData = true;
                 return;
             }
+            List<Object> row = skipEmptyRows();
+            if (row != null) {
+                rowIter = new ListIter(row, bodyStyles, defaultStyle);
+                hasData = true;
+            }
+        }
+
+        private List<Object> skipEmptyRows() {
             while (index < size) {
                 List<Object> row = body.get(index);
-                if (ObjectUtil.isNotEmpty(row)) {
-                    rowIter = new ListIter(row, bodyStyles, defaultStyle);
-                    this.hasData = true;
-                    break;
+                if (row != null && !row.isEmpty()) {
+                    return row;
                 }
                 index++;
             }
+            return null;
         }
 
         @Override
@@ -191,16 +200,11 @@ public class SimpleSheet implements IExcelSheet {
             if (headerIter.hasNext()) {
                 cell = headerIter.next();
                 if (!headerIter.hasNext()) {
-                    while (index < size) {
-                        List<Object> row = body.get(index);
-                        if (ObjectUtil.isNotEmpty(row)) {
-                            rowIter = new ListIter(row, bodyStyles, defaultStyle);
-                            nextOffset++;
-                            break;
-                        }
-                        index++;
-                    }
-                    if (index == size) {
+                    List<Object> row = skipEmptyRows();
+                    if (row != null) {
+                        rowIter = new ListIter(row, bodyStyles, defaultStyle);
+                        nextOffset++;
+                    } else {
                         hasData = false;
                     }
                 }
@@ -210,17 +214,11 @@ public class SimpleSheet implements IExcelSheet {
             cell = rowIter.next();
             if (!rowIter.hasNext()) {
                 index++;
-                while (index < size) {
-                    List<Object> row = body.get(index);
-                    if (ObjectUtil.isNotEmpty(row)) {
-                        rowIter.reset(row);
-                        nextOffset++;
-                        break;
-                    }
-                    index++;
-                }
-
-                if (index == size) {
+                List<Object> row = skipEmptyRows();
+                if (row != null) {
+                    rowIter.reset(row);
+                    nextOffset++;
+                } else {
                     hasData = false;
                 }
             }
@@ -269,7 +267,10 @@ public class SimpleSheet implements IExcelSheet {
 
         @Override
         public ExcelStyle getStyle() {
-            return ListUtil.getOrElse(this.styles, prevOffset, this.defaultStyle);
+            if (styles != null && prevOffset < styles.size()) {
+                return styles.get(prevOffset);
+            }
+            return defaultStyle;
         }
 
         @Override
@@ -280,9 +281,7 @@ public class SimpleSheet implements IExcelSheet {
         @Override
         public IExcelCell next() {
             prevContent.setContent(row.get(offset));
-            prevOffset = offset;
-
-            offset++;
+            prevOffset = offset++;
             return this;
         }
     }

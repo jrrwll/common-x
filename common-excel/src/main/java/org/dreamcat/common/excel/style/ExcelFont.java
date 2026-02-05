@@ -54,44 +54,44 @@ public class ExcelFont {
         this.name = fontName;
     }
 
-    public static ExcelFont merge(ExcelFont font, ExcelFont defaultFont) {
-        if (font == null) return defaultFont;
-        if (defaultFont == null) return font;
-
+    public ExcelFont copy() {
         ExcelFont newFont = new ExcelFont();
-        newFont.name = defaultFont.name;
-        if (font.name != null) {
-            newFont.name = font.name;
-        }
-        newFont.bold = defaultFont.bold;
-        if (font.bold != null) {
-            newFont.bold = font.bold;
-        }
-        newFont.italic = defaultFont.italic;
-        if (font.italic != null) {
-            newFont.italic = font.italic;
-        }
-        newFont.underline = defaultFont.underline;
-        if (font.underline != -1) {
-            newFont.underline = font.underline;
-        }
-        newFont.strikeout = defaultFont.strikeout;
-        if (font.strikeout != null) {
-            newFont.strikeout = font.strikeout;
-        }
-        newFont.typeOffset = defaultFont.typeOffset;
-        if (font.typeOffset != -1) {
-            newFont.typeOffset = font.typeOffset;
-        }
-        newFont.color = defaultFont.color;
-        if (hasColor(font.color)) {
-            newFont.color = font.color;
-        }
-        newFont.height = defaultFont.height;
-        if (font.height != 0) {
-            newFont.height = font.height;
-        }
+        newFont.name = this.name;
+        newFont.bold = this.bold;
+        newFont.italic = this.italic;
+        newFont.underline = this.underline;
+        newFont.strikeout = this.strikeout;
+        newFont.typeOffset = this.typeOffset;
+        newFont.color = this.color;
+        newFont.height = this.height;
         return newFont;
+    }
+
+    public void merge(ExcelFont font) {
+        if (font.name != null) {
+            this.name = font.name;
+        }
+        if (font.bold != null) {
+            this.bold = font.bold;
+        }
+        if (font.italic != null) {
+            this.italic = font.italic;
+        }
+        if (font.underline != -1) {
+            this.underline = font.underline;
+        }
+        if (font.strikeout != null) {
+            this.strikeout = font.strikeout;
+        }
+        if (font.typeOffset != -1) {
+            this.typeOffset = font.typeOffset;
+        }
+        if (hasColor(font.color)) {
+            this.color = font.color;
+        }
+        if (font.height != 0) {
+            this.height = font.height;
+        }
     }
 
     public static ExcelFont from(Font font) {

@@ -58,8 +58,8 @@ public class SimpleSheetSpeedTest {
 
         List<Object> xData = new ArrayList<>();
         List<long[]> tss = new ArrayList<>();
-        System.out.println("        dreamcat  easyexcel   poi");
-        for (int i = 1; i <= 100_0000; i *= 10) {
+        System.out.println("                dreamcat  easyexcel   poi");
+        for (int i = 1; i <= 10_0000; i *= 10) {
             List<List<Object>> body = buildBody(i);
 
             File file1 = new File(dir, String.format("dreamcat-%07d.xlsx", i));
@@ -82,6 +82,7 @@ public class SimpleSheetSpeedTest {
                     .addAction(() -> {
                         poi(body, file3);
                     })
+                    .count(5).skip(2)
                     .run();
             System.out.printf("%07d %s\n", i, timeit.formatMs(ts, 16));
 

@@ -53,110 +53,108 @@ public class ExcelStyle {
     private short topBorderColor = -1;
     private short rightBorderColor = -1;
 
-    public static ExcelStyle merge(ExcelStyle style, ExcelStyle defaultStyle) {
-        if (style == null) return defaultStyle;
-        if (defaultStyle == null) return style;
-
+    public ExcelStyle copy() {
         ExcelStyle newStyle = new ExcelStyle();
-        newStyle.font = defaultStyle.font;
-        if (style.font != null) {
-            if (defaultStyle.font == null) {
-                newStyle.font = style.font;
-            } else {
-                newStyle.font = ExcelFont.merge(style.font, defaultStyle.font);
-            }
+        if (this.font != null) {
+            newStyle.font = this.font.copy();
         }
+        newStyle.dataFormat = this.dataFormat;
+        newStyle.horizontalAlignment = this.horizontalAlignment;
+        newStyle.verticalAlignment = this.verticalAlignment;
+        newStyle.hidden = this.hidden;
+        newStyle.wrapText = this.wrapText;
+        newStyle.locked = this.locked;
+        newStyle.quotePrefix = this.quotePrefix;
+        newStyle.shrinkToFit = this.shrinkToFit;
+        newStyle.indent = this.indent;
+        newStyle.rotation = this.rotation;
+        newStyle.bgColor = this.bgColor;
+        newStyle.fgColor = this.fgColor;
+        newStyle.fillPattern = this.fillPattern;
 
-        newStyle.dataFormat = defaultStyle.dataFormat;
-        if (style.dataFormat != null) {
-            newStyle.dataFormat = style.dataFormat;
-        }
-        newStyle.horizontalAlignment = defaultStyle.horizontalAlignment;
-        if (style.horizontalAlignment != null) {
-            newStyle.horizontalAlignment = style.horizontalAlignment;
-        }
-        newStyle.verticalAlignment = defaultStyle.verticalAlignment;
-        if (style.verticalAlignment != null) {
-            newStyle.verticalAlignment = style.verticalAlignment;
-        }
-        newStyle.hidden = defaultStyle.hidden;
-        if (style.hidden != null) {
-            newStyle.hidden = style.hidden;
-        }
-        newStyle.wrapText = defaultStyle.wrapText;
-        if (style.wrapText != null) {
-            newStyle.wrapText = style.wrapText;
-        }
-        newStyle.locked = defaultStyle.locked;
-        if (style.locked != null) {
-            newStyle.locked = style.locked;
-        }
-
-        newStyle.quotePrefix = defaultStyle.quotePrefix;
-        if (style.quotePrefix != null) {
-            newStyle.quotePrefix = style.quotePrefix;
-        }
-        newStyle.shrinkToFit = defaultStyle.shrinkToFit;
-        if (style.shrinkToFit != null) {
-            newStyle.shrinkToFit = style.shrinkToFit;
-        }
-
-        newStyle.indent = defaultStyle.indent;
-        if (style.indent != -1) {
-            newStyle.indent = style.indent;
-        }
-        newStyle.rotation = defaultStyle.rotation;
-        if (style.rotation != 0) {
-            newStyle.rotation = style.rotation;
-        }
-
-        newStyle.bgColor = defaultStyle.bgColor;
-        if (hasColor(style.bgColor)) {
-            newStyle.bgColor = style.bgColor;
-        }
-        newStyle.fgColor = defaultStyle.fgColor;
-        if (hasColor(style.fgColor)) {
-            newStyle.fgColor = style.fgColor;
-        }
-        newStyle.fillPattern = defaultStyle.fillPattern;
-        if (style.fillPattern != null) {
-            newStyle.fillPattern = style.fillPattern;
-        }
-
-        newStyle.borderBottom = defaultStyle.borderBottom;
-        if (style.borderBottom != null) {
-            newStyle.borderBottom = style.borderBottom;
-        }
-        newStyle.borderLeft = defaultStyle.borderLeft;
-        if (style.borderLeft != null) {
-            newStyle.borderLeft = style.borderLeft;
-        }
-        newStyle.borderTop = defaultStyle.borderTop;
-        if (style.borderTop != null) {
-            newStyle.borderTop = style.borderTop;
-        }
-        newStyle.borderRight = defaultStyle.borderRight;
-        if (style.borderRight != null) {
-            newStyle.borderRight = style.borderRight;
-        }
-
-        newStyle.bottomBorderColor = defaultStyle.bottomBorderColor;
-        if (hasColor(style.bottomBorderColor)) {
-            newStyle.bottomBorderColor = style.bottomBorderColor;
-        }
-        newStyle.leftBorderColor = defaultStyle.leftBorderColor;
-        if (hasColor(style.leftBorderColor)) {
-            newStyle.leftBorderColor = style.leftBorderColor;
-        }
-        newStyle.topBorderColor = defaultStyle.topBorderColor;
-        if (hasColor(style.topBorderColor)) {
-            newStyle.topBorderColor = style.topBorderColor;
-        }
-        newStyle.rightBorderColor = defaultStyle.rightBorderColor;
-        if (hasColor(style.rightBorderColor)) {
-            newStyle.rightBorderColor = style.rightBorderColor;
-        }
+        newStyle.borderBottom = this.borderBottom;
+        newStyle.borderLeft = this.borderLeft;
+        newStyle.borderTop = this.borderTop;
+        newStyle.borderRight = this.borderRight;
+        newStyle.bottomBorderColor = this.bottomBorderColor;
+        newStyle.leftBorderColor = this.leftBorderColor;
+        newStyle.topBorderColor = this.topBorderColor;
+        newStyle.rightBorderColor = this.rightBorderColor;
         return newStyle;
+    }
+
+    public void merge(ExcelStyle style) {
+        if (style == null) return;
+
+        if (style.font != null) {
+            if (this.font == null) {
+                this.font = new ExcelFont();
+            }
+            this.font.merge(style.font);
+        }
+        if (style.dataFormat != null) {
+            this.dataFormat = style.dataFormat;
+        }
+        if (style.horizontalAlignment != null) {
+            this.horizontalAlignment = style.horizontalAlignment;
+        }
+        if (style.verticalAlignment != null) {
+            this.verticalAlignment = style.verticalAlignment;
+        }
+        if (style.hidden != null) {
+            this.hidden = style.hidden;
+        }
+        if (style.wrapText != null) {
+            this.wrapText = style.wrapText;
+        }
+        if (style.locked != null) {
+            this.locked = style.locked;
+        }
+        if (style.quotePrefix != null) {
+            this.quotePrefix = style.quotePrefix;
+        }
+        if (style.shrinkToFit != null) {
+            this.shrinkToFit = style.shrinkToFit;
+        }
+        if (style.indent != -1) {
+            this.indent = style.indent;
+        }
+        if (style.rotation != 0) {
+            this.rotation = style.rotation;
+        }
+        if (hasColor(style.bgColor)) {
+            this.bgColor = style.bgColor;
+        }
+        if (hasColor(style.fgColor)) {
+            this.fgColor = style.fgColor;
+        }
+        if (style.fillPattern != null) {
+            this.fillPattern = style.fillPattern;
+        }
+        if (style.borderBottom != null) {
+            this.borderBottom = style.borderBottom;
+        }
+        if (style.borderLeft != null) {
+            this.borderLeft = style.borderLeft;
+        }
+        if (style.borderTop != null) {
+            this.borderTop = style.borderTop;
+        }
+        if (style.borderRight != null) {
+            this.borderRight = style.borderRight;
+        }
+        if (hasColor(style.bottomBorderColor)) {
+            this.bottomBorderColor = style.bottomBorderColor;
+        }
+        if (hasColor(style.leftBorderColor)) {
+            this.leftBorderColor = style.leftBorderColor;
+        }
+        if (hasColor(style.topBorderColor)) {
+            this.topBorderColor = style.topBorderColor;
+        }
+        if (hasColor(style.rightBorderColor)) {
+            this.rightBorderColor = style.rightBorderColor;
+        }
     }
 
     public static ExcelStyle from(CellStyle style) {

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
+import org.dreamcat.common.excel.content.ExcelUnionContent;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.ArrayUtil;
@@ -56,11 +57,16 @@ public class SimpleSheet implements IExcelSheet {
     public Iterator<IExcelCell> iterator() {
         if (defaultStyle == null) {
             defaultHeaderStyle = headerStyle;
-        } else if (headerStyle == null) {
-            defaultHeaderStyle = defaultStyle;
+            if (headerStyle != null) {
+                defaultHeaderStyle = headerStyle.copy();
+            }
         } else {
-            defaultHeaderStyle = ExcelStyle.merge(headerStyle, defaultStyle);
+            defaultHeaderStyle = defaultStyle.copy();
+            if (headerStyle != null) {
+                defaultHeaderStyle.merge(headerStyle);
+            }
         }
+
         headerStyles = mergeStyles(columnStyles, defaultHeaderStyle);
         bodyStyles = mergeStyles(columnStyles, defaultStyle);
 
@@ -81,16 +87,21 @@ public class SimpleSheet implements IExcelSheet {
         return this.new Iter();
     }
 
-    private static List<ExcelStyle> mergeStyles(List<ExcelStyle> styles, ExcelStyle defaultStyle) {
-        if (defaultStyle == null) {
-            return styles;
-        }
-        if (ObjectUtil.isEmpty(styles)) {
+    private static List<ExcelStyle> mergeStyles(List<ExcelStyle> columnStyles, ExcelStyle style) {
+        if (ObjectUtil.isEmpty(columnStyles)) {
             return null;
         }
-        return styles.stream()
-                .map(style -> ExcelStyle.merge(style, defaultStyle))
-                .collect(Collectors.toList());
+        return columnStyles.stream().map(columnStyle -> {
+            ExcelStyle defaultStyle = style != null ? style.copy() : null;
+            if (columnStyle == null) {
+                return defaultStyle;
+            } else if (defaultStyle == null) {
+                return columnStyle.copy();
+            } else {
+                defaultStyle.merge(columnStyle);
+                return defaultStyle;
+            }
+        }).collect(Collectors.toList());
     }
 
     private List<ExcelStyle> computeDataFormat(List<ExcelStyle> styles, List<Object> row) {
@@ -125,11 +136,12 @@ public class SimpleSheet implements IExcelSheet {
         for (int i = 0; i < m; i++) {
             ExcelStyle style = ListUtil.getOrNull(styles, i);
             String dataFormat = dataFormatMap.get(i);
-            if (dataFormat != null) {
-                ExcelStyle dataFormatStyle = new ExcelStyle().setDataFormat(dataFormat);
-                style = ExcelStyle.merge(style, dataFormatStyle);
-                newStyles.add(style);
+            if (dataFormat == null) continue;
+
+            if (style == null) {
+                style = new ExcelStyle();
             }
+            style.setDataFormat(dataFormat);
             newStyles.add(style);
         }
         return newStyles;
@@ -225,7 +237,7 @@ public class SimpleSheet implements IExcelSheet {
         int size;
         int offset;
 
-        Object prevCell;
+        ExcelUnionContent prevContent = new ExcelUnionContent();
         int prevOffset;
 
         private ListIter(List<?> row, List<ExcelStyle> styles, ExcelStyle defaultStyle) {
@@ -252,7 +264,7 @@ public class SimpleSheet implements IExcelSheet {
 
         @Override
         public IExcelContent getContent() {
-            return IExcelContent.from(prevCell);
+            return prevContent;
         }
 
         @Override
@@ -267,7 +279,7 @@ public class SimpleSheet implements IExcelSheet {
 
         @Override
         public IExcelCell next() {
-            prevCell = row.get(offset);
+            prevContent.setContent(row.get(offset));
             prevOffset = offset;
 
             offset++;

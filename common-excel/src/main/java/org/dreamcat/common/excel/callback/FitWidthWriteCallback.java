@@ -9,10 +9,16 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.content.IExcelContent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Create by tuke on 2020/7/26
  */
 public class FitWidthWriteCallback implements IExcelWriteCallback {
+
+    private final Map<Integer, Integer> columnWidthMap = new HashMap<>();
 
     @Override
     public void onFinishCell(Workbook workbook, Sheet sheet, int sheetIndex, Row row, Cell cell,
@@ -34,9 +40,16 @@ public class FitWidthWriteCallback implements IExcelWriteCallback {
         if (width > 255 * 256) width = 255 * 256;
 
         int columnIndex = cell.getColumnIndex();
-        int columnWith = sheet.getColumnWidth(columnIndex);
+        int columnWith = columnWidthMap.getOrDefault(columnIndex, 0);
         if (width > columnWith) {
-            sheet.setColumnWidth(columnIndex, width);
+            columnWidthMap.put(columnIndex, width);
+        }
+    }
+
+    @Override
+    public void onFinishSheet(Workbook workbook, Sheet sheet, int sheetIndex) {
+        for (Entry<Integer, Integer> entry : columnWidthMap.entrySet()) {
+            sheet.setColumnWidth(entry.getKey(), entry.getValue());
         }
     }
 }

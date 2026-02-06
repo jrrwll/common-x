@@ -29,7 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Jerry Will
  * @version 2026-01-21
  */
-public class ExcelStyleTest {
+public class ExcelStyleDataFormatTest {
 
     @Test
     @SneakyThrows

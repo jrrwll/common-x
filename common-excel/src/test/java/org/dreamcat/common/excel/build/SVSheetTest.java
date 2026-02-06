@@ -6,7 +6,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.ExcelSheet;
-import org.dreamcat.common.excel.callback.AutoWidthWriteCallback;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
@@ -47,7 +46,6 @@ class SVSheetTest extends BaseTest {
         SVSheet sheet1 = new SVSheet("Sheet One");
         sheet1.setAnnotationStyle(true);
         // sheet1.setWriteCallback(new FitWidthWriteCallback());
-        sheet1.addWriteCallback(new AutoWidthWriteCallback());
 
         for (int i = 0; i < 6; i++) sheet1.add(XlsMetaTest.newPojo());
         for (int i = 0; i < 6; i++) sheet1.add(headerSheet());

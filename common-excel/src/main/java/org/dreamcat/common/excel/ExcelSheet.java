@@ -1,6 +1,8 @@
 package org.dreamcat.common.excel;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFPicture;
@@ -40,18 +42,19 @@ import java.util.TreeMap;
  * XLS = 65536 * 256
  * XLSX = 1048576 * 16384
  */
-@Data
 @Slf4j
+@Getter
+@NoArgsConstructor
 public class ExcelSheet implements IExcelSheet {
 
-    private final String name;
-    private final List<IExcelCell> cells;
+    @Setter
+    private String name;
+    private final List<IExcelCell> cells = new ArrayList<>();
     private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
     private final List<ExcelPicture> pictures = new ArrayList<>();
 
     public ExcelSheet(String name) {
         this.name = name;
-        this.cells = new ArrayList<>();
     }
 
     public ExcelSheet(String name, List<IExcelCell> cells) {

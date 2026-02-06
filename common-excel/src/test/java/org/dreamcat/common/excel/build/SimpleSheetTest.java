@@ -16,25 +16,30 @@ import java.util.List;
  */
 class SimpleSheetTest extends BaseTest {
 
+    static ExcelStyle defaultStyle = new ExcelStyle()
+            .fontName("Times New Roman")
+            .fontHeight(12);
+    static ExcelStyle defaultHeaderStyle = new ExcelStyle()
+            .setHorizontalAlignment(HorizontalAlignment.CENTER)
+            .setVerticalAlignment(VerticalAlignment.CENTER)
+            .setWrapText(true)
+            .fontName("宋体")
+            .fontHeight(14)
+            .fontBold(true)
+            .setLocked(true);
+
     @Test
     void testSmall() {
-        ExcelStyle defaultStyle = new ExcelStyle()
-                .fontName("Times New Roman")
-                .fontHeight(12);
-        ExcelStyle defaultHeaderStyle = new ExcelStyle()
-                .setHorizontalAlignment(HorizontalAlignment.CENTER)
-                .setVerticalAlignment(VerticalAlignment.CENTER);
-
         SimpleSheet sheet1 = new SimpleSheet();
         sheet1.setDefaultStyle(defaultStyle);
         sheet1.setName("small");
-        sheet1.setHeader(Arrays.asList("id", "name", "age"));
+        sheet1.setHeader(buildHeader());
         sheet1.setBody(buildBody());
 
         SimpleSheet sheet2 = new SimpleSheet();
         sheet2.setHeaderStyle(defaultHeaderStyle);
         sheet2.setName("small_style");
-        sheet2.setHeader(Arrays.asList("id", "name", "age"));
+        sheet2.setHeader(buildHeader());
         sheet2.setBody(buildBody());
 
         ExcelStyle style1 = new ExcelStyle()
@@ -61,7 +66,11 @@ class SimpleSheetTest extends BaseTest {
         writeXlsx("testSmall", sheet1, sheet2, sheet3);
     }
 
-    private List<List<Object>> buildBody() {
+    static List<String> buildHeader() {
+        return Arrays.asList("id", "name", "age");
+    }
+
+    static List<List<Object>> buildBody() {
         return Arrays.asList(
                 Arrays.asList(1, "Tom", 18),
                 Arrays.asList(2, "Jerry", 19),

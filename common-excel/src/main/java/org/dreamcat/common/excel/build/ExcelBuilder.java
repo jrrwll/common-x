@@ -46,7 +46,7 @@ public class ExcelBuilder {
         ExcelBuilder.build()
                 .addBasicSheet()
                 .addMixedSheet()
-                .addSheet(new MixedSheet(""))
+                .addSheet(new MixedSheet())
                 .writeTo(new File("test.xlsx"));
     }
 }

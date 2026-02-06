@@ -12,7 +12,6 @@ import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelUtil;
 import org.dreamcat.common.excel.ExcelWorkbook;
-import org.dreamcat.common.excel.callback.AutoWidthWriteCallback;
 import org.dreamcat.common.excel.parse.SVParser;
 import org.dreamcat.common.excel.parse.SVRow;
 import org.dreamcat.common.util.BeanUtil;
@@ -75,7 +74,6 @@ class SVParserTest {
             offset++;
         }
 
-        sheet.addWriteCallback(new AutoWidthWriteCallback());
         ExcelWorkbook<ExcelSheet> book = new ExcelWorkbook<>();
         book.addSheet(sheet).writeTo(book1);
     }

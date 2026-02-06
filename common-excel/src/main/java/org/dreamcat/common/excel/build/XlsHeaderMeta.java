@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.Getter;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.IExcelCell;
-import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.annotation.XlsHeader;
 import org.dreamcat.common.excel.annotation.XlsHeader.SubheaderStyle;
 import org.dreamcat.common.excel.annotation.XlsSheet;
@@ -17,7 +16,6 @@ import org.dreamcat.common.util.StringUtil;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Create by tuke on 2021/2/22
  */
-public class XlsHeaderMeta implements IExcelSheet {
+public class XlsHeaderMeta {
 
     @Getter
     public String name;
@@ -97,11 +95,6 @@ public class XlsHeaderMeta implements IExcelSheet {
             int width = subCells.size();
             excelCell.setColumnSpan(width * span);
         }
-    }
-
-    @Override
-    public Iterator<IExcelCell> iterator() {
-        return getHeaderCells().iterator();
     }
 
     /**

@@ -10,13 +10,11 @@ import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.build.MixedSheet2Test.Pojo;
 import org.dreamcat.common.excel.style.ExcelStyle;
-import org.dreamcat.common.util.ArrayUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * Create by tuke on 2020/7/22
@@ -66,7 +64,7 @@ public class MixedSheetTest extends BaseTest {
         ExcelSheet sheet1 = createHeaderSheet();
 
         AnnotatedSheet<Pojo> sheet2 = new AnnotatedSheet<>();
-        sheet2.setData(Arrays.asList(
+        sheet2.setBody(Arrays.asList(
                 new Pojo(1, rand(), null, choose72(6)),
                 new Pojo(2, rand() * (1 << 16), null, choose72(2))
         ));
@@ -84,7 +82,7 @@ public class MixedSheetTest extends BaseTest {
                 .setStyle(new ExcelStyle().fgColor(IndexedColors.TURQUOISE)));
 
         AnnotatedSheet<Pojo> sheet4 = new AnnotatedSheet<>();
-        sheet2.setData(Arrays.asList(
+        sheet2.setBody(Arrays.asList(
                 new Pojo(3, rand(), null, choose72(6)),
                 new Pojo(4, rand() * (1 << 16), null, choose72(2))
         ));

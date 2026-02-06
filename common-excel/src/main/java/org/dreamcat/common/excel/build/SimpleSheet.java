@@ -222,7 +222,7 @@ public class SimpleSheet implements IExcelSheet {
         }
     }
 
-    private class ListIter implements Iterator<IExcelCell>, IExcelCell {
+    private static class ListIter implements Iterator<IExcelCell>, IExcelCell {
 
         final List<ExcelStyle> styles;
         final ExcelStyle defaultStyle;

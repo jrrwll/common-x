@@ -29,7 +29,7 @@ public class AnnotatedSheetTest extends BaseTest {
         for (int i = 0; i < 20_0000; i++) {
             pojoList.add(Pojo.create(i));
         }
-        bodySheet.setData(pojoList);
+        bodySheet.setBody(pojoList);
 
         MixedSheet sheet = new MixedSheet();
         sheet.setName("Sheet One");

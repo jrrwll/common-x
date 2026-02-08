@@ -29,6 +29,7 @@ public class AnnotatedSheet<T> implements IExcelSheet {
 
     public AnnotatedSheet(Class<T> header) {
         this.excelType = ExcelType.Value.parse(header);
+        this.name = excelType.getName();
     }
 
     @Override

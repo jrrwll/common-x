@@ -5,7 +5,6 @@ import org.dreamcat.common.asm.BeanMapUtil;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.annotation.ExcelColumn.SubValue;
-import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.ReflectUtil;
 
@@ -31,16 +30,11 @@ public @interface ExcelType {
 
     boolean onlyAnnotated() default false;
 
-    // default style
-    ExcelColumnFont font() default @ExcelColumnFont();
-
-    ExcelColumnStyle style() default @ExcelColumnStyle();
-
     @Getter
     class Value {
 
         private String name;
-        private final List<ExcelColumn.Value> columns = new ArrayList<>();
+        private List<ExcelColumn.Value> columns;
         // any column expanded
         private boolean subheader;
 
@@ -56,55 +50,56 @@ public @interface ExcelType {
                 if (!name.isEmpty()) {
                     typeValue.name = name;
                 }
-                defaultStyle = ExcelStyle.from(excelType.style());
-                defaultStyle.setFont(ExcelFont.from(excelType.font()));
-
                 onlyAnnotated = excelType.onlyAnnotated();
+
+                defaultStyle = ExcelColumn.SubValue.parseStyle(clazz, null);
             }
 
-            List<ExcelColumn.Value> annotatedUnsortColumns = new ArrayList<>();
+            List<ExcelColumn.Value> unsortedColumns = new ArrayList<>();
             Map<Integer, ExcelColumn.Value> annotatedSortedColumns = new TreeMap<>();
 
             List<Field> fields = ReflectUtil.retrieveBeanFields(clazz);
             for (Field field : fields) {
-                ExcelColumn.Value columnValue = new ExcelColumn.Value();
-                String fieldName = field.getName();
-                columnValue.setFieldName(fieldName);
-                columnValue.setHeader(fieldName);
-
                 ExcelColumn excelColumn = field.getAnnotation(ExcelColumn.class);
                 if (excelColumn == null) {
                     if (onlyAnnotated) continue;
+                }
 
-                    typeValue.columns.add(columnValue);
+                ExcelColumn.Value columnValue = new ExcelColumn.Value();
+                String fieldName = field.getName();
+                columnValue.fieldName = fieldName;
+                columnValue.header = fieldName;
+
+                if (excelColumn != null) {
+                    String header = excelColumn.header();
+                    if (!header.isEmpty()) {
+                        columnValue.header = header;
+                    }
+                } else {
+                    unsortedColumns.add(columnValue);
                     continue;
                 }
 
-                columnValue.setHeader(excelColumn.header());
-                ExcelStyle columnStyle = ExcelStyle.from(excelColumn.style());
-                columnStyle.setFont(ExcelFont.from(excelColumn.font()));
-                if (defaultStyle != null) {
-                    columnStyle.merge(defaultStyle);
-                }
-                columnValue.setStyle(columnStyle);
+                columnValue.style = ExcelColumn.SubValue.parseStyle(field, defaultStyle);
+
                 if (excelColumn.expanded()) {
                     if (excelColumn.subheader()) {
                         typeValue.subheader = true;
                     }
-                    List<SubValue> subValues = SubValue.parse(field.getType());
-                    columnValue.setSubValues(subValues);
+                    columnValue.subValues = SubValue.parse(field.getType());
                 }
 
                 int fieldIndex = excelColumn.fieldIndex();
                 if (fieldIndex == -1) {
-                    annotatedUnsortColumns.add(columnValue);
+                    unsortedColumns.add(columnValue);
                 } else {
                     annotatedSortedColumns.put(fieldIndex, columnValue);
                 }
             }
-            typeValue.columns.addAll(annotatedUnsortColumns);
-            typeValue.columns.addAll(annotatedSortedColumns.values());
 
+            typeValue.columns = new ArrayList<>();
+            typeValue.columns.addAll(unsortedColumns);
+            typeValue.columns.addAll(annotatedSortedColumns.values());
             return typeValue;
         }
 
@@ -124,7 +119,6 @@ public @interface ExcelType {
                 String header = column.getHeader();
                 ExcelCell excelCell = new ExcelCell(header, 0, offset);
                 excelCell.setRowSpan(rowSpan);
-                headerCells.add(excelCell);
 
                 ExcelStyle style = column.getStyle();
                 if (style != null) {
@@ -135,12 +129,14 @@ public @interface ExcelType {
                 if (subValues == null) {
                     excelCell.setColumnSpan(1);
                     offset++;
+                    headerCells.add(excelCell);
                     continue;
                 }
 
                 excelCell.setRowSpan(1);
                 if (subheader) {
                     excelCell.setColumnSpan(subValues.size());
+                    headerCells.add(excelCell);
                 }
                 for (SubValue subValue : subValues) {
                     ExcelCell subExcelCell = new ExcelCell(subValue.getHeader(), 0, offset++);
@@ -152,6 +148,7 @@ public @interface ExcelType {
                     if (subheader) {
                         subExcelCell.setRowIndex(1);
                     }
+                    headerCells.add(subExcelCell);
                 }
             }
         }

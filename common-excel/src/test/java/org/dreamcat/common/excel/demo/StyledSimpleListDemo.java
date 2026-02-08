@@ -14,7 +14,7 @@ import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.annotation.XlsHeader;
 import org.dreamcat.common.excel.annotation.XlsSheet;
-import org.dreamcat.common.excel.annotation.XlsStyle;
+import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.excel.callback.HeaderCellStyleWriteCallback;
 import org.dreamcat.common.excel.build.MixedSheet2;
@@ -35,25 +35,25 @@ public class StyledSimpleListDemo {
     @Data
     static class Pojo {
 
-        @XlsHeader(header = "Cell int", style = @XlsStyle(fgColor = 2))
+        @XlsHeader(header = "Cell int", style = @ExcelColumnStyle(fgColor = 2))
         int a = randi(128);
-        @XlsHeader(header = "Cell Double", style = @XlsStyle(fgColor = 3))
+        @XlsHeader(header = "Cell Double", style = @ExcelColumnStyle(fgColor = 3))
         Double b = rand();
-        @XlsHeader(header = "Cell String", style = @XlsStyle(fgColor = 4))
+        @XlsHeader(header = "Cell String", style = @ExcelColumnStyle(fgColor = 4))
         String c = choose36(randi(3, 7));
-        @XlsHeader(header = "Cell boolean", style = @XlsStyle(fgColor = 5))
+        @XlsHeader(header = "Cell boolean", style = @ExcelColumnStyle(fgColor = 5))
         boolean d = rand() > 0.5;
-        @XlsHeader(header = "Cell Date", style = @XlsStyle(
+        @XlsHeader(header = "Cell Date", style = @ExcelColumnStyle(
                 fgColor = 6, dataFormat = "yyyy-MM-dd hh:mm:ss"))
         Date e = new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L));
-        @XlsHeader(header = "Cell LocalDate", style = @XlsStyle(
+        @XlsHeader(header = "Cell LocalDate", style = @ExcelColumnStyle(
                 fgColor = 7, dataFormat = "yyyy-MM-dd"))
         LocalDate f = ofDate(
                 new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L))).toLocalDate();
-        @XlsHeader(header = "Cell LocalDateTime", style = @XlsStyle(
+        @XlsHeader(header = "Cell LocalDateTime", style = @ExcelColumnStyle(
                 fgColor = 10, dataFormat = "yyyy-MM-dd hh:mm:ss"))
         LocalDateTime g = ofDate(new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L)));
-        @XlsHeader(header = "null", style = @XlsStyle(fgColor = 30))
+        @XlsHeader(header = "null", style = @ExcelColumnStyle(fgColor = 30))
         String _null; // null
     }
 

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.ExcelSheet;
+import org.dreamcat.common.util.ArrayUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,13 +18,21 @@ import java.util.Arrays;
  * Create by tuke on 2020/7/26
  */
 public class AnnotatedSheetTest extends BaseTest {
+
+    @Test
+    void testSmall() {
+        AnnotatedSheet<Pojo> sheet = new AnnotatedSheet<>(Pojo.class);
+        sheet.setBody(ArrayUtil.mapRangeToList(1, 4, Pojo::create));
+        writeXlsx("testSmall", sheet);
+    }
+
     @Test
     void testHuge() {
         // header
         ExcelSheet headerSheet = MixedSheetTest.createHeaderSheet();
 
         // body
-        AnnotatedSheet<Pojo> bodySheet = new AnnotatedSheet<>();
+        AnnotatedSheet<Pojo> bodySheet = new AnnotatedSheet<>(Pojo.class);
         ArrayList<Pojo> pojoList;
         pojoList = new ArrayList<>();
         for (int i = 0; i < 20_0000; i++) {
@@ -40,7 +49,7 @@ public class AnnotatedSheetTest extends BaseTest {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    static class Pojo {
+    public static class Pojo {
 
         int a;
         double b;

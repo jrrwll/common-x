@@ -23,9 +23,9 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.annotation.XlsCell;
-import org.dreamcat.common.excel.annotation.XlsFont;
+import org.dreamcat.common.excel.annotation.ExcelColumnFont;
 import org.dreamcat.common.excel.annotation.XlsSheet;
-import org.dreamcat.common.excel.annotation.XlsStyle;
+import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
 import org.dreamcat.common.json.JsonUtil;
 import org.dreamcat.common.util.ArrayUtil;
 import org.dreamcat.common.util.BeanUtil;
@@ -124,26 +124,26 @@ public class XlsMetaTest extends BaseTest {
     @XlsSheet(name = "Pojo")
     public static class Pojo {
 
-        @XlsStyle(horizontalAlignment = HorizontalAlignment.CENTER,
+        @ExcelColumnStyle(horizontalAlignment = HorizontalAlignment.CENTER,
                 fgIndexedColor = IndexedColors.RED)
-        @XlsFont(name = "宋体", height = 24)
+        @ExcelColumnFont(name = "宋体", height = 24)
         int S;
 
-        @XlsStyle(fgIndexedColor = IndexedColors.LEMON_CHIFFON,
+        @ExcelColumnStyle(fgIndexedColor = IndexedColors.LEMON_CHIFFON,
                 bgIndexedColor = IndexedColors.GREEN,
                 fillPattern = FillPatternType.ALT_BARS)
         List<Double> SA;
 
-        @XlsStyle(verticalAlignment = VerticalAlignment.CENTER)
+        @ExcelColumnStyle(verticalAlignment = VerticalAlignment.CENTER)
         @XlsCell(expanded = true)
-        @XlsFont(name = "黑体", height = 21, italic = true, indexedColor = IndexedColors.AQUA)
+        @ExcelColumnFont(name = "黑体", height = 21, italic = true, indexedColor = IndexedColors.AQUA)
         Item V;
 
-        @XlsStyle(
+        @ExcelColumnStyle(
                 fgIndexedColor = IndexedColors.ROSE,
                 borderBottom = BorderStyle.DASH_DOT_DOT,
                 borderLeft = BorderStyle.THICK)
-        @XlsFont(name = "微软雅黑", height = 16, bold = true, italic = true)
+        @ExcelColumnFont(name = "微软雅黑", height = 16, bold = true, italic = true)
         @XlsCell(expanded = true)
         List<Item> VA;
     }

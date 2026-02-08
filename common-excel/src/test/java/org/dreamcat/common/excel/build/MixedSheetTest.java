@@ -63,7 +63,7 @@ public class MixedSheetTest extends BaseTest {
         // header
         ExcelSheet sheet1 = createHeaderSheet();
 
-        AnnotatedSheet<Pojo> sheet2 = new AnnotatedSheet<>();
+        AnnotatedSheet<Pojo> sheet2 = new AnnotatedSheet<>(Pojo.class);
         sheet2.setBody(Arrays.asList(
                 new Pojo(1, rand(), null, choose72(6)),
                 new Pojo(2, rand() * (1 << 16), null, choose72(2))
@@ -81,7 +81,7 @@ public class MixedSheetTest extends BaseTest {
         sheet3.addCell(new ExcelCell("D6:D7", 0, 3, 2, 1)
                 .setStyle(new ExcelStyle().fgColor(IndexedColors.TURQUOISE)));
 
-        AnnotatedSheet<Pojo> sheet4 = new AnnotatedSheet<>();
+        AnnotatedSheet<Pojo> sheet4 = new AnnotatedSheet<>(Pojo.class);
         sheet2.setBody(Arrays.asList(
                 new Pojo(3, rand(), null, choose72(6)),
                 new Pojo(4, rand() * (1 << 16), null, choose72(2))

@@ -66,6 +66,8 @@ public @interface ExcelType {
                 }
 
                 ExcelColumn.Value columnValue = new ExcelColumn.Value();
+                columnValue.style = ExcelColumn.SubValue.parseStyle(field, defaultStyle);
+
                 String fieldName = field.getName();
                 columnValue.fieldName = fieldName;
                 columnValue.header = fieldName;
@@ -80,7 +82,6 @@ public @interface ExcelType {
                     continue;
                 }
 
-                columnValue.style = ExcelColumn.SubValue.parseStyle(field, defaultStyle);
 
                 if (excelColumn.expanded()) {
                     if (excelColumn.subheader()) {

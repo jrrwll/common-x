@@ -65,9 +65,8 @@ public @interface ExcelColumn {
                     if (onlyAnnotated) continue;
                 }
 
-
-                
                 SubValue subValue = new SubValue();
+                subValue.style = parseStyle(field, defaultStyle);
 
                 String fieldName = field.getName();
                 subValue.fieldName = fieldName;
@@ -81,8 +80,6 @@ public @interface ExcelColumn {
                     unsortColumns.add(subValue);
                     continue;
                 }
-
-                subValue.style = parseStyle(field, defaultStyle);
 
                 int fieldIndex = excelColumn.fieldIndex();
                 if (fieldIndex == -1) {

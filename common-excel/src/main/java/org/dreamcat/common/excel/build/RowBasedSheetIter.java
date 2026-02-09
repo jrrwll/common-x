@@ -24,8 +24,7 @@ abstract class RowBasedSheetIter<T> extends ExcelCellWithOffset implements Itera
 
     abstract Iterator<IExcelCell> getHeaderCells();
 
-    abstract Iterator<IExcelCell>
-            (T row);
+    abstract Iterator<IExcelCell> getColumnCells(T row);
 
     RowBasedSheetIter(List<T> body) {
         this.body = body;

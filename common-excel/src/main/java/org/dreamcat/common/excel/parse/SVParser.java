@@ -2,6 +2,8 @@ package org.dreamcat.common.excel.parse;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.dreamcat.common.excel.model.DetailRow;
+import org.dreamcat.common.excel.model.MasterDetailRow;
 import org.dreamcat.common.reflect.FieldColumn;
 import org.dreamcat.common.util.AssertUtil;
 import org.dreamcat.common.util.ListUtil;
@@ -22,7 +24,7 @@ import java.util.function.Function;
 @Slf4j
 @Setter
 public class SVParser<S, V> implements
-        IExcelParser<SVRow<S, V>> {
+        IExcelParser<MasterDetailRow<S, V>> {
 
     private int headerIndex = 0;
     // tow level sequence column index
@@ -51,7 +53,7 @@ public class SVParser<S, V> implements
         this.vectorColumns = FieldColumn.parse(vectorClass);
 
         Map<String, Field> fieldMap = ReflectUtil.retrieveFieldMap(
-                SVRow.class);
+                MasterDetailRow.class);
         this.scalarField = fieldMap.get("scalar");
         this.scalarMapField = fieldMap.get("map");
         this.vectorField = fieldMap.get("vector");
@@ -63,7 +65,7 @@ public class SVParser<S, V> implements
     }
 
     @Override
-    public List<SVRow<S, V>> readSheetAsValue(List<List<String>> sheet) throws Exception {
+    public List<MasterDetailRow<S, V>> readSheetAsValue(List<List<String>> sheet) throws Exception {
         if (ObjectUtil.isEmpty(sheet)) return null;
 
         int rowSize = sheet.size();
@@ -78,7 +80,7 @@ public class SVParser<S, V> implements
                     "empty header row in row " + headerIndex);
         }
 
-        List<SVRow<S, V>> list = new ArrayList<>();
+        List<MasterDetailRow<S, V>> list = new ArrayList<>();
         next:
         for (int i = headerIndex + 1; i < rowSize; i++) {
             List<String> values = sheet.get(i);
@@ -107,7 +109,7 @@ public class SVParser<S, V> implements
                     throw new IllegalArgumentException("missing sequence in row " + i);
                 }
 
-                SVRow<S, V> bean = new SVRow<>();
+                MasterDetailRow<S, V> bean = new MasterDetailRow<>();
                 int width = readOneRow(bean, headers, values);
                 list.add(bean);
                 while (i < rowSize - 1) {
@@ -121,7 +123,7 @@ public class SVParser<S, V> implements
                     sequence = values.get(scalarSequenceIndex);
                     if (sequence != null) continue values;
 
-                    SVColumn<V> svColumn = readSVColumn(headers, values, width);
+                    DetailRow<V> svColumn = readSVColumn(headers, values, width);
                     bean.getVector().add(svColumn);
                 }
                 break;
@@ -131,7 +133,7 @@ public class SVParser<S, V> implements
         return list;
     }
 
-    private int readOneRow(SVRow<S, V> bean, List<String> headers, List<String> values)
+    private int readOneRow(MasterDetailRow<S, V> bean, List<String> headers, List<String> values)
             throws IllegalAccessException {
         S scalar = ReflectUtil.newInstance(scalarClass);
         scalarField.set(bean, scalar);
@@ -219,16 +221,16 @@ public class SVParser<S, V> implements
 
         int width = offset;
         // vector
-        List<SVColumn<V>> vector = new ArrayList<>();
+        List<DetailRow<V>> vector = new ArrayList<>();
         vectorField.set(bean, vector);
-        SVColumn<V> svColumn = readSVColumn(headers, values, offset);
+        DetailRow<V> svColumn = readSVColumn(headers, values, offset);
         vector.add(svColumn);
         return width;
     }
 
-    private SVColumn<V> readSVColumn(List<String> headers, List<String> values, int offset)
+    private DetailRow<V> readSVColumn(List<String> headers, List<String> values, int offset)
             throws IllegalAccessException {
-        SVColumn<V> svColumn = new SVColumn<>();
+        DetailRow<V> svColumn = new DetailRow<>();
 
         V svColumnScalar = ReflectUtil.newInstance(vectorClass);
         scalarField.set(svColumn, svColumnScalar);
@@ -291,7 +293,7 @@ public class SVParser<S, V> implements
         return svColumn;
     }
 
-    private void fillScalarMap(SVRow<S, V> bean, List<String> headers, List<String> values,
+    private void fillScalarMap(MasterDetailRow<S, V> bean, List<String> headers, List<String> values,
             int start, int end) throws IllegalAccessException {
         Map<String, String> map = new HashMap<>();
         scalarMapField.set(bean, map);
@@ -300,7 +302,7 @@ public class SVParser<S, V> implements
         }
     }
 
-    private void fillVectorMap(SVColumn<V> svColumn, List<String> headers, List<String> values,
+    private void fillVectorMap(DetailRow<V> svColumn, List<String> headers, List<String> values,
             int start, int end) throws IllegalAccessException {
         Map<String, String> map = new HashMap<>();
         scalarMapField.set(svColumn, map);

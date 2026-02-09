@@ -13,7 +13,7 @@ import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelUtil;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.parse.SVParser;
-import org.dreamcat.common.excel.parse.SVRow;
+import org.dreamcat.common.excel.model.MasterDetailRow;
 import org.dreamcat.common.util.BeanUtil;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +36,7 @@ class SVParserTest {
         SVParser<Dancer, Maid> parser = new SVParser<>(Dancer.class, Maid.class, 1);
         parser.setHeaderIndex(2);
         parser.setVectorFirstHeaderName("maid-bm");
-        List<SVRow<Dancer, Maid>> rows = parser.readSheetAsValue(book1, 0);
+        List<MasterDetailRow<Dancer, Maid>> rows = parser.readSheetAsValue(book1, 0);
         rows.forEach(row -> System.out.println(BeanUtil.toPrettyString(row)));
         System.out.println("total " + rows.size());
     }

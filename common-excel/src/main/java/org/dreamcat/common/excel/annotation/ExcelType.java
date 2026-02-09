@@ -1,9 +1,9 @@
 package org.dreamcat.common.excel.annotation;
 
 import lombok.Getter;
+import org.dreamcat.common.Triple;
 import org.dreamcat.common.asm.BeanMapUtil;
 import org.dreamcat.common.excel.ExcelCell;
-import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.annotation.ExcelColumn.SubValue;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.ReflectUtil;
@@ -38,7 +38,8 @@ public @interface ExcelType {
         // any column expanded
         private boolean subheader;
 
-        private transient List<IExcelCell> headerCells;
+        // cells, rowSpan, columnSpan
+        private transient Triple<List<ExcelCell>, Integer, Integer> headerCells;
 
         public static Value parse(Class<?> clazz) {
             Value typeValue = new Value();
@@ -104,7 +105,7 @@ public @interface ExcelType {
             return typeValue;
         }
 
-        public synchronized List<IExcelCell> getHeaderCells() {
+        public synchronized Triple<List<ExcelCell>, Integer, Integer> getHeaderCells() {
             if (headerCells == null) {
                 initHeaderCells();
             }
@@ -112,7 +113,7 @@ public @interface ExcelType {
         }
 
         private void initHeaderCells() {
-            headerCells = new ArrayList<>();
+            List<ExcelCell> cells = new ArrayList<>();
 
             int offset = 0;
             int rowSpan = subheader ? 2 : 1;
@@ -130,14 +131,14 @@ public @interface ExcelType {
                 if (subValues == null) {
                     excelCell.setColumnSpan(1);
                     offset++;
-                    headerCells.add(excelCell);
+                    cells.add(excelCell);
                     continue;
                 }
 
                 excelCell.setRowSpan(1);
                 if (subheader) {
                     excelCell.setColumnSpan(subValues.size());
-                    headerCells.add(excelCell);
+                    cells.add(excelCell);
                 }
                 for (SubValue subValue : subValues) {
                     ExcelCell subExcelCell = new ExcelCell(subValue.getHeader(), 0, offset++);
@@ -149,13 +150,14 @@ public @interface ExcelType {
                     if (subheader) {
                         subExcelCell.setRowIndex(1);
                     }
-                    headerCells.add(subExcelCell);
+                    cells.add(subExcelCell);
                 }
             }
+            headerCells = Triple.of(cells, rowSpan, offset);
         }
 
-        public List<IExcelCell> getColumnCells(Object row) {
-            List<IExcelCell> cells = new ArrayList<>();
+        public List<ExcelCell> getColumnCells(Object row) {
+            List<ExcelCell> cells = new ArrayList<>();
             Map<String, Object> rowMap = BeanMapUtil.toShallowMap(row);
 
             int offset = 0;

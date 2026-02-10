@@ -1,6 +1,7 @@
 package org.dreamcat.common.excel;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -35,6 +36,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,7 @@ public class ExcelWorkbook<T extends IExcelSheet> {
     final Map<PictureData, ExcelPictureData> reservedPictureDatas = new LinkedHashMap<>();
 
     boolean date1904;
+    private final Map<Short, byte[]> paletteRecords = new HashMap<>();
 
     public ExcelWorkbook<T> addSheet(T sheet) {
         sheets.add(sheet);
@@ -69,6 +72,12 @@ public class ExcelWorkbook<T extends IExcelSheet> {
         }
         return this;
     }
+
+    public void setColorAtIndex(short index, byte red, byte green, byte blue) {
+        paletteRecords.put(index, new byte[]{red, green, blue});
+    }
+
+    // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 
     public List<T> getSheets() {
         return Collections.unmodifiableList(sheets);
@@ -174,7 +183,13 @@ public class ExcelWorkbook<T extends IExcelSheet> {
     }
 
     public HSSFWorkbook toWorkbook2003() {
-        return toWorkbook(new HSSFWorkbook());
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFPalette customPalette = workbook.getCustomPalette();
+        for (Map.Entry<Short, byte[]> entry : paletteRecords.entrySet()) {
+            byte[] rgb = entry.getValue();
+            customPalette.setColorAtIndex(entry.getKey(), rgb[0], rgb[1], rgb[2]);
+        }
+        return toWorkbook(workbook);
     }
 
     private  <W extends Workbook> W toWorkbook(W workbook) {
@@ -215,7 +230,9 @@ public class ExcelWorkbook<T extends IExcelSheet> {
 
             // content
             IExcelContent cellContent = excelCell.getContent();
-            cellContent.fill(cell);
+            if (cellContent != null) {
+                cellContent.fill(cell);
+            }
 
             // font and style
             CellStyle style = makeCellStyle(excelCell, workbook);

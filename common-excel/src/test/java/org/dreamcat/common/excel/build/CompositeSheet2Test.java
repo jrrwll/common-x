@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Create by tuke on 2020/7/22
  */
-class MixedSheet2Test extends BaseTest {
+class CompositeSheet2Test extends BaseTest {
 
     @Test
     void testSmall() {
@@ -28,13 +28,13 @@ class MixedSheet2Test extends BaseTest {
 
         List<ExcelCell> cells1 = new ArrayList<>();
         cells1.add(new ExcelCell("A1:C2", 0, 0, 2, 3)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.GREY_50_PERCENT)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.GREY_50_PERCENT)));
         cells1.add(new ExcelCell("D1:D3", 0, 3, 3, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.RED)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.RED)));
         cells1.add(new ExcelCell("B3:C3", 2, 1, 1, 2)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.GREEN)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.GREEN)));
         cells1.add(new ExcelCell("A3", 2, 0)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.LIGHT_BLUE)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.LIGHT_BLUE)));
         sheet.addRow(cells1);
 
         sheet.addRow(new Pojo(1, rand(), null, choose72(6)));
@@ -42,15 +42,15 @@ class MixedSheet2Test extends BaseTest {
 
         List<ExcelCell> cells2 = new ArrayList<>();
         cells2.add(new ExcelCell("A6:B6", 0, 0, 1, 2)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.PINK)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.PINK)));
         cells2.add(new ExcelCell("A7", 1, 0, 1, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.LIGHT_YELLOW)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.LIGHT_YELLOW)));
         cells2.add(new ExcelCell("B7:C7", 1, 1, 1, 2)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.ORANGE)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.ORANGE)));
         cells2.add(new ExcelCell("C6", 0, 2, 1, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.YELLOW1)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.YELLOW1)));
         cells2.add(new ExcelCell("D6:D7", 0, 3, 2, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.TURQUOISE)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.TURQUOISE)));
         sheet.addRow(cells2);
 
         sheet.addRow(new Pojo(3, rand(), null, choose72(6)));
@@ -66,13 +66,13 @@ class MixedSheet2Test extends BaseTest {
         // list1
         List<ExcelCell> cells1 = new ArrayList<>();
         cells1.add(new ExcelCell("A1:C2", 0, 0, 2, 3)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.GREY_50_PERCENT)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.GREY_50_PERCENT)));
         cells1.add(new ExcelCell("D1:D3", 0, 3, 3, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.RED)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.RED)));
         cells1.add(new ExcelCell("B3:C3", 2, 1, 1, 2)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.GREEN)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.GREEN)));
         cells1.add(new ExcelCell("A3", 2, 0)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.LIGHT_BLUE)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.LIGHT_BLUE)));
         sheet.addRow(cells1);
 
         // list2
@@ -95,15 +95,15 @@ class MixedSheet2Test extends BaseTest {
         // // list4
         List<ExcelCell> cells2 = new ArrayList<>();
         cells2.add(new ExcelCell("A6:B6", 0, 0, 1, 2)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.PINK)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.PINK)));
         cells2.add(new ExcelCell("A7", 1, 0, 1, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.BLUE_GREY)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.BLUE_GREY)));
         cells2.add(new ExcelCell("B7:C7", 1, 1, 1, 2)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.GREY_25_PERCENT)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.GREY_25_PERCENT)));
         cells2.add(new ExcelCell("C6", 0, 2, 1, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.DARK_YELLOW)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.DARK_YELLOW)));
         cells2.add(new ExcelCell("D6:D7", 0, 3, 2, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.DARK_BLUE)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.DARK_BLUE)));
         sheet.addRow(cells2);
 
         // list5

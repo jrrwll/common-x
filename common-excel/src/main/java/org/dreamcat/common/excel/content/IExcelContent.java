@@ -54,7 +54,7 @@ public interface IExcelContent {
             case FORMULA:
                 return new ExcelFormulaContent(cell.getCellFormula());
             default:
-                return new ExcelStringContent();
+                return null;
         }
     }
 

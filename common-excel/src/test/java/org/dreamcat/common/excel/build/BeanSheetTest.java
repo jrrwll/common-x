@@ -31,18 +31,18 @@ import java.util.Date;
 /**
  * Create by tuke on 2020/7/26
  */
-public class AnnotatedSheetTest extends BaseTest {
+public class BeanSheetTest extends BaseTest {
 
     @Test
     void testSmall() {
-        AnnotatedSheet<AnnotatedPojo> sheet = new AnnotatedSheet<>(AnnotatedPojo.class);
+        BeanSheet<AnnotatedPojo> sheet = new BeanSheet<>(AnnotatedPojo.class);
         sheet.setBody(ArrayUtil.mapRangeToList(1, 4, AnnotatedPojo::create));
         writeXlsx("testSmall", sheet);
     }
 
     @Test
     void testSmallSimple() {
-        AnnotatedSheet<Pojo> sheet = new AnnotatedSheet<>(Pojo.class);
+        BeanSheet<Pojo> sheet = new BeanSheet<>(Pojo.class);
         sheet.setBody(ArrayUtil.mapRangeToList(1, 4, Pojo::create));
         writeXlsx("testSmallSimple", sheet);
     }
@@ -53,7 +53,7 @@ public class AnnotatedSheetTest extends BaseTest {
         ExcelSheet headerSheet = MixedSheetTest.createHeaderSheet();
 
         // body
-        AnnotatedSheet<Pojo> bodySheet = new AnnotatedSheet<>(Pojo.class);
+        BeanSheet<Pojo> bodySheet = new BeanSheet<>(Pojo.class);
         ArrayList<Pojo> pojoList;
         pojoList = new ArrayList<>();
         for (int i = 0; i < 20_0000; i++) {
@@ -61,7 +61,7 @@ public class AnnotatedSheetTest extends BaseTest {
         }
         bodySheet.setBody(pojoList);
 
-        MixedSheet sheet = new MixedSheet();
+        CompositeSheet sheet = new CompositeSheet();
         sheet.setName("Sheet One");
         sheet.setSheets(Arrays.asList(headerSheet, bodySheet));
         writeXlsxWithBigGrid("testHuge", sheet);

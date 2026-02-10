@@ -25,6 +25,8 @@ public @interface ExcelColumn {
 
     int fieldIndex() default -1;
 
+    boolean ignore() default false;
+
     String header() default "";
 
     boolean expanded() default false;

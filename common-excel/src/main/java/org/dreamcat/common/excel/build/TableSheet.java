@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
  */
 @Setter
 @NoArgsConstructor
-public class SimpleSheet implements IExcelSheet {
+public class TableSheet implements IExcelSheet {
 
     @Getter
     private String name;

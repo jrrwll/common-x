@@ -8,7 +8,7 @@ import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.IExcelSheet;
-import org.dreamcat.common.excel.build.MixedSheet2Test.Pojo;
+import org.dreamcat.common.excel.build.CompositeSheet2Test.Pojo;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.junit.jupiter.api.Test;
 
@@ -23,29 +23,29 @@ public class MixedSheetTest extends BaseTest {
 
     @Test
     void testSmall() {
-        MixedSheet sheet1 = new MixedSheet();
+        CompositeSheet sheet1 = new CompositeSheet();
         sheet1.setName("Sheet One");
         List<IExcelSheet> sheets1 = new ArrayList<>();
         sheet1.setSheets(sheets1);
         for (int i = 0; i < 5; i++) {
-            SimpleSheet simpleSheet = new SimpleSheet();
-            simpleSheet.setDefaultStyle(SimpleSheetTest.defaultStyle);
-            simpleSheet.setHeader(SimpleSheetTest.buildHeader());
-            simpleSheet.setBody(SimpleSheetTest.buildBody());
-            sheets1.add(simpleSheet);
+            TableSheet tableSheet = new TableSheet();
+            tableSheet.setDefaultStyle(TableSheetTest.defaultStyle);
+            tableSheet.setHeader(TableSheetTest.buildHeader());
+            tableSheet.setBody(TableSheetTest.buildBody());
+            sheets1.add(tableSheet);
         }
 
-        MixedSheet sheet2 = new MixedSheet();
+        CompositeSheet sheet2 = new CompositeSheet();
         sheet2.setName("Sheet2");
         List<IExcelSheet> sheets2 = new ArrayList<>();
         sheet2.setSheets(sheets2);
         for (int i = 0; i < 4; i++) {
-            SimpleSheet simpleSheet = new SimpleSheet();
-            simpleSheet.setDefaultStyle(SimpleSheetTest.defaultStyle);
-            simpleSheet.setHeaderStyle(SimpleSheetTest.defaultHeaderStyle);
-            simpleSheet.setHeader(SimpleSheetTest.buildHeader());
-            simpleSheet.setBody(SimpleSheetTest.buildBody());
-            sheets2.add(simpleSheet);
+            TableSheet tableSheet = new TableSheet();
+            tableSheet.setDefaultStyle(TableSheetTest.defaultStyle);
+            tableSheet.setHeaderStyle(TableSheetTest.defaultHeaderStyle);
+            tableSheet.setHeader(TableSheetTest.buildHeader());
+            tableSheet.setBody(TableSheetTest.buildBody());
+            sheets2.add(tableSheet);
         }
         writeXlsx("testSmall", sheet1, sheet2);
     }
@@ -63,7 +63,7 @@ public class MixedSheetTest extends BaseTest {
         // header
         ExcelSheet sheet1 = createHeaderSheet();
 
-        AnnotatedSheet<Pojo> sheet2 = new AnnotatedSheet<>(Pojo.class);
+        BeanSheet<Pojo> sheet2 = new BeanSheet<>(Pojo.class);
         sheet2.setBody(Arrays.asList(
                 new Pojo(1, rand(), null, choose72(6)),
                 new Pojo(2, rand() * (1 << 16), null, choose72(2))
@@ -71,23 +71,23 @@ public class MixedSheetTest extends BaseTest {
 
         ExcelSheet sheet3 = new ExcelSheet();
         sheet3.addCell(new ExcelCell("A6:B6", 0, 0, 1, 2)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.PINK)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.PINK)));
         sheet3.addCell(new ExcelCell("A7", 1, 0, 1, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.LIGHT_YELLOW)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.LIGHT_YELLOW)));
         sheet3.addCell(new ExcelCell("B7:C7", 1, 1, 1, 2)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.ORANGE)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.ORANGE)));
         sheet3.addCell(new ExcelCell("C6", 0, 2, 1, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.YELLOW1)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.YELLOW1)));
         sheet3.addCell(new ExcelCell("D6:D7", 0, 3, 2, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.TURQUOISE)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.TURQUOISE)));
 
-        AnnotatedSheet<Pojo> sheet4 = new AnnotatedSheet<>(Pojo.class);
+        BeanSheet<Pojo> sheet4 = new BeanSheet<>(Pojo.class);
         sheet2.setBody(Arrays.asList(
                 new Pojo(3, rand(), null, choose72(6)),
                 new Pojo(4, rand() * (1 << 16), null, choose72(2))
         ));
 
-        MixedSheet sheet = new MixedSheet();
+        CompositeSheet sheet = new CompositeSheet();
         sheet.setName("Sheet One");
         sheet.setSheets(Arrays.asList(sheet1, sheet2, sheet3, sheet4));
         writeXlsxWithBigGrid("test", sheet);
@@ -96,13 +96,13 @@ public class MixedSheetTest extends BaseTest {
     static ExcelSheet createHeaderSheet() {
         ExcelSheet headerSheet = new ExcelSheet();
         headerSheet.addCell(new ExcelCell("A1:C2", 0, 0, 2, 3)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.GREY_50_PERCENT)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.GREY_50_PERCENT)));
         headerSheet.addCell(new ExcelCell("D1:D3", 0, 3, 3, 1)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.RED)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.RED)));
         headerSheet.addCell(new ExcelCell("B3:C3", 2, 1, 1, 2)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.GREEN)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.GREEN)));
         headerSheet.addCell(new ExcelCell("A3", 2, 0)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.LIGHT_BLUE)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.LIGHT_BLUE)));
         return headerSheet;
     }
 }

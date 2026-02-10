@@ -70,37 +70,37 @@ class SVSheetTest extends BaseTest {
         headerSheet.addCell(new ExcelCell("A1:A2", 0, 0, 2, 1)
                 .setStyle(new ExcelStyle().setVerticalAlignment(VerticalAlignment.CENTER)
                         .setHorizontalAlignment(HorizontalAlignment.CENTER)
-                        .fgColor(IndexedColors.ROSE)
+                        .fillColor(IndexedColors.ROSE)
                         .setFont(new ExcelFont().height(24).color(IndexedColors.RED1))));
         // col2
         headerSheet.addCell(new ExcelCell("B1", 0, 1, 2, 1)
                 .setStyle(new ExcelStyle()
-                        .fgColor(IndexedColors.VIOLET)
+                        .fillColor(IndexedColors.VIOLET)
                         .fontHeight(32)));
 
         // col3
         headerSheet.addCell(new ExcelCell("C1:D1", 0, 2, 1, 2)
                 .setStyle(new ExcelStyle()
                         .setVerticalAlignment(VerticalAlignment.CENTER)
-                        .fgColor(IndexedColors.LEMON_CHIFFON)
+                        .fillColor(IndexedColors.LEMON_CHIFFON)
                         .fontHeight(16)));
         headerSheet.addCell(new ExcelCell("C2", 1, 2)
                 .setStyle(new ExcelStyle()
-                        .fgColor(IndexedColors.GREY_50_PERCENT)
+                        .fillColor(IndexedColors.GREY_50_PERCENT)
                         .fontHeight(14)));
         headerSheet.addCell(new ExcelCell("D2", 1, 3)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.LAVENDER)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.LAVENDER)));
 
         // col4
         headerSheet.addCell(new ExcelCell("E1:F1", 0, 4, 1, 2)
                 .setStyle(new ExcelStyle()
                         .setVerticalAlignment(VerticalAlignment.CENTER)
-                        .fgColor(IndexedColors.AQUA)
+                        .fillColor(IndexedColors.AQUA)
                         .fontHeight(12)));
         headerSheet.addCell(new ExcelCell("E2", 1, 4)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.OLIVE_GREEN).fontHeight(10)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.OLIVE_GREEN).fontHeight(10)));
         headerSheet.addCell(new ExcelCell("F2", 1, 5)
-                .setStyle(new ExcelStyle().fgColor(IndexedColors.PALE_BLUE).fontHeight(8)));
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.PALE_BLUE).fontHeight(8)));
         return headerSheet;
     }
 

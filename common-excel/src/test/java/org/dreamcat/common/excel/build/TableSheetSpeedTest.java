@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * @author Jerry Will
  * @version 2026-02-04
  */
-public class SimpleSheetSpeedTest {
+public class TableSheetSpeedTest {
 
     @Test
     void test() throws Exception {
@@ -48,7 +48,7 @@ public class SimpleSheetSpeedTest {
                 .setVerticalAlignment(VerticalAlignment.CENTER)
                 .fontName("宋体")
                 .fontHeight(14)
-                .fontBold(true);
+                .fontBold();
 
         List<List<String>> easyExcelHeader = header.stream()
                 .map(Collections::singletonList)
@@ -68,7 +68,7 @@ public class SimpleSheetSpeedTest {
             Timeit timeit = Timeit.ofActions();
             long[] ts = timeit
                     .addAction(() -> {
-                        SimpleSheet sheet = new SimpleSheet();
+                        TableSheet sheet = new TableSheet();
                         sheet.setDefaultStyle(defaultStyle);
                         sheet.setHeaderStyle(headerStyle);
                         sheet.setHeader(header);

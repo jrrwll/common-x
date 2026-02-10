@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Create by tuke on 2020/7/22
  */
-class SimpleSheetTest extends BaseTest {
+class TableSheetTest extends BaseTest {
 
     static ExcelStyle defaultStyle = new ExcelStyle()
             .fontName("Times New Roman")
@@ -25,18 +25,18 @@ class SimpleSheetTest extends BaseTest {
             .setWrapText(true)
             .fontName("宋体")
             .fontHeight(14)
-            .fontBold(true)
+            .fontBold()
             .setLocked(true);
 
     @Test
     void testSmall() {
-        SimpleSheet sheet1 = new SimpleSheet();
+        TableSheet sheet1 = new TableSheet();
         sheet1.setDefaultStyle(defaultStyle);
         sheet1.setName("small");
         sheet1.setHeader(buildHeader());
         sheet1.setBody(buildBody());
 
-        SimpleSheet sheet2 = new SimpleSheet();
+        TableSheet sheet2 = new TableSheet();
         sheet2.setHeaderStyle(defaultHeaderStyle);
         sheet2.setName("small_style");
         sheet2.setHeader(buildHeader());
@@ -45,17 +45,17 @@ class SimpleSheetTest extends BaseTest {
         ExcelStyle style1 = new ExcelStyle()
                 .fontName("Arial")
                 .fontHeight(10)
-                .fontBold(true)
-                .fgColor(IndexedColors.SKY_BLUE)
+                .fontBold()
+                .fillColor(IndexedColors.SKY_BLUE)
                 .borderColor(IndexedColors.BLACK);
         ExcelStyle style2 = new ExcelStyle()
                 .fontName("宋体")
                 .fontHeight(13)
-                .fgColor(IndexedColors.ORANGE)
+                .fillColor(IndexedColors.ORANGE)
                 .borderColor(IndexedColors.RED, BorderStyle.DOUBLE);
         sheet2.setColumnStyles(Arrays.asList(style1, style2));
 
-        SimpleSheet sheet3 = new SimpleSheet();
+        TableSheet sheet3 = new TableSheet();
         sheet3.setDefaultStyle(defaultStyle);
         sheet3.setHeaderStyle(defaultHeaderStyle);
         sheet3.setName("small_style2");

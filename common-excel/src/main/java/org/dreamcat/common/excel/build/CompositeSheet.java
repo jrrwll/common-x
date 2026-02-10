@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
  */
 @Setter
 @NoArgsConstructor
-public class MixedSheet implements IExcelSheet {
+public class CompositeSheet implements IExcelSheet {
 
     @Getter
     private String name;

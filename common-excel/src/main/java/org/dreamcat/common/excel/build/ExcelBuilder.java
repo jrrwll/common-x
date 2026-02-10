@@ -1,15 +1,29 @@
 package org.dreamcat.common.excel.build;
 
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.IExcelSheet;
+import org.dreamcat.common.excel.build.MasterDetailSheet.ExtraField;
+import org.dreamcat.common.excel.model.DetailRow;
+import org.dreamcat.common.excel.model.MasterDetailRow;
+import org.dreamcat.common.excel.style.ExcelStyle;
+import org.dreamcat.common.util.ListUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Create by tuke on 2020/7/22
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ExcelBuilder {
 
     private final ExcelWorkbook<IExcelSheet> workbook = new ExcelWorkbook<>();
@@ -29,12 +43,45 @@ public class ExcelBuilder {
         workbook.writeTo(output);
     }
 
-    public ExcelBuilder addBasicSheet() {
-        return this;
+    public ExcelBuilder addSheet(String sheetName, List<String> header, List<List<Object>> body) {
+        return addSheet(sheet -> sheet
+                .name(sheetName)
+                .header(header)
+                .body(body));
     }
 
-    public ExcelBuilder addMixedSheet() {
-        return this;
+    public ExcelBuilder addSheet(Consumer<TableSheetBuilder> builder) {
+        TableSheetBuilder sheetBuilder = new TableSheetBuilder();
+        builder.accept(sheetBuilder);
+        return addSheet(sheetBuilder.build());
+    }
+
+    public <T> ExcelBuilder addSheet(Class<T> beanType, List<T> body) {
+        return addSheet(beanType, sheet -> sheet
+                .body(body));
+    }
+
+    public <T> ExcelBuilder addSheet(Class<T> beanType, Consumer<BeanSheetBuilder<T>> builder) {
+        BeanSheetBuilder<T> sheetBuilder = new BeanSheetBuilder<>(beanType);
+        builder.accept(sheetBuilder);
+        return addSheet(sheetBuilder.build());
+    }
+
+    public <M, D> ExcelBuilder addSheet(Class<M> masterType, Class<D> detailType, Consumer<MasterDetailSheetBuilder<M, D>> builder) {
+        MasterDetailSheetBuilder<M, D> sheetBuilder = new MasterDetailSheetBuilder<>(masterType, detailType);
+        builder.accept(sheetBuilder);
+        return addSheet(sheetBuilder.build());
+    }
+
+    public ExcelBuilder addSheet(String sheetName, IExcelSheet firstSheet, IExcelSheet... remainingSheets) {
+        return addSheet(sheetName, ListUtil.asList(firstSheet, remainingSheets));
+    }
+
+    public ExcelBuilder addSheet(String sheetName, List<IExcelSheet> sheets) {
+        CompositeSheet sheet = new CompositeSheet();
+        sheet.setName(sheetName);
+        sheet.setSheets(sheets);
+        return addSheet(sheet);
     }
 
     public ExcelBuilder addSheet(IExcelSheet sheet) {
@@ -42,11 +89,135 @@ public class ExcelBuilder {
         return this;
     }
 
-    public static void main(String[] args) throws Exception {
-        ExcelBuilder.build()
-                .addBasicSheet()
-                .addMixedSheet()
-                .addSheet(new MixedSheet())
-                .writeTo(new File("test.xlsx"));
+    @Setter
+    @Accessors(fluent = true)
+    @RequiredArgsConstructor
+    public static class TableSheetBuilder {
+
+        ExcelStyle defaultStyle;
+        ExcelStyle headerStyle;
+        List<ExcelStyle> columnStyles;
+        boolean disableDefaultDataFormat;
+        String defaultDateTimeDataFormat;
+        String defaultDateDataFormat;
+        String defaultTimeDataFormat;
+
+        String name;
+        List<String> header;
+        List<List<Object>> body;
+
+        public TableSheet build() {
+            TableSheet sheet = new TableSheet();
+            sheet.setDefaultStyle(defaultStyle);
+            sheet.setHeaderStyle(headerStyle);
+            sheet.setColumnStyles(columnStyles);
+            sheet.setDisableDefaultDataFormat(disableDefaultDataFormat);
+            if (defaultDateTimeDataFormat != null) {
+                sheet.setDefaultDateTimeDataFormat(defaultDateTimeDataFormat);
+            }
+            if (defaultDateDataFormat != null) {
+                sheet.setDefaultDateDataFormat(defaultDateDataFormat);
+            }
+            if (defaultTimeDataFormat != null) {
+                sheet.setDefaultTimeDataFormat(defaultTimeDataFormat);
+            }
+
+            sheet.setName(name);
+            sheet.setHeader(header);
+            sheet.setBody(body);
+            return sheet;
+        }
+    }
+
+    @Setter
+    @Accessors(fluent = true)
+    @RequiredArgsConstructor
+    public static class BeanSheetBuilder<T> {
+
+        final Class<T> beanType;
+
+        ExcelStyle defaultStyle;
+
+        String name;
+        boolean headerless;
+        List<T> body;
+
+        public BeanSheet<T> build() {
+            BeanSheet<T> sheet = new BeanSheet<>(beanType);
+            sheet.setDefaultStyle(defaultStyle);
+
+            sheet.setName(name);
+            sheet.setHeaderless(headerless);
+            sheet.setBody(body);
+            return sheet;
+        }
+    }
+
+    @Setter
+    @Accessors(fluent = true)
+    @RequiredArgsConstructor
+    public static class MasterDetailSheetBuilder<M, D> {
+
+        final Class<M> masterType;
+        final Class<D> detailType;
+
+        List<ExtraField> masterExtraFields;
+        List<ExtraField> detailExtraFields;
+        boolean detailSubheader;
+        String detailSubheaderName;
+        String masterExtraSubheader;
+        String detailExtraSubheader;
+
+        String name;
+        boolean headerless;
+        List<MasterDetailRow<M, D>> body;
+
+        public MasterDetailSheetBuilder<M, D> body(List<M> body, Function<M, List<? extends D>> detailGetter) {
+            this.body = body.stream()
+                    .map(master -> MasterDetailRow.fromEntities(master, (List) detailGetter.apply(master)))
+                    .collect(Collectors.toList());
+            return this;
+        }
+
+        public MasterDetailSheetBuilder<M, D> body(
+                List<M> body, Function<M, List<? extends D>> detailGetter,
+                Function<M, Map<String, Object>> masterExtraGetter, Function<D, Map<String, Object>> detailExtraGetter) {
+            this.body = body.stream()
+                    .map(master -> {
+                        MasterDetailRow<M, D> mdr = new MasterDetailRow<>();
+                        mdr.setMaster(master);
+                        if (masterExtraGetter != null) {
+                            mdr.setMasterExtra(masterExtraGetter.apply(master));
+                        }
+                        mdr.setDetails(detailGetter.apply(master).stream()
+                                .map(detail -> {
+                                    DetailRow<D> dr = new DetailRow<>();
+                                    dr.setDetail(detail);
+                                    if (detailExtraGetter != null) {
+                                        dr.setDetailExtra(detailExtraGetter.apply(detail));
+                                    }
+                                    return dr;
+                                })
+                                .collect(Collectors.toList()));
+                        return mdr;
+                    })
+                    .collect(Collectors.toList());
+            return this;
+        }
+
+        public MasterDetailSheet<M, D> build() {
+            MasterDetailSheet<M, D> sheet = new MasterDetailSheet<>(masterType, detailType);
+            sheet.setMasterExtraFields(masterExtraFields);
+            sheet.setDetailExtraFields(detailExtraFields);
+            sheet.setDetailSubheader(detailSubheader);
+            sheet.setDetailSubheaderName(detailSubheaderName);
+            sheet.setMasterExtraSubheader(masterExtraSubheader);
+            sheet.setDetailExtraSubheader(detailExtraSubheader);
+
+            sheet.setName(name);
+            sheet.setHeaderless(headerless);
+            sheet.setBody(body);
+            return sheet;
+        }
     }
 }

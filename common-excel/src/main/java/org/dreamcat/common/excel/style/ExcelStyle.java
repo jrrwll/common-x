@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
 import org.dreamcat.common.util.ObjectUtil;
 
@@ -39,8 +40,8 @@ public class ExcelStyle {
     // whereas XSSF uses values from 0 to 180 degrees
     private short rotation = 0;
 
-    private short bgColor = -1;
-    private short fgColor = -1;
+    private ExcelColor fillColor;
+    private ExcelColor fillBaseColor; // barely used, don't work on SOLID_FOREGROUND;
     private FillPatternType fillPattern;
 
     private BorderStyle borderBottom;
@@ -48,10 +49,10 @@ public class ExcelStyle {
     private BorderStyle borderTop;
     private BorderStyle borderRight;
 
-    private short bottomBorderColor = -1;
-    private short leftBorderColor = -1;
-    private short topBorderColor = -1;
-    private short rightBorderColor = -1;
+    private ExcelColor bottomBorderColor;
+    private ExcelColor leftBorderColor;
+    private ExcelColor topBorderColor;
+    private ExcelColor rightBorderColor;
 
     public ExcelStyle copy() {
         ExcelStyle newStyle = new ExcelStyle();
@@ -68,8 +69,8 @@ public class ExcelStyle {
         newStyle.shrinkToFit = this.shrinkToFit;
         newStyle.indent = this.indent;
         newStyle.rotation = this.rotation;
-        newStyle.bgColor = this.bgColor;
-        newStyle.fgColor = this.fgColor;
+        newStyle.fillColor = this.fillColor;
+        newStyle.fillBaseColor = this.fillBaseColor;
         newStyle.fillPattern = this.fillPattern;
 
         newStyle.borderBottom = this.borderBottom;
@@ -122,11 +123,11 @@ public class ExcelStyle {
         if (style.rotation != 0) {
             this.rotation = style.rotation;
         }
-        if (hasColor(style.bgColor)) {
-            this.bgColor = style.bgColor;
+        if (style.fillColor != null) {
+            this.fillColor = style.fillColor;
         }
-        if (hasColor(style.fgColor)) {
-            this.fgColor = style.fgColor;
+        if (style.fillBaseColor != null) {
+            this.fillBaseColor = style.fillBaseColor;
         }
         if (style.fillPattern != null) {
             this.fillPattern = style.fillPattern;
@@ -143,16 +144,16 @@ public class ExcelStyle {
         if (style.borderRight != null) {
             this.borderRight = style.borderRight;
         }
-        if (hasColor(style.bottomBorderColor)) {
+        if (style.bottomBorderColor != null) {
             this.bottomBorderColor = style.bottomBorderColor;
         }
-        if (hasColor(style.leftBorderColor)) {
+        if (style.leftBorderColor != null) {
             this.leftBorderColor = style.leftBorderColor;
         }
-        if (hasColor(style.topBorderColor)) {
+        if (style.topBorderColor != null) {
             this.topBorderColor = style.topBorderColor;
         }
-        if (hasColor(style.rightBorderColor)) {
+        if (style.rightBorderColor != null) {
             this.rightBorderColor = style.rightBorderColor;
         }
     }
@@ -167,73 +168,91 @@ public class ExcelStyle {
         excelStyle.setHidden(style.getLocked());
         excelStyle.setQuotePrefix(style.getQuotePrefixed());
         excelStyle.setShrinkToFit(style.getShrinkToFit());
-        // rich style
         excelStyle.setIndent(style.getIndention());
         excelStyle.setRotation(style.getIndention());
-        excelStyle.setBgColor(style.getFillBackgroundColor());
-        excelStyle.setFgColor(style.getFillForegroundColor());
+
+        excelStyle.setFillColor(ExcelColor.from(style.getFillForegroundColorColor()));
+        excelStyle.setFillBaseColor(ExcelColor.from(style.getFillBackgroundColorColor()));
         excelStyle.setFillPattern(style.getFillPattern());
+
         excelStyle.setBorderBottom(style.getBorderBottom());
         excelStyle.setBorderLeft(style.getBorderLeft());
         excelStyle.setBorderTop(style.getBorderTop());
         excelStyle.setBorderRight(style.getBorderRight());
-        excelStyle.setBottomBorderColor(style.getBottomBorderColor());
-        excelStyle.setLeftBorderColor(style.getLeftBorderColor());
-        excelStyle.setTopBorderColor(style.getTopBorderColor());
-        excelStyle.setRightBorderColor(style.getRightBorderColor());
+
+        if (style instanceof XSSFCellStyle) {
+            XSSFCellStyle xssfStyle = (XSSFCellStyle) style;
+            excelStyle.setBottomBorderColor(ExcelColor.from(xssfStyle.getBottomBorderXSSFColor()));
+            excelStyle.setLeftBorderColor(ExcelColor.from(xssfStyle.getLeftBorderXSSFColor()));
+            excelStyle.setTopBorderColor(ExcelColor.from(xssfStyle.getTopBorderXSSFColor()));
+            excelStyle.setRightBorderColor(ExcelColor.from(xssfStyle.getRightBorderXSSFColor()));
+        } else {
+            excelStyle.setBottomBorderColor(new ExcelColor(style.getBottomBorderColor()));
+            excelStyle.setLeftBorderColor(new ExcelColor(style.getLeftBorderColor()));
+            excelStyle.setTopBorderColor(new ExcelColor(style.getTopBorderColor()));
+            excelStyle.setRightBorderColor(new ExcelColor(style.getRightBorderColor()));
+        }
         return excelStyle;
     }
 
-    public static ExcelStyle from(ExcelColumnStyle xlsStyle) {
+    public static ExcelStyle from(ExcelColumnStyle columnStyle) {
         ExcelStyle style = new ExcelStyle();
-        style.setDataFormat(xlsStyle.dataFormat());
-        style.setHorizontalAlignment(xlsStyle.horizontalAlignment());
-        style.setVerticalAlignment(xlsStyle.verticalAlignment());
-        style.setHidden(xlsStyle.hidden());
-        style.setWrapText(xlsStyle.wrapText());
-        style.setLocked(xlsStyle.locked());
-        style.setQuotePrefix(xlsStyle.quotePrefix());
-        style.setShrinkToFit(xlsStyle.shrinkToFit());
+        style.setDataFormat(columnStyle.dataFormat());
+        style.setHorizontalAlignment(columnStyle.horizontalAlignment());
+        style.setVerticalAlignment(columnStyle.verticalAlignment());
+        style.setHidden(columnStyle.hidden());
+        style.setWrapText(columnStyle.wrapText());
+        style.setLocked(columnStyle.locked());
+        style.setQuotePrefix(columnStyle.quotePrefix());
+        style.setShrinkToFit(columnStyle.shrinkToFit());
         // rich style
-        style.setIndent(xlsStyle.indent());
-        style.setRotation(xlsStyle.rotation());
+        style.setIndent(columnStyle.indent());
+        style.setRotation(columnStyle.rotation());
 
-        if (xlsStyle.bgColor() != -1) {
-            style.setBgColor(xlsStyle.bgColor());
-        } else {
-            style.setBgColor(xlsStyle.bgIndexedColor().getIndex());
+        String fillColor = columnStyle.fillColor();
+        if (!fillColor.isEmpty()) {
+            style.setFillColor(ExcelColor.fromRgba(fillColor));
+        } else if (columnStyle.fillColorIndex() != IndexedColors.AUTOMATIC){
+            style.setFillColor(new ExcelColor(columnStyle.fillColorIndex().getIndex()));
         }
-        if (xlsStyle.fgColor() != -1) {
-            style.setFgColor(xlsStyle.fgColor());
-        } else {
-            style.setFgColor(xlsStyle.fgIndexedColor().getIndex());
+        String fillBaseColor = columnStyle.fillBaseColor();
+        if (!fillBaseColor.isEmpty()) {
+            style.setFillBaseColor(ExcelColor.fromRgba(fillBaseColor));
+        } else if (columnStyle.fillBaseColorIndex() != IndexedColors.AUTOMATIC){
+            style.setFillBaseColor(new ExcelColor(columnStyle.fillBaseColorIndex().getIndex()));
         }
-        style.setFillPattern(xlsStyle.fillPattern());
+        if (style.getFillColor() != null) {
+            style.setFillPattern(columnStyle.fillPattern());
+        }
 
-        style.setBorderBottom(xlsStyle.borderBottom());
-        style.setBorderLeft(xlsStyle.borderLeft());
-        style.setBorderTop(xlsStyle.borderTop());
-        style.setBorderRight(xlsStyle.borderRight());
+        style.setBorderBottom(columnStyle.borderBottom());
+        style.setBorderLeft(columnStyle.borderLeft());
+        style.setBorderTop(columnStyle.borderTop());
+        style.setBorderRight(columnStyle.borderRight());
 
-        if (xlsStyle.bottomBorderColor() != -1) {
-            style.setBottomBorderColor(xlsStyle.bottomBorderColor());
-        } else {
-            style.setBottomBorderColor(xlsStyle.bottomBorderIndexedColor().getIndex());
+        String bottomBorderColor = columnStyle.bottomBorderColor();
+        if (!bottomBorderColor.isEmpty()) {
+            style.setBottomBorderColor(ExcelColor.fromRgba(bottomBorderColor));
+        } else if (columnStyle.bottomBorderColorIndex() != IndexedColors.AUTOMATIC){
+            style.setBottomBorderColor(new ExcelColor(columnStyle.bottomBorderColorIndex().getIndex()));
         }
-        if (xlsStyle.leftBorderColor() != -1) {
-            style.setLeftBorderColor(xlsStyle.leftBorderColor());
-        } else {
-            style.setLeftBorderColor(xlsStyle.leftBorderIndexedColor().getIndex());
+        String leftBorderColor = columnStyle.leftBorderColor();
+        if (!leftBorderColor.isEmpty()) {
+            style.setLeftBorderColor(ExcelColor.fromRgba(leftBorderColor));
+        } else if (columnStyle.leftBorderColorIndex() != IndexedColors.AUTOMATIC){
+            style.setLeftBorderColor(new ExcelColor(columnStyle.leftBorderColorIndex().getIndex()));
         }
-        if (xlsStyle.topBorderColor() != -1) {
-            style.setTopBorderColor(xlsStyle.topBorderColor());
-        } else {
-            style.setTopBorderColor(xlsStyle.topBorderIndexedColor().getIndex());
+        String topBorderColor = columnStyle.topBorderColor();
+        if (!topBorderColor.isEmpty()) {
+            style.setTopBorderColor(ExcelColor.fromRgba(topBorderColor));
+        } else if (columnStyle.topBorderColorIndex() != IndexedColors.AUTOMATIC){
+            style.setTopBorderColor(new ExcelColor(columnStyle.topBorderColorIndex().getIndex()));
         }
-        if (xlsStyle.rightBorderColor() != -1) {
-            style.setRightBorderColor(xlsStyle.rightBorderColor());
-        } else {
-            style.setRightBorderColor(xlsStyle.rightBorderIndexedColor().getIndex());
+        String rightBorderColor = columnStyle.rightBorderColor();
+        if (!rightBorderColor.isEmpty()) {
+            style.setRightBorderColor(ExcelColor.fromRgba(rightBorderColor));
+        } else if (columnStyle.rightBorderColorIndex() != IndexedColors.AUTOMATIC){
+            style.setRightBorderColor(new ExcelColor(columnStyle.rightBorderColorIndex().getIndex()));
         }
         return style;
     }
@@ -253,9 +272,11 @@ public class ExcelStyle {
 
         if (indent != -1) style.setIndention(indent);
         if (rotation != 0) style.setRotation(rotation);
-        if (hasColor(fgColor) || hasColor(bgColor)) {
-            if (hasColor(fgColor)) style.setFillForegroundColor(fgColor);
-            if (hasColor(bgColor)) style.setFillBackgroundColor(bgColor);
+        if (fillColor != null) {
+            fillColor.fill(style::setFillForegroundColor, style::setFillForegroundColor);
+            if (fillBaseColor != null) {
+                fillBaseColor.fill(style::setFillBackgroundColor, style::setFillBackgroundColor);
+            }
             if (fillPattern != null) {
                 style.setFillPattern(fillPattern);
             } else {
@@ -268,44 +289,60 @@ public class ExcelStyle {
         if (borderTop != null) style.setBorderTop(borderTop);
         if (borderRight != null) style.setBorderRight(borderRight);
 
-        if (hasColor(bottomBorderColor)) style.setBottomBorderColor(bottomBorderColor);
-        if (hasColor(leftBorderColor)) style.setLeftBorderColor(leftBorderColor);
-        if (hasColor(topBorderColor)) style.setTopBorderColor(topBorderColor);
-        if (hasColor(rightBorderColor)) style.setRightBorderColor(rightBorderColor);
+        if (style instanceof XSSFCellStyle) {
+            XSSFCellStyle xssfStyle = (XSSFCellStyle) style;
+            if (bottomBorderColor != null) {
+                bottomBorderColor.fill(xssfStyle::setBottomBorderColor, xssfStyle::setBottomBorderColor);
+            }
+            if (leftBorderColor != null) {
+                leftBorderColor.fill(xssfStyle::setLeftBorderColor, xssfStyle::setLeftBorderColor);
+            }
+            if (topBorderColor != null) {
+                topBorderColor.fill(xssfStyle::setTopBorderColor, xssfStyle::setTopBorderColor);
+            }
+            if (rightBorderColor != null) {
+                rightBorderColor.fill(xssfStyle::setRightBorderColor, xssfStyle::setRightBorderColor);
+            }
+        } else {
+            if (bottomBorderColor != null) {
+                bottomBorderColor.fill(style::setBottomBorderColor);
+            }
+            if (leftBorderColor != null) {
+                leftBorderColor.fill(style::setLeftBorderColor);
+            }
+            if (topBorderColor != null) {
+                topBorderColor.fill(style::setTopBorderColor);
+            }
+            if (rightBorderColor != null) {
+                rightBorderColor.fill(style::setRightBorderColor);
+            }
+        }
     }
 
     static boolean hasColor(int color) {
         return color != -1 && color != IndexedColors.AUTOMATIC.getIndex();
     }
 
-    public ExcelStyle fgColor(IndexedColors color) {
-        this.fgColor = color.getIndex();
-        return this;
-    }
-
-    public ExcelStyle bgColor(IndexedColors color) {
-        this.bgColor = color.getIndex();
+    public ExcelStyle fillColor(IndexedColors color) {
+        this.fillColor = new ExcelColor(color.getIndex());
         return this;
     }
 
     public ExcelStyle borderColor(IndexedColors color) {
-        this.bottomBorderColor = color.getIndex();
-        this.leftBorderColor = color.getIndex();
-        this.topBorderColor = color.getIndex();
-        this.rightBorderColor = color.getIndex();
+        ExcelColor excelColor = new ExcelColor(color.getIndex());
+        this.bottomBorderColor = excelColor;
+        this.leftBorderColor = excelColor;
+        this.topBorderColor = excelColor;
+        this.rightBorderColor = excelColor;
         return this;
     }
 
     public ExcelStyle borderColor(IndexedColors color, BorderStyle style) {
-        this.bottomBorderColor = color.getIndex();
-        this.leftBorderColor = color.getIndex();
-        this.topBorderColor = color.getIndex();
-        this.rightBorderColor = color.getIndex();
         this.borderBottom = style;
         this.borderLeft = style;
         this.borderTop = style;
         this.borderRight = style;
-        return this;
+        return borderColor(color);
     }
 
     public ExcelStyle fontHeight(int height) {
@@ -324,7 +361,7 @@ public class ExcelStyle {
         return this;
     }
 
-    public ExcelStyle fontBold(boolean fontBold) {
+    public ExcelStyle fontBold() {
         if (this.font == null) {
             this.font = new ExcelFont();
         }

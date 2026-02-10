@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Setter
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class AnnotatedSheet<T> implements IExcelSheet {
+public class BeanSheet<T> implements IExcelSheet {
 
     @Getter
     private String name;
@@ -26,7 +26,7 @@ public class AnnotatedSheet<T> implements IExcelSheet {
 
     private final ExcelType.Value excelType;
 
-    public AnnotatedSheet(Class<T> header) {
+    public BeanSheet(Class<T> header) {
         this.excelType = ExcelType.Value.parse(header);
         this.name = excelType.getName();
     }
@@ -39,7 +39,7 @@ public class AnnotatedSheet<T> implements IExcelSheet {
     private class Iter extends RowBasedSheetIter<T> {
 
         private Iter() {
-            super(AnnotatedSheet.this.body);
+            super(BeanSheet.this.body);
         }
 
         @Override

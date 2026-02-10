@@ -89,6 +89,10 @@ public class BaseTest {
         }
     }
 
+    protected File outputFile(String name, String suffix) {
+        return new File(baseDir, getClass().getSimpleName() + "_" + name + "." + suffix);
+    }
+
     /// util
 
     public void printSheet(IExcelSheet sheet) {

@@ -44,17 +44,14 @@ public @interface ExcelColumnStyle {
     // whereas XSSF uses values from 0 to 180 degrees
     short rotation() default 0;
 
-    /**
-     * @return filled background color
-     * @see IndexedColors
-     */
-    short bgColor() default -1;
+    // RGB or RGBA, e.g. #FFFFFF, #FFFFFFFF
+    String fillColor() default "";
 
-    short fgColor() default -1;
+    String fillBaseColor() default "";
 
-    IndexedColors bgIndexedColor() default IndexedColors.AUTOMATIC;
+    IndexedColors fillColorIndex() default IndexedColors.AUTOMATIC;
 
-    IndexedColors fgIndexedColor() default IndexedColors.AUTOMATIC;
+    IndexedColors fillBaseColorIndex() default IndexedColors.AUTOMATIC;
 
     FillPatternType fillPattern() default FillPatternType.SOLID_FOREGROUND;
 
@@ -66,19 +63,19 @@ public @interface ExcelColumnStyle {
 
     BorderStyle borderRight() default BorderStyle.NONE;
 
-    short bottomBorderColor() default -1;
+    String bottomBorderColor() default "";
 
-    short leftBorderColor() default -1;
+    String leftBorderColor() default "";
 
-    short topBorderColor() default -1;
+    String topBorderColor() default "";
 
-    short rightBorderColor() default -1;
+    String rightBorderColor() default "";
 
-    IndexedColors bottomBorderIndexedColor() default IndexedColors.AUTOMATIC;
+    IndexedColors bottomBorderColorIndex() default IndexedColors.AUTOMATIC;
 
-    IndexedColors leftBorderIndexedColor() default IndexedColors.AUTOMATIC;
+    IndexedColors leftBorderColorIndex() default IndexedColors.AUTOMATIC;
 
-    IndexedColors topBorderIndexedColor() default IndexedColors.AUTOMATIC;
+    IndexedColors topBorderColorIndex() default IndexedColors.AUTOMATIC;
 
-    IndexedColors rightBorderIndexedColor() default IndexedColors.AUTOMATIC;
+    IndexedColors rightBorderColorIndex() default IndexedColors.AUTOMATIC;
 }

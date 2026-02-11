@@ -124,7 +124,7 @@ public class SVParser<S, V> implements
                     if (sequence != null) continue values;
 
                     DetailRow<V> svColumn = readSVColumn(headers, values, width);
-                    bean.getVector().add(svColumn);
+                    bean.getDetails().add(svColumn);
                 }
                 break;
             }

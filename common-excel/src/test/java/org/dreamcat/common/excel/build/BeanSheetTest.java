@@ -87,12 +87,12 @@ public class BeanSheetTest extends BaseTest {
     public static class AnnotatedPojo {
 
         @ExcelColumnStyle(horizontalAlignment = HorizontalAlignment.CENTER,
-                fgIndexedColor = IndexedColors.RED)
+                fillColorIndex = IndexedColors.RED)
         @ExcelColumnFont(name = "宋体", height = 24)
         String name;
 
-        @ExcelColumnStyle(fgIndexedColor = IndexedColors.LEMON_CHIFFON,
-                bgIndexedColor = IndexedColors.GREEN,
+        @ExcelColumnStyle(fillColorIndex = IndexedColors.LEMON_CHIFFON,
+                fillBaseColorIndex = IndexedColors.GREEN,
                 fillPattern = FillPatternType.ALT_BARS)
         Double num;
 
@@ -102,14 +102,14 @@ public class BeanSheetTest extends BaseTest {
         Item item;
 
         @ExcelColumnStyle(
-                fgIndexedColor = IndexedColors.ROSE,
+                fillColorIndex = IndexedColors.ROSE,
                 borderBottom = BorderStyle.DASH_DOT_DOT,
                 borderLeft = BorderStyle.THICK)
         @ExcelColumnFont(name = "微软雅黑", height = 16, bold = true, italic = true)
         Date date;
 
         @ExcelColumnStyle(
-                fgIndexedColor = IndexedColors.SKY_BLUE,
+                fillColorIndex = IndexedColors.SKY_BLUE,
                 borderBottom = BorderStyle.DASHED,
                 borderLeft = BorderStyle.THIN)
         @ExcelColumnFont(height = 15, italic = true)

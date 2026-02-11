@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Create by tuke on 2020/7/22
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public class ExcelBuilder {
 
     private final ExcelWorkbook<IExcelSheet> workbook = new ExcelWorkbook<>();
@@ -174,7 +174,7 @@ public class ExcelBuilder {
 
         public MasterDetailSheetBuilder<M, D> body(List<M> body, Function<M, List<? extends D>> detailGetter) {
             this.body = body.stream()
-                    .map(master -> MasterDetailRow.fromEntities(master, (List) detailGetter.apply(master)))
+                    .map(m -> MasterDetailRow.fromEntities(m, (List<D>) detailGetter.apply(m)))
                     .collect(Collectors.toList());
             return this;
         }

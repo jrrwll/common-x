@@ -29,6 +29,14 @@ class ExcelWorkbookTest extends BaseTest {
     }
 
     @Test
+    void reExport() throws Exception {
+        ExcelWorkbook<ExcelSheet> workbook = ExcelWorkbook.from(outputFile("export", "xlsx"));
+        File file = outputFile("reExport", "xlsx");
+        System.out.println("output file: " + file);
+        workbook.writeTo(file);
+    }
+
+    @Test
     void fromAnnotationRowSheetTestTest() {
         readXlsx("export", this::printSheetVerbose);
     }

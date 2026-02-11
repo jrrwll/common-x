@@ -193,6 +193,11 @@ public class ExcelWorkbook<T extends IExcelSheet> {
     }
 
     private  <W extends Workbook> W toWorkbook(W workbook) {
+        // clear all reserved data, poi object is not allowed to reuse
+        reservedFonts.clear();
+        reservedStyles.clear();
+        reservedPictureDatas.clear();
+
         // picture data
         for (ExcelPictureData pictureData : getPictureDatas()) {
             workbook.addPicture(pictureData.getData(), pictureData.getPictureType());

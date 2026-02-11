@@ -1,6 +1,7 @@
 package org.dreamcat.common.excel.annotation;
 
 import lombok.Getter;
+import org.dreamcat.common.excel.annotation.XlsFormat.None;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.ReflectUtil;
@@ -15,10 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 /**
  * Create by tuke on 2021/2/22
  */
+@SuppressWarnings("rawtypes")
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExcelColumn {
@@ -33,6 +36,20 @@ public @interface ExcelColumn {
 
     // enable subheader when it is expanded
     boolean subheader() default false;
+
+    String dataFormat() default "";
+
+    Class<? extends Function> serializer() default None.class;
+
+    Class<? extends Function> deserializer() default None.class;
+
+    class None implements Function {
+
+        @Override
+        public Object apply(Object o) {
+            throw new IllegalStateException("this method may not be invoked");
+        }
+    }
 
     @Getter
     class Value extends SubValue {

@@ -125,12 +125,12 @@ public class XlsMetaTest extends BaseTest {
     public static class Pojo {
 
         @ExcelColumnStyle(horizontalAlignment = HorizontalAlignment.CENTER,
-                fgIndexedColor = IndexedColors.RED)
+                fillColorIndex = IndexedColors.RED)
         @ExcelColumnFont(name = "宋体", height = 24)
         int S;
 
-        @ExcelColumnStyle(fgIndexedColor = IndexedColors.LEMON_CHIFFON,
-                bgIndexedColor = IndexedColors.GREEN,
+        @ExcelColumnStyle(fillColorIndex = IndexedColors.LEMON_CHIFFON,
+                fillBaseColorIndex = IndexedColors.GREEN,
                 fillPattern = FillPatternType.ALT_BARS)
         List<Double> SA;
 
@@ -140,7 +140,7 @@ public class XlsMetaTest extends BaseTest {
         Item V;
 
         @ExcelColumnStyle(
-                fgIndexedColor = IndexedColors.ROSE,
+                fillColorIndex = IndexedColors.ROSE,
                 borderBottom = BorderStyle.DASH_DOT_DOT,
                 borderLeft = BorderStyle.THICK)
         @ExcelColumnFont(name = "微软雅黑", height = 16, bold = true, italic = true)

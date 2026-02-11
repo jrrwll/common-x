@@ -38,7 +38,7 @@ public class TableSheet implements IExcelSheet {
     private String defaultDateDataFormat = "yyyy-MM-dd";
     private String defaultTimeDataFormat = "HH:mm:ss";
 
-    private List<ExcelStyle> columnStyles;
+    private List<ExcelStyle> columnStyles;// todo rename to bodyStyles
     private List<String> header;
     private List<List<Object>> body;
 

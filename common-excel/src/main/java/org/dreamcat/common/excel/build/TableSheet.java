@@ -9,6 +9,7 @@ import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.content.ExcelUnionContent;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.style.ExcelStyle;
+import org.dreamcat.common.util.ObjectUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 /**
  * Create by tuke on 2020/7/22
@@ -32,70 +34,66 @@ public class TableSheet implements IExcelSheet {
     private String name;
     private ExcelStyle defaultStyle;
     private ExcelStyle headerStyle;
+    private List<ExcelStyle> headerStyles; // headerStyles first, headerStyle second
+    private List<ExcelStyle> bodyStyles;
 
     private boolean disableDefaultDataFormat;
     private String defaultDateTimeDataFormat = "yyyy-MM-dd HH:mm:ss";
     private String defaultDateDataFormat = "yyyy-MM-dd";
     private String defaultTimeDataFormat = "HH:mm:ss";
 
-    private List<ExcelStyle> columnStyles;// todo rename to bodyStyles
     private List<String> header;
     private List<List<Object>> body;
 
     @Setter(AccessLevel.NONE)
-    private transient ExcelStyle defaultHeaderStyle;
+    private transient ExcelStyle finalHeaderStyle;
     @Setter(AccessLevel.NONE)
-    private transient List<ExcelStyle> headerStyles;
+    private transient List<ExcelStyle> finalHeaderStyles;
     @Setter(AccessLevel.NONE)
-    private transient List<ExcelStyle> bodyStyles;
+    private transient List<ExcelStyle> finalBodyStyles;
 
     @Override
     public Iterator<IExcelCell> iterator() {
+        // header style
         if (defaultStyle == null) {
-            defaultHeaderStyle = headerStyle;
-            if (headerStyle != null) {
-                defaultHeaderStyle = headerStyle.copy();
-            }
+            finalHeaderStyle = headerStyle;
+            finalHeaderStyles = headerStyles;
         } else {
-            defaultHeaderStyle = defaultStyle.copy();
-            if (headerStyle != null) {
-                defaultHeaderStyle.merge(headerStyle);
+            if (headerStyle == null) {
+                finalHeaderStyle = defaultStyle;
+            } else {
+                finalHeaderStyle = defaultStyle.copy();
+                finalHeaderStyle.merge(headerStyle);
+            }
+            if (ObjectUtil.isNotEmpty(headerStyles)) {
+                finalHeaderStyles = mergeDefaultStyle(headerStyles);
             }
         }
 
-        headerStyles = mergeStyles(columnStyles, defaultHeaderStyle);
-        bodyStyles = mergeStyles(columnStyles, defaultStyle);
+        if (defaultStyle != null) {
+            if (finalHeaderStyle == null) {
+                finalHeaderStyle = defaultStyle;
+            } else {
+                finalHeaderStyle = defaultStyle.copy();
+            }
+        }
 
+        // body style
+        finalBodyStyles = bodyStyles;
         // add default data format for body
         if (!disableDefaultDataFormat && body != null && !body.isEmpty()) {
             for (List<Object> row : body) {
                 if (row != null && !row.isEmpty()) {
-                    bodyStyles = computeDataFormat(bodyStyles, row);
+                    finalBodyStyles = computeDataFormat(bodyStyles, row);
                     break;
                 }
             }
-        }
-
-        return this.new Iter();
-    }
-
-    private static List<ExcelStyle> mergeStyles(List<ExcelStyle> columnStyles, ExcelStyle style) {
-        if (columnStyles == null || columnStyles.isEmpty()) {
-            return null;
-        }
-        List<ExcelStyle> result = new ArrayList<>(columnStyles.size());
-        for (ExcelStyle columnStyle : columnStyles) {
-            ExcelStyle mergedStyle = style != null ? style.copy() : null;
-            if (columnStyle == null) {
-                result.add(mergedStyle);
-            } else if (mergedStyle == null) {
-                result.add(columnStyle.copy());
-            } else {
-                mergedStyle.merge(columnStyle);
-                result.add(mergedStyle);
+        } else if (defaultStyle != null) {
+            if (bodyStyles != null) {
+                finalBodyStyles = mergeDefaultStyle(bodyStyles);
             }
         }
-        return result;
+        return this.new Iter();
     }
 
     private List<ExcelStyle> computeDataFormat(List<ExcelStyle> styles, List<Object> row) {
@@ -116,14 +114,22 @@ public class TableSheet implements IExcelSheet {
             dataFormatMap.put(i, dataFormat);
         }
         if (dataFormatMap.isEmpty()) {
-            return styles;
+            if (ObjectUtil.isEmpty(styles)) {
+                return styles;
+            } else {
+                return mergeDefaultStyle(styles);
+            }
         }
         if (styles == null || styles.isEmpty()) {
             List<ExcelStyle> newStyles = new ArrayList<>(n);
             for (int i = 0; i < n; i++) {
                 String dataFormat = dataFormatMap.get(i);
                 if (dataFormat != null) {
-                    newStyles.add(new ExcelStyle().setDataFormat(dataFormat));
+                    ExcelStyle style = new ExcelStyle().setDataFormat(dataFormat);
+                    if (defaultStyle != null) {
+                        style = defaultStyle.copy().merge(style);
+                    }
+                    newStyles.add(style);
                 } else {
                     newStyles.add(null);
                 }
@@ -138,87 +144,61 @@ public class TableSheet implements IExcelSheet {
             String dataFormat = i < n ? dataFormatMap.get(i) : null;
             if (dataFormat != null) {
                 if (style == null) {
-                    style = new ExcelStyle();
+                    if (defaultStyle != null) {
+                        style = defaultStyle.copy();
+                    } else {
+                        style = new ExcelStyle();
+                    }
+                } else {
+                    if (defaultStyle != null) {
+                        style = defaultStyle.copy().merge(style);
+                    } else {
+                        style = style.copy(); // avoid reuse styles
+                    }
                 }
                 style.setDataFormat(dataFormat);
+            } else if (style != null) {
+                if (defaultStyle != null) {
+                    style = defaultStyle.copy().merge(style);
+                }
             }
             newStyles.add(style);
         }
         return newStyles;
     }
 
-    private class Iter extends ExcelCellWithOffset implements Iterator<IExcelCell> {
+    private List<ExcelStyle> mergeDefaultStyle(List<ExcelStyle> styles) {
+        if (defaultStyle == null) return styles;
+        return styles.stream().map(style -> {
+            ExcelStyle newStyle = defaultStyle.copy();
+            newStyle.merge(style);
+            return newStyle;
+        }).collect(Collectors.toList());
+    }
 
-        int size;
-        int index;
+    private class Iter extends RowBasedSheetIter<List<Object>> {
 
-        boolean hasData;
-        ListIter headerIter;
         ListIter rowIter;
-        int nextOffset;
 
         private Iter() {
-            size = body != null ? body.size() : 0;
-
-            if (header != null && !header.isEmpty()) {
-                headerIter = new ListIter(header, headerStyles, defaultHeaderStyle);
-                hasData = true;
-                return;
-            }
-            List<Object> row = skipEmptyRows();
-            if (row != null) {
-                rowIter = new ListIter(row, bodyStyles, defaultStyle);
-                hasData = true;
-            }
-        }
-
-        private List<Object> skipEmptyRows() {
-            while (index < size) {
-                List<Object> row = body.get(index);
-                if (row != null && !row.isEmpty()) {
-                    return row;
-                }
-                index++;
-            }
-            return null;
+            super(TableSheet.this.body);
         }
 
         @Override
-        public boolean hasNext() {
-            return hasData;
+        Iterator<IExcelCell> getHeaderCells() {
+            if (ObjectUtil.isEmpty(header)) return null;
+
+            return new ListIter(header, finalHeaderStyles, finalHeaderStyle);
         }
 
         @Override
-        public IExcelCell next() {
-            if (!hasNext()) throw new NoSuchElementException();
-
-            offset = nextOffset;
-            if (headerIter.hasNext()) {
-                cell = headerIter.next();
-                if (!headerIter.hasNext()) {
-                    List<Object> row = skipEmptyRows();
-                    if (row != null) {
-                        rowIter = new ListIter(row, bodyStyles, defaultStyle);
-                        nextOffset++;
-                    } else {
-                        hasData = false;
-                    }
-                }
-                return this;
+        Iterator<IExcelCell> getColumnCells(List<Object> row) {
+            if (rowIter == null) {
+                rowIter = new ListIter(row, finalBodyStyles, defaultStyle);
+            } else {
+                rowIter.reset(row);
             }
-
-            cell = rowIter.next();
-            if (!rowIter.hasNext()) {
-                index++;
-                List<Object> row = skipEmptyRows();
-                if (row != null) {
-                    rowIter.reset(row);
-                    nextOffset++;
-                } else {
-                    hasData = false;
-                }
-            }
-            return this;
+            return rowIter;
         }
     }
 
@@ -281,5 +261,4 @@ public class TableSheet implements IExcelSheet {
             return this;
         }
     }
-
 }

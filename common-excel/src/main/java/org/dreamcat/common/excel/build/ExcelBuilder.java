@@ -96,7 +96,8 @@ public class ExcelBuilder {
 
         ExcelStyle defaultStyle;
         ExcelStyle headerStyle;
-        List<ExcelStyle> columnStyles;
+        List<ExcelStyle> headerStyles;
+        List<ExcelStyle> bodyStyles;
         boolean disableDefaultDataFormat;
         String defaultDateTimeDataFormat;
         String defaultDateDataFormat;
@@ -110,7 +111,8 @@ public class ExcelBuilder {
             TableSheet sheet = new TableSheet();
             sheet.setDefaultStyle(defaultStyle);
             sheet.setHeaderStyle(headerStyle);
-            sheet.setColumnStyles(columnStyles);
+            sheet.setHeaderStyles(headerStyles);
+            sheet.setBodyStyles(bodyStyles);
             sheet.setDisableDefaultDataFormat(disableDefaultDataFormat);
             if (defaultDateTimeDataFormat != null) {
                 sheet.setDefaultDateTimeDataFormat(defaultDateTimeDataFormat);

@@ -53,7 +53,7 @@ class TableSheetTest extends BaseTest {
                 .fontHeight(13)
                 .fillColor(IndexedColors.ORANGE)
                 .borderColor(IndexedColors.RED, BorderStyle.DOUBLE);
-        sheet2.setColumnStyles(Arrays.asList(style1, style2));
+        sheet2.setBodyStyles(Arrays.asList(style1, style2));
 
         TableSheet sheet3 = new TableSheet();
         sheet3.setDefaultStyle(defaultStyle);
@@ -61,7 +61,7 @@ class TableSheetTest extends BaseTest {
         sheet3.setName("small_style2");
         sheet3.setHeader(Arrays.asList("id", "name", "age"));
         sheet3.setBody(buildBody());
-        sheet3.setColumnStyles(Arrays.asList(style1, null, style2));
+        sheet3.setBodyStyles(Arrays.asList(style1, null, style2));
 
         writeXlsx("testSmall", sheet1, sheet2, sheet3);
     }

@@ -84,8 +84,8 @@ public class ExcelStyle {
         return newStyle;
     }
 
-    public void merge(ExcelStyle style) {
-        if (style == null) return;
+    public ExcelStyle merge(ExcelStyle style) {
+        if (style == null) return this;
 
         if (style.font != null) {
             if (this.font == null) {
@@ -156,6 +156,7 @@ public class ExcelStyle {
         if (style.rightBorderColor != null) {
             this.rightBorderColor = style.rightBorderColor;
         }
+        return this;
     }
 
     public static ExcelStyle from(CellStyle style) {

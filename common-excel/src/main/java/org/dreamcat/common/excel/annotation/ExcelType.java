@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
 /**
  * Create by tuke on 2020/7/22
@@ -43,21 +44,30 @@ public @interface ExcelType {
 
         public static Value parse(Class<?> clazz) {
             Value typeValue = new Value();
+            typeValue.columns = parseFields(clazz, ExcelColumn.Value::new, true, typeValue);
+            return typeValue;
+        }
+
+        private static <T extends SubValue> List<T> parseFields(
+                Class<?> clazz, Supplier<T> columnValueConstructor,
+                boolean enableExpanded, Value typeValue) {
             ExcelType excelType = ReflectUtil.retrieveAnnotation(clazz, ExcelType.class);
             boolean onlyAnnotated = false;
             ExcelStyle defaultStyle = null;
             if (excelType != null) {
                 String name = excelType.name();
                 if (!name.isEmpty()) {
-                    typeValue.name = name;
+                    if (typeValue != null) {
+                        typeValue.name = name;
+                    }
                 }
                 onlyAnnotated = excelType.onlyAnnotated();
 
-                defaultStyle = ExcelColumn.SubValue.parseStyle(clazz, null);
+                defaultStyle = SubValue.parseStyle(clazz, null);
             }
 
-            List<ExcelColumn.Value> unsortedColumns = new ArrayList<>();
-            Map<Integer, ExcelColumn.Value> annotatedSortedColumns = new TreeMap<>();
+            List<T> unsortedColumns = new ArrayList<>();
+            Map<Integer, T> annotatedSortedColumns = new TreeMap<>();
 
             List<Field> fields = ReflectUtil.retrieveBeanFields(clazz);
             for (Field field : fields) {
@@ -66,8 +76,8 @@ public @interface ExcelType {
                     if (onlyAnnotated) continue;
                 }
 
-                ExcelColumn.Value columnValue = new ExcelColumn.Value();
-                columnValue.style = ExcelColumn.SubValue.parseStyle(field, defaultStyle);
+                T columnValue = columnValueConstructor.get();
+                columnValue.style = SubValue.parseStyle(field, defaultStyle);
 
                 String fieldName = field.getName();
                 columnValue.fieldName = fieldName;
@@ -83,12 +93,14 @@ public @interface ExcelType {
                     continue;
                 }
 
-
-                if (excelColumn.expanded()) {
+                if (enableExpanded && excelColumn.expanded()) {
                     if (excelColumn.subheader()) {
-                        typeValue.subheader = true;
+                        if (typeValue != null) {
+                            typeValue.subheader = true;
+                        }
                     }
-                    columnValue.subValues = SubValue.parse(field.getType());
+
+                    ((ExcelColumn.Value) columnValue).subValues = parseFields(field.getType(), SubValue::new, false, null);
                 }
 
                 int fieldIndex = excelColumn.fieldIndex();
@@ -98,11 +110,10 @@ public @interface ExcelType {
                     annotatedSortedColumns.put(fieldIndex, columnValue);
                 }
             }
-
-            typeValue.columns = new ArrayList<>();
-            typeValue.columns.addAll(unsortedColumns);
-            typeValue.columns.addAll(annotatedSortedColumns.values());
-            return typeValue;
+            List<T> columns = new ArrayList<>();
+            columns.addAll(unsortedColumns);
+            columns.addAll(annotatedSortedColumns.values());
+            return columns;
         }
 
         public synchronized Triple<List<ExcelCell>, Integer, Integer> getHeaderCells() {

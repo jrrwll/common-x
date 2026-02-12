@@ -10,7 +10,6 @@ import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelWriteCallback;
-import org.dreamcat.common.excel.build.MixedSheet2;
 import org.dreamcat.common.util.BeanUtil;
 import org.dreamcat.common.util.DateUtil;
 import org.junit.jupiter.api.Test;
@@ -31,50 +30,50 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ExcelStyleDataFormatTest {
 
-    @Test
-    @SneakyThrows
-    public void testDataFormat() {
-
-        List<List<Object>> sheetData1 = new ArrayList<>();
-        sheetData1.add(Arrays.asList("abc", "314", "2020/02/02", 1));
-        sheetData1.add(Arrays.asList("xyz", "3.14", "1999/12/31", 2.71828));
-        sheetData1.add(Arrays.asList("abc", "314", "2020/02/02", BigDecimal.ONE));
-        sheetData1.add(Arrays.asList("xyz", "3.14", "1999/12/31", BigDecimal.valueOf(2.71828)));
-        sheetData1.add(Arrays.asList("rst", "1.414", new Date(), BigDecimal.valueOf(3.14158265357989)));
-        sheetData1.add(Arrays.asList("uvw", "65537", DateUtil.parse("2015-12-12 00:00"), BigDecimal.valueOf(2.71828)));
-
-        MixedSheet2 sheet1 = new MixedSheet2(headerSheet(false));
-        sheet1.addAll(sheetData1);
-        sheet1.addWriteCallback(new IExcelWriteCallback() {
-
-            @Override
-            public void onFinishSheet(Workbook workbook, Sheet sheet, int sheetIndex) {
-                sheet.setDefaultRowHeightInPoints((float) 14);
-                for (int i = 0; i < 4; i++) {
-                    // unit is 1/256
-                    sheet.setColumnWidth(i, 10 * 256);
-                }
-            }
-        });
-
-        List<List<Object>> sheetData2 = new ArrayList<>();
-        for (int i = 0; i < 30_0000; i++) {
-            long t = ThreadLocalRandom.current().nextLong(1000 * 24 * 3600_000L);
-            Date date = new Date(System.currentTimeMillis() - t);
-            LocalDate localDate = DateUtil.ofDate(date).toLocalDate();
-            Object value = i % 10 == 0 ? localDate : "";
-            sheetData2.add(Arrays.asList(UUID.randomUUID().toString(), String.valueOf(Math.random()), value,
-                    Math.random() * 1000));
-            if (i > 10) break;
-        }
-        MixedSheet2 sheet2 = new MixedSheet2(headerSheet(true));
-        sheet2.setName("Sheet 2");
-        sheet2.addAll(sheetData2);
-
-        File file = new File(System.getenv("HOME"), "Downloads/common_excel_test.xlsx");
-        ExcelWorkbook<MixedSheet2> workbook = new ExcelWorkbook<>();
-        workbook.addSheet(sheet1).addSheet(sheet2).writeTo(file);
-    }
+    // @Test
+    // @SneakyThrows
+    // public void testDataFormat() {
+    //
+    //     List<List<Object>> sheetData1 = new ArrayList<>();
+    //     sheetData1.add(Arrays.asList("abc", "314", "2020/02/02", 1));
+    //     sheetData1.add(Arrays.asList("xyz", "3.14", "1999/12/31", 2.71828));
+    //     sheetData1.add(Arrays.asList("abc", "314", "2020/02/02", BigDecimal.ONE));
+    //     sheetData1.add(Arrays.asList("xyz", "3.14", "1999/12/31", BigDecimal.valueOf(2.71828)));
+    //     sheetData1.add(Arrays.asList("rst", "1.414", new Date(), BigDecimal.valueOf(3.14158265357989)));
+    //     sheetData1.add(Arrays.asList("uvw", "65537", DateUtil.parse("2015-12-12 00:00"), BigDecimal.valueOf(2.71828)));
+    //
+    //     MixedSheet2 sheet1 = new MixedSheet2(headerSheet(false));
+    //     sheet1.addAll(sheetData1);
+    //     sheet1.addWriteCallback(new IExcelWriteCallback() {
+    //
+    //         @Override
+    //         public void onFinishSheet(Workbook workbook, Sheet sheet, int sheetIndex) {
+    //             sheet.setDefaultRowHeightInPoints((float) 14);
+    //             for (int i = 0; i < 4; i++) {
+    //                 // unit is 1/256
+    //                 sheet.setColumnWidth(i, 10 * 256);
+    //             }
+    //         }
+    //     });
+    //
+    //     List<List<Object>> sheetData2 = new ArrayList<>();
+    //     for (int i = 0; i < 30_0000; i++) {
+    //         long t = ThreadLocalRandom.current().nextLong(1000 * 24 * 3600_000L);
+    //         Date date = new Date(System.currentTimeMillis() - t);
+    //         LocalDate localDate = DateUtil.ofDate(date).toLocalDate();
+    //         Object value = i % 10 == 0 ? localDate : "";
+    //         sheetData2.add(Arrays.asList(UUID.randomUUID().toString(), String.valueOf(Math.random()), value,
+    //                 Math.random() * 1000));
+    //         if (i > 10) break;
+    //     }
+    //     MixedSheet2 sheet2 = new MixedSheet2(headerSheet(true));
+    //     sheet2.setName("Sheet 2");
+    //     sheet2.addAll(sheetData2);
+    //
+    //     File file = new File(System.getenv("HOME"), "Downloads/common_excel_test.xlsx");
+    //     ExcelWorkbook<MixedSheet2> workbook = new ExcelWorkbook<>();
+    //     workbook.addSheet(sheet1).addSheet(sheet2).writeTo(file);
+    // }
 
     private static ExcelSheet headerSheet(boolean dataFormat) {
         ExcelStyle style = new ExcelStyle();

@@ -1,28 +1,36 @@
 package org.dreamcat.common.csv;
 
-import org.dreamcat.common.csv.CsvMeta.Cell;
 import org.dreamcat.common.CloseableIterator;
+import org.dreamcat.common.csv.CsvTypeValue.ColumnValue;
 import org.dreamcat.common.io.CsvUtil;
 import org.dreamcat.common.util.BeanUtil;
+import org.dreamcat.common.util.ListUtil;
+import org.dreamcat.common.util.MapUtil;
 import org.dreamcat.common.util.ReflectUtil;
 import org.dreamcat.common.util.StringUtil;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Create by tuke on 2020/7/28
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class CsvWorkbook<T> implements ICsvWorkbook {
+public class CsvWorkbook<T> implements Iterable<Iterable<String>> {
+
+    private static final String csvEscapeChars = "\\\",";
+    private static final String tsvEscapeChars = "\\\"\t";
 
     private final List<T> values;
 
@@ -65,37 +73,49 @@ public class CsvWorkbook<T> implements ICsvWorkbook {
 
         List<T> values = new ArrayList<>();
         CsvWorkbook<T> workbook = new CsvWorkbook<>(values);
-        CsvMeta meta = CsvBuilder.parse(clazz);
+        CsvTypeValue typeValue = CsvTypeValue.parse(clazz);
+        List<ColumnValue> columns = typeValue.getColumns();
 
-        try (CloseableIterator<List<String>> iter = CsvUtil.readAsIter(reader)) {
+        Map<Integer, ColumnValue> headerMappedColumns = null;
+        try (CloseableIterator<List<String>> iter = CsvUtil.readAsIter(reader, typeValue.delimiter, '"')) {
             while (iter.hasNext()) {
                 List<String> row = iter.next();
+                if (row.isEmpty() && typeValue.skipEmptyLines) continue;
+
+                if (headerMappedColumns == null && !typeValue.headerless) {
+                    if (!iter.hasNext()) {
+                        return workbook;
+                    }
+
+                    headerMappedColumns = getHeaderMappedColumns(row, columns);
+                    continue;
+                }
 
                 T object = ReflectUtil.newInstance(clazz);
                 values.add(object);
-                for (int i = 0, size = row.size(); i < size; i++) {
-                    String word = row.get(i);
-                    Cell cell = meta.getCells().get(i);
-                    if (cell == null || cell.ignored()) continue;
 
-                    Field field = cell.field;
-                    Class<?> fieldClass = field.getType();
+                for (int i = 0, size = row.size(); i < size; i++) {
+                    ColumnValue column;
+                    if (headerMappedColumns != null) {
+                        column = headerMappedColumns.get(i);
+                    } else {
+                        column = ListUtil.getOrNull(columns, i);
+                    }
+                    if (column == null) continue;
+
+                    String word = row.get(i);
+
+                    Field field = column.field;
                     Object fieldValue = null;
-                    if (cell.deserializer != null) {
-                        fieldValue = cell.deserializer.apply(word);
-                    } else if (fieldClass.equals(String.class)) {
-                        fieldValue = word;
-                    } else if (fieldClass.equals(Integer.class)) {
-                        fieldValue = Integer.valueOf(word);
-                    } else if (fieldClass.equals(Long.class)) {
-                        fieldValue = Long.valueOf(word);
-                    } else if (fieldClass.equals(Double.class)) {
-                        fieldValue = Double.valueOf(word);
-                    } else if (fieldClass.equals(Date.class)) {
-                        fieldValue = new Date(Long.parseLong(word));
+                    if (column.deserializer != null) {
+                        fieldValue = column.deserializer.apply(word);
+                    } else {
+                        fieldValue = ReflectUtil.cast(word, field.getType());
                     }
 
-                    ReflectUtil.setFieldValue(object, field, fieldValue);
+                    if (fieldValue != null) {
+                        ReflectUtil.setFieldValue(object, field, fieldValue);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -104,6 +124,73 @@ public class CsvWorkbook<T> implements ICsvWorkbook {
         }
         return workbook;
     }
+
+    private static Map<Integer, ColumnValue> getHeaderMappedColumns(
+            List<String> row, List<ColumnValue> columns) {
+        Map<Integer, ColumnValue> map = new HashMap<>();
+        Map<String, ColumnValue> columnMap = MapUtil.toMap(columns, ColumnValue::getHeader);
+        for (int i = 0, n = row.size(); i < n; i++) {
+            String header = row.get(i);
+            ColumnValue column = columnMap.get(header);
+            if (column == null) continue;
+
+            map.put(i, column);
+        }
+        return map;
+    }
+
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
+
+    public void writeToCsv(String newFile) throws IOException {
+        writeToCsv(new File(newFile));
+    }
+
+    public void writeToCsv(File newFile) throws IOException {
+        try (FileWriter writer = new FileWriter(newFile)) {
+            writeToCsv(writer);
+        }
+    }
+
+    public void writeToTsv(String newFile) throws IOException {
+        writeToTsv(new File(newFile));
+    }
+
+    public void writeToTsv(File newFile) throws IOException {
+        try (FileWriter writer = new FileWriter(newFile)) {
+            writeToTsv(writer);
+        }
+    }
+
+    public void writeToCsv(Writer writer) throws IOException {
+        writeTo(writer, ",", csvEscapeChars);
+    }
+
+    public void writeToTsv(Writer writer) throws IOException {
+        writeTo(writer, "\t", tsvEscapeChars);
+    }
+
+    // 1. Each record is located on a separate line, delimited by a line break (CRLF)
+    // 2. The last record in the file may or may not have an ending line break
+    public void writeTo(Writer writer, String separator, String escapeChars)
+            throws IOException {
+        for (Iterable<String> row : this) {
+            StringBuilder rowString = new StringBuilder();
+            Iterator<String> iterator = row.iterator();
+            while (iterator.hasNext()) {
+                String value = iterator.next();
+                String literal = StringUtil.escape(value, escapeChars);
+                rowString.append(literal);
+                if (iterator.hasNext()) {
+                    rowString.append(separator);
+                }
+            }
+
+            writer.write(rowString.toString());
+            writer.write("\r\n");
+        }
+    }
+
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     @Override
     public Iterator<Iterable<String>> iterator() {

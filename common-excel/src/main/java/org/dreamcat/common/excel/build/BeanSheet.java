@@ -21,13 +21,14 @@ public class BeanSheet<T> implements IExcelSheet {
     private String name;
     private ExcelStyle defaultStyle;
     private boolean headerless;
+    private DefaultDataFormat defaultDataFormat = new DefaultDataFormat();
 
     private List<T> body; // data
 
     private final ExcelType.Value excelType;
 
     public BeanSheet(Class<T> header) {
-        this.excelType = ExcelType.Value.parse(header);
+        this.excelType = ExcelType.Value.parse(header, defaultDataFormat);
         this.name = excelType.getName();
     }
 

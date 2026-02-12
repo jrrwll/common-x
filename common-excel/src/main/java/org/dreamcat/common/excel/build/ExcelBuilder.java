@@ -98,10 +98,7 @@ public class ExcelBuilder {
         ExcelStyle headerStyle;
         List<ExcelStyle> headerStyles;
         List<ExcelStyle> bodyStyles;
-        boolean disableDefaultDataFormat;
-        String defaultDateTimeDataFormat;
-        String defaultDateDataFormat;
-        String defaultTimeDataFormat;
+        DefaultDataFormat defaultDataFormat;
 
         String name;
         List<String> header;
@@ -113,15 +110,8 @@ public class ExcelBuilder {
             sheet.setHeaderStyle(headerStyle);
             sheet.setHeaderStyles(headerStyles);
             sheet.setBodyStyles(bodyStyles);
-            sheet.setDisableDefaultDataFormat(disableDefaultDataFormat);
-            if (defaultDateTimeDataFormat != null) {
-                sheet.setDefaultDateTimeDataFormat(defaultDateTimeDataFormat);
-            }
-            if (defaultDateDataFormat != null) {
-                sheet.setDefaultDateDataFormat(defaultDateDataFormat);
-            }
-            if (defaultTimeDataFormat != null) {
-                sheet.setDefaultTimeDataFormat(defaultTimeDataFormat);
+            if (defaultDataFormat != null) {
+                sheet.setDefaultDataFormat(defaultDataFormat);
             }
 
             sheet.setName(name);
@@ -139,14 +129,19 @@ public class ExcelBuilder {
         final Class<T> beanType;
 
         ExcelStyle defaultStyle;
+        DefaultDataFormat defaultDataFormat;
 
         String name;
         boolean headerless;
+
         List<T> body;
 
         public BeanSheet<T> build() {
             BeanSheet<T> sheet = new BeanSheet<>(beanType);
             sheet.setDefaultStyle(defaultStyle);
+            if (defaultDataFormat != null) {
+                sheet.setDefaultDataFormat(defaultDataFormat);
+            }
 
             sheet.setName(name);
             sheet.setHeaderless(headerless);
@@ -162,6 +157,8 @@ public class ExcelBuilder {
 
         final Class<M> masterType;
         final Class<D> detailType;
+
+        DefaultDataFormat defaultDataFormat;
 
         List<ExtraField> masterExtraFields;
         List<ExtraField> detailExtraFields;
@@ -209,6 +206,10 @@ public class ExcelBuilder {
 
         public MasterDetailSheet<M, D> build() {
             MasterDetailSheet<M, D> sheet = new MasterDetailSheet<>(masterType, detailType);
+            if (defaultDataFormat != null) {
+                sheet.setDefaultDataFormat(defaultDataFormat);
+            }
+
             sheet.setMasterExtraFields(masterExtraFields);
             sheet.setDetailExtraFields(detailExtraFields);
             sheet.setDetailSubheader(detailSubheader);

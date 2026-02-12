@@ -10,7 +10,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
+import org.dreamcat.common.excel.annotation.ExcelHeaderStyle;
 import org.dreamcat.common.util.ObjectUtil;
 
 /**
@@ -196,7 +196,7 @@ public class ExcelStyle {
         return excelStyle;
     }
 
-    public static ExcelStyle from(ExcelColumnStyle columnStyle) {
+    public static ExcelStyle from(ExcelHeaderStyle columnStyle) {
         ExcelStyle style = new ExcelStyle();
         style.setDataFormat(columnStyle.dataFormat());
         style.setHorizontalAlignment(columnStyle.horizontalAlignment());

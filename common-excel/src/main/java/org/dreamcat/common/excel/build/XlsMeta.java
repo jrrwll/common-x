@@ -2,10 +2,10 @@ package org.dreamcat.common.excel.build;
 
 import lombok.Data;
 import org.dreamcat.common.excel.annotation.XlsCell;
-import org.dreamcat.common.excel.annotation.ExcelColumnFont;
+import org.dreamcat.common.excel.annotation.ExcelFontStyle;
 import org.dreamcat.common.excel.annotation.XlsFormat;
 import org.dreamcat.common.excel.annotation.XlsSheet;
-import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
+import org.dreamcat.common.excel.annotation.ExcelHeaderStyle;
 import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.dreamcat.common.util.BeanUtil;
@@ -58,7 +58,7 @@ public class XlsMeta {
         return fieldIndexes;
     }
 
-    private void setDefaultFont(ExcelColumnFont xlsFont) {
+    private void setDefaultFont(ExcelFontStyle xlsFont) {
         if (defaultStyle == null) {
             defaultStyle = new ExcelStyle();
         }
@@ -136,19 +136,19 @@ public class XlsMeta {
     }
 
     private static void parseXlsFont(XlsMeta meta, Class<?> clazz) {
-        ExcelColumnFont xlsFont = ReflectUtil.retrieveAnnotation(clazz, ExcelColumnFont.class);
+        ExcelFontStyle xlsFont = ReflectUtil.retrieveAnnotation(clazz, ExcelFontStyle.class);
         if (xlsFont == null) return;
         meta.setDefaultFont(xlsFont);
     }
 
     private static void parseXlsStyle(XlsMeta meta, Class<?> clazz) {
-        ExcelColumnStyle xlsStyle = ReflectUtil.retrieveAnnotation(clazz, ExcelColumnStyle.class);
+        ExcelHeaderStyle xlsStyle = ReflectUtil.retrieveAnnotation(clazz, ExcelHeaderStyle.class);
         if (xlsStyle == null) return;
         meta.defaultStyle = ExcelStyle.from(xlsStyle);
     }
 
     private static void parseXlsFont(Cell cell, Field field) {
-        ExcelColumnFont xlsFont = field.getDeclaredAnnotation(ExcelColumnFont.class);
+        ExcelFontStyle xlsFont = field.getDeclaredAnnotation(ExcelFontStyle.class);
         if (xlsFont == null) return;
         if (cell.style == null) {
             cell.style = new ExcelStyle();
@@ -157,7 +157,7 @@ public class XlsMeta {
     }
 
     private static void parseXlsStyle(Cell cell, Field field) {
-        ExcelColumnStyle xlsStyle = field.getDeclaredAnnotation(ExcelColumnStyle.class);
+        ExcelHeaderStyle xlsStyle = field.getDeclaredAnnotation(ExcelHeaderStyle.class);
         if (xlsStyle == null) return;
         cell.setStyle(ExcelStyle.from(xlsStyle));
     }

@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface ExcelColumnStyle {
+public @interface ExcelHeaderStyle {
 
     HorizontalAlignment horizontalAlignment() default HorizontalAlignment.RIGHT;
 

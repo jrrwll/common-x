@@ -25,6 +25,8 @@ public class MasterDetailSheet<M, D> implements IExcelSheet {
 
     private String name;
     private boolean headerless;
+    private DefaultDataFormat defaultDataFormat = new DefaultDataFormat();
+
     private List<MasterDetailRow<M, D>> body; // data
 
     private List<ExtraField> masterExtraFields = new ArrayList<>();
@@ -39,8 +41,8 @@ public class MasterDetailSheet<M, D> implements IExcelSheet {
 
     public MasterDetailSheet(
             Class<M> masterClass, Class<D> detailClass) {
-        this.masterType = ExcelType.Value.parse(masterClass);
-        this.detailType = ExcelType.Value.parse(detailClass);
+        this.masterType = ExcelType.Value.parse(masterClass, defaultDataFormat);
+        this.detailType = ExcelType.Value.parse(detailClass, defaultDataFormat);
 
         this.name = masterType.getName();
         this.detailSubheaderName = detailType.getName();

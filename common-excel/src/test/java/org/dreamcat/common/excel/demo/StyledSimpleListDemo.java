@@ -13,19 +13,20 @@ import org.dreamcat.common.Triple;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelWorkbook;
-import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
+import org.dreamcat.common.excel.annotation.ExcelHeaderStyle;
 import org.dreamcat.common.excel.annotation.XlsHeader;
 import org.dreamcat.common.excel.annotation.XlsSheet;
-import org.dreamcat.common.excel.build.MixedSheet2;
-import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
-import org.dreamcat.common.excel.callback.HeaderCellStyleWriteCallback;
+import org.dreamcat.common.excel.build.BeanSheet;
+import org.dreamcat.common.excel.build.CompositeSheet;
 import org.dreamcat.common.excel.style.ExcelStyle;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Create by tuke on 2021/2/16
@@ -36,39 +37,41 @@ public class StyledSimpleListDemo {
     @Data
     static class Pojo {
 
-        @XlsHeader(header = "Cell int", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.RED1))
+        @XlsHeader(header = "Cell int", style = @ExcelHeaderStyle(fillColorIndex = IndexedColors.RED1))
         int a = randi(128);
-        @XlsHeader(header = "Cell Double", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.BRIGHT_GREEN1))
+        @XlsHeader(header = "Cell Double", style = @ExcelHeaderStyle(fillColorIndex = IndexedColors.BRIGHT_GREEN1))
         Double b = rand();
-        @XlsHeader(header = "Cell String", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.BLUE1))
+        @XlsHeader(header = "Cell String", style = @ExcelHeaderStyle(fillColorIndex = IndexedColors.BLUE1))
         String c = choose36(randi(3, 7));
-        @XlsHeader(header = "Cell boolean", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.YELLOW1))
+        @XlsHeader(header = "Cell boolean", style = @ExcelHeaderStyle(fillColorIndex = IndexedColors.YELLOW1))
         boolean d = rand() > 0.5;
-        @XlsHeader(header = "Cell Date", style = @ExcelColumnStyle(
+        @XlsHeader(header = "Cell Date", style = @ExcelHeaderStyle(
                 fillColorIndex = IndexedColors.PINK1, dataFormat = "yyyy-MM-dd hh:mm:ss"))
         Date e = new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L));
-        @XlsHeader(header = "Cell LocalDate", style = @ExcelColumnStyle(
+        @XlsHeader(header = "Cell LocalDate", style = @ExcelHeaderStyle(
                 fillColorIndex = IndexedColors.TURQUOISE1, dataFormat = "yyyy-MM-dd"))
         LocalDate f = ofDate(
                 new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L))).toLocalDate();
-        @XlsHeader(header = "Cell LocalDateTime", style = @ExcelColumnStyle(
+        @XlsHeader(header = "Cell LocalDateTime", style = @ExcelHeaderStyle(
                 fillColorIndex = IndexedColors.RED, dataFormat = "yyyy-MM-dd hh:mm:ss"))
         LocalDateTime g = ofDate(new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L)));
-        @XlsHeader(header = "null", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.ROYAL_BLUE))
+        @XlsHeader(header = "null", style = @ExcelHeaderStyle(fillColorIndex = IndexedColors.ROYAL_BLUE))
         String _null; // null
     }
 
     public static void main(String[] args) throws IOException {
         // build a sheet with a styled header row
-        MixedSheet2 sheet1 = new MixedSheet2(Pojo.class);
+        BeanSheet<Pojo> sheet1 = new BeanSheet<>(Pojo.class);
+        List<Pojo> body1 = new ArrayList<>();
         for (int i = 0; i < randi(2, 17); i++) {
             // add one row to the sheet
-            sheet1.addRow(new Pojo());
+            body1.add(new Pojo());
         }
         // add many rows to the sheet
-        sheet1.addAll(Arrays.asList(new Pojo(), new Pojo()));
-        sheet1.addWriteCallback(new HeaderCellStyleWriteCallback().overwrite(true));
-        sheet1.addWriteCallback(new FitWidthWriteCallback());
+        body1.addAll(Arrays.asList(new Pojo(), new Pojo()));
+        sheet1.setBody(body1);
+
+        // sheet1.addWriteCallback(new FitWidthWriteCallback());
 
         // build the second sheet with a specified header
 
@@ -79,15 +82,20 @@ public class StyledSimpleListDemo {
         headerSheet.addCell(new ExcelCell("cell_c", 0, 2)
                 .setStyle(new ExcelStyle().fillColor(IndexedColors.BRIGHT_GREEN1)));
 
-        MixedSheet2 sheet2 = new MixedSheet2(headerSheet);
+
+        BeanSheet<Triple> sheet_triple = new BeanSheet<>(Triple.class);
+        List<Triple> body2 = new ArrayList<>();
         for (int i = 0; i < randi(1, 17); i++) {
-            sheet2.addRow(Triple.of(uuid32(), rand(10), addDay(new Date(), -i - 1)));
+            body2.add(Triple.of(uuid32(), rand(10), addDay(new Date(), -i - 1)));
         }
-        // custom bean_to_list, only output c & a
-        sheet2.setSchemeConverter(row -> {
-            Triple<?, ?, ?> triple = (Triple<?, ?, ?>) row;
-            return Arrays.asList(triple.third(), triple.first());
-        });
+        sheet_triple.setBody(body2);
+        // // custom bean_to_list, only output c & a
+        // sheet2.setSchemeConverter(row -> {
+        //     Triple<?, ?, ?> triple = (Triple<?, ?, ?>) row;
+        //     return Arrays.asList(triple.third(), triple.first());
+        // });
+        CompositeSheet sheet2 = new CompositeSheet();
+        sheet2.setSheets(Arrays.asList(headerSheet, sheet_triple));
 
         // write data to a local Excel file
         String excelFile = System.getenv("HOME") + "/Downloads/StyledSimpleListDemo.xlsx";

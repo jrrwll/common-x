@@ -19,9 +19,9 @@ public @interface XlsHeader {
     @Inherited
     @interface Default {
 
-        ExcelColumnFont font() default @ExcelColumnFont();
+        ExcelFontStyle font() default @ExcelFontStyle();
 
-        ExcelColumnStyle style() default @ExcelColumnStyle();
+        ExcelHeaderStyle style() default @ExcelHeaderStyle();
 
         boolean onlyAnnotated() default false;
     }
@@ -33,9 +33,9 @@ public @interface XlsHeader {
 
         boolean enabled() default true;
 
-        ExcelColumnFont font() default @ExcelColumnFont();
+        ExcelFontStyle font() default @ExcelFontStyle();
 
-        ExcelColumnStyle style() default @ExcelColumnStyle();
+        ExcelHeaderStyle style() default @ExcelHeaderStyle();
     }
 
     boolean ignored() default false;
@@ -44,9 +44,9 @@ public @interface XlsHeader {
     String header() default "";
 
     // header style
-    ExcelColumnFont font() default @ExcelColumnFont();
+    ExcelFontStyle font() default @ExcelFontStyle();
 
-    ExcelColumnStyle style() default @ExcelColumnStyle();
+    ExcelHeaderStyle style() default @ExcelHeaderStyle();
 
     // enable subheader when it is expanded
     boolean subheader() default false;

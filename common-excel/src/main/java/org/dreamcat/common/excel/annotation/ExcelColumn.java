@@ -60,8 +60,8 @@ public @interface ExcelColumn {
         ExcelStyle style;
 
         static ExcelStyle parseStyle(AnnotatedElement element, ExcelStyle defaultStyle) {
-            ExcelColumnStyle columnStyle = element.getAnnotation(ExcelColumnStyle.class);
-            ExcelColumnFont columnFont = element.getAnnotation(ExcelColumnFont.class);
+            ExcelHeaderStyle columnStyle = element.getAnnotation(ExcelHeaderStyle.class);
+            ExcelFontStyle columnFont = element.getAnnotation(ExcelFontStyle.class);
 
             if (columnStyle == null && columnFont == null) {
                 return defaultStyle != null ? defaultStyle.copy() : null;

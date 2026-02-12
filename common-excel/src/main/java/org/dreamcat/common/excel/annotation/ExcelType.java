@@ -5,7 +5,9 @@ import org.dreamcat.common.Triple;
 import org.dreamcat.common.asm.BeanMapUtil;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.annotation.ExcelColumn.SubValue;
+import org.dreamcat.common.excel.build.DefaultDataFormat;
 import org.dreamcat.common.excel.style.ExcelStyle;
+import org.dreamcat.common.util.ObjectUtil;
 import org.dreamcat.common.util.ReflectUtil;
 
 import java.lang.annotation.ElementType;
@@ -42,15 +44,15 @@ public @interface ExcelType {
         // cells, rowSpan, columnSpan
         private transient Triple<List<ExcelCell>, Integer, Integer> headerCells;
 
-        public static Value parse(Class<?> clazz) {
+        public static Value parse(Class<?> clazz, DefaultDataFormat defaultDataFormat) {
             Value typeValue = new Value();
-            typeValue.columns = parseFields(clazz, ExcelColumn.Value::new, true, typeValue);
+            typeValue.columns = parseFields(clazz, ExcelColumn.Value::new, true, typeValue, defaultDataFormat);
             return typeValue;
         }
 
         private static <T extends SubValue> List<T> parseFields(
                 Class<?> clazz, Supplier<T> columnValueConstructor,
-                boolean enableExpanded, Value typeValue) {
+                boolean enableExpanded, Value typeValue, DefaultDataFormat defaultDataFormat) {
             ExcelType excelType = ReflectUtil.retrieveAnnotation(clazz, ExcelType.class);
             boolean onlyAnnotated = false;
             ExcelStyle defaultStyle = null;
@@ -77,7 +79,14 @@ public @interface ExcelType {
                 }
 
                 T columnValue = columnValueConstructor.get();
-                columnValue.style = SubValue.parseStyle(field, defaultStyle);
+                ExcelStyle style = SubValue.parseStyle(field, defaultStyle);
+                if (!defaultDataFormat.isDisable() && style != null && ObjectUtil.isEmpty(style.getDataFormat())) {
+                    String dataFormat = defaultDataFormat.getDataFormat(field.getType());
+                    if (dataFormat != null) {
+                        style.setDataFormat(dataFormat);
+                    }
+                }
+                columnValue.style = style;
 
                 String fieldName = field.getName();
                 columnValue.fieldName = fieldName;
@@ -87,6 +96,12 @@ public @interface ExcelType {
                     String header = excelColumn.header();
                     if (!header.isEmpty()) {
                         columnValue.header = header;
+                    }
+                    if (excelColumn.serializer() != ExcelColumn.None.class) {
+                        columnValue.serializer = ReflectUtil.newInstance(excelColumn.serializer());
+                    }
+                    if (excelColumn.deserializer() != ExcelColumn.None.class) {
+                        columnValue.deserializer = ReflectUtil.newInstance(excelColumn.deserializer());
                     }
                 } else {
                     unsortedColumns.add(columnValue);
@@ -100,7 +115,7 @@ public @interface ExcelType {
                         }
                     }
 
-                    ((ExcelColumn.Value) columnValue).subValues = parseFields(field.getType(), SubValue::new, false, null);
+                    ((ExcelColumn.Value) columnValue).subValues = parseFields(field.getType(), SubValue::new, false, null, defaultDataFormat);
                 }
 
                 int fieldIndex = excelColumn.fieldIndex();

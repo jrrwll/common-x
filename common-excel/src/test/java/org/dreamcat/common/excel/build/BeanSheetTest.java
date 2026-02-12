@@ -15,8 +15,8 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.annotation.ExcelColumn;
-import org.dreamcat.common.excel.annotation.ExcelColumnFont;
-import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
+import org.dreamcat.common.excel.annotation.ExcelFontStyle;
+import org.dreamcat.common.excel.annotation.ExcelHeaderStyle;
 import org.dreamcat.common.excel.annotation.ExcelType;
 import org.dreamcat.common.util.ArrayUtil;
 import org.dreamcat.common.util.RandomUtil;
@@ -35,15 +35,15 @@ public class BeanSheetTest extends BaseTest {
 
     @Test
     void testSmall() {
-        BeanSheet<AnnotatedPojo> sheet = new BeanSheet<>(AnnotatedPojo.class);
-        sheet.setBody(ArrayUtil.mapRangeToList(1, 4, AnnotatedPojo::create));
+        BeanSheet<Pojo> sheet = new BeanSheet<>(Pojo.class);
+        sheet.setBody(ArrayUtil.mapRangeToList(1, 4, Pojo::create));
         writeXlsx("testSmall", sheet);
     }
 
     @Test
     void testSmallSimple() {
-        BeanSheet<Pojo> sheet = new BeanSheet<>(Pojo.class);
-        sheet.setBody(ArrayUtil.mapRangeToList(1, 4, Pojo::create));
+        BeanSheet<SimplePojo> sheet = new BeanSheet<>(SimplePojo.class);
+        sheet.setBody(ArrayUtil.mapRangeToList(1, 4, SimplePojo::create));
         writeXlsx("testSmallSimple", sheet);
     }
 
@@ -53,11 +53,11 @@ public class BeanSheetTest extends BaseTest {
         ExcelSheet headerSheet = MixedSheetTest.createHeaderSheet();
 
         // body
-        BeanSheet<Pojo> bodySheet = new BeanSheet<>(Pojo.class);
-        ArrayList<Pojo> pojoList;
+        BeanSheet<SimplePojo> bodySheet = new BeanSheet<>(SimplePojo.class);
+        ArrayList<SimplePojo> pojoList;
         pojoList = new ArrayList<>();
         for (int i = 0; i < 20_0000; i++) {
-            pojoList.add(Pojo.create(i));
+            pojoList.add(SimplePojo.create(i));
         }
         bodySheet.setBody(pojoList);
 
@@ -70,55 +70,55 @@ public class BeanSheetTest extends BaseTest {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Pojo {
+    public static class SimplePojo {
 
         int a;
         double b;
         Long c;
         String s;
 
-        static Pojo create(int seq) {
-            return new Pojo(seq, rand(), null, choose26(6));
+        static SimplePojo create(int seq) {
+            return new SimplePojo(seq, rand(), null, choose26(6));
         }
     }
 
     @Data
     @ExcelType(name = "Pojo")
-    public static class AnnotatedPojo {
+    public static class Pojo {
 
-        @ExcelColumnStyle(horizontalAlignment = HorizontalAlignment.CENTER,
+        @ExcelHeaderStyle(horizontalAlignment = HorizontalAlignment.CENTER,
                 fillColorIndex = IndexedColors.RED)
-        @ExcelColumnFont(name = "宋体", height = 24)
+        @ExcelFontStyle(name = "宋体", height = 24)
         String name;
 
-        @ExcelColumnStyle(fillColorIndex = IndexedColors.LEMON_CHIFFON,
+        @ExcelHeaderStyle(fillColorIndex = IndexedColors.LEMON_CHIFFON,
                 fillBaseColorIndex = IndexedColors.GREEN,
                 fillPattern = FillPatternType.ALT_BARS)
         Double num;
 
-        @ExcelColumnStyle(verticalAlignment = VerticalAlignment.CENTER)
-        @ExcelColumnFont(name = "黑体", height = 21, italic = true, indexedColor = IndexedColors.AQUA)
+        @ExcelHeaderStyle(verticalAlignment = VerticalAlignment.CENTER)
+        @ExcelFontStyle(name = "黑体", height = 21, italic = true, indexedColor = IndexedColors.AQUA)
         @ExcelColumn(expanded = true, header = "expanded item")
         Item item;
 
-        @ExcelColumnStyle(
+        @ExcelHeaderStyle(
                 fillColorIndex = IndexedColors.ROSE,
                 borderBottom = BorderStyle.DASH_DOT_DOT,
                 borderLeft = BorderStyle.THICK)
-        @ExcelColumnFont(name = "微软雅黑", height = 16, bold = true, italic = true)
+        @ExcelFontStyle(name = "微软雅黑", height = 16, bold = true, italic = true)
         Date date;
 
-        @ExcelColumnStyle(
+        @ExcelHeaderStyle(
                 fillColorIndex = IndexedColors.SKY_BLUE,
                 borderBottom = BorderStyle.DASHED,
                 borderLeft = BorderStyle.THIN)
-        @ExcelColumnFont(height = 15, italic = true)
+        @ExcelFontStyle(height = 15, italic = true)
         LocalDateTime localDateTime;
 
         int seq;
 
-        public static AnnotatedPojo create(int seq) {
-            AnnotatedPojo pojo = new AnnotatedPojo();
+        public static Pojo create(int seq) {
+            Pojo pojo = new Pojo();
             pojo.name = choose26(randi(4, 7)); // 4-6
             pojo.num = rand();
             pojo.item = Item.create(seq);

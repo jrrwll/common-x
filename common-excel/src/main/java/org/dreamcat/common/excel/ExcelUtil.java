@@ -6,16 +6,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.dreamcat.common.Pair;
 import org.dreamcat.common.excel.content.IExcelContent;
-import org.dreamcat.common.excel.build.MixedSheet2;
 import org.dreamcat.common.util.ListUtil;
 import org.dreamcat.common.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -238,65 +235,4 @@ public final class ExcelUtil {
     }
 
     // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
-
-    public static void writeTo(File file, String sheetName, List<?> sheetData) throws IOException {
-        writeTo(file, Pair.of(sheetName, sheetData));
-    }
-
-    public static <T> void writeTo(File file, Class<T> clazz, String sheetName, List<? extends T> sheetData) throws IOException {
-        writeTo(file, clazz, Pair.of(sheetName, sheetData));
-    }
-
-    public static void writeTo(OutputStream output, String sheetName, List<?> sheetData) throws IOException {
-        writeTo(output, Pair.of(sheetName, sheetData));
-    }
-
-    public static <T> void writeTo(OutputStream output, Class<T> clazz, String sheetName, List<? extends T> sheetData) throws IOException {
-        writeTo(output, clazz, Pair.of(sheetName, sheetData));
-    }
-
-    // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
-
-    @SafeVarargs
-    public static void writeTo(File file, Pair<String, List<?>>... sheets) throws IOException {
-        ExcelWorkbook<MixedSheet2> workbook = buildWorkbook(null,  sheets);
-        workbook.writeTo(file);
-    }
-
-    @SafeVarargs
-    public static <T> void writeTo(File file, Class<T> clazz, Pair<String, List<? extends T>>... sheets) throws IOException {
-        ExcelWorkbook<MixedSheet2> workbook = buildWorkbook(clazz,  sheets);
-        workbook.writeTo(file);
-    }
-
-    @SafeVarargs
-    public static void writeTo(OutputStream output, Pair<String, List<?>>... sheets) throws IOException {
-        ExcelWorkbook<MixedSheet2> workbook = buildWorkbook(null,  sheets);
-        workbook.writeTo(output);
-    }
-
-    @SafeVarargs
-    public static <T> void writeTo(OutputStream output, Class<T> clazz, Pair<String, List<? extends T>>... sheets) throws IOException {
-        ExcelWorkbook<MixedSheet2> workbook = buildWorkbook(clazz,  sheets);
-        workbook.writeTo(output);
-    }
-
-    @SafeVarargs
-    private static <T> ExcelWorkbook<MixedSheet2> buildWorkbook(
-            Class<T> clazz, Pair<String, List<? extends T>>... sheets) {
-        ExcelWorkbook<MixedSheet2> workbook = new ExcelWorkbook<>();
-        for (Pair<String, List<? extends T>> pair : sheets) {
-            MixedSheet2 sheet;
-            if (clazz != null) {
-                sheet = new MixedSheet2(clazz);
-                sheet.setName(pair.first());
-            } else {
-                sheet = new MixedSheet2(pair.first());
-            }
-
-            sheet.addAll(pair.second());
-            workbook.addSheet(sheet);
-        }
-        return workbook;
-    }
 }

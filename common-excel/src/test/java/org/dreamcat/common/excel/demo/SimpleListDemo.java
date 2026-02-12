@@ -34,12 +34,12 @@ public class SimpleListDemo {
         }
 
         String excelFile = System.getenv("HOME") + "/Downloads/SimpleListDemo.xlsx";
-        ExcelUtil.writeTo(new File(excelFile),
-                Pair.of("pojo", pojoList),
-                Pair.of("9x9", multiply));
-
-        String excelFileWithStyle = System.getenv("HOME") + "/Downloads/SimpleListDemoWithStyle.xlsx";
-        ExcelUtil.writeTo(new File(excelFileWithStyle), Pojo.class, "pojo", pojoList);
+        // ExcelUtil.writeTo(new File(excelFile),
+        //         Pair.of("pojo", pojoList),
+        //         Pair.of("9x9", multiply));
+        //
+        // String excelFileWithStyle = System.getenv("HOME") + "/Downloads/SimpleListDemoWithStyle.xlsx";
+        // ExcelUtil.writeTo(new File(excelFileWithStyle), Pojo.class, "pojo", pojoList);
     }
 
 }

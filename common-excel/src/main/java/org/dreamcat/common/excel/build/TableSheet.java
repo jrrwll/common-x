@@ -36,13 +36,9 @@ public class TableSheet implements IExcelSheet {
     private ExcelStyle headerStyle;
     private List<ExcelStyle> headerStyles; // headerStyles first, headerStyle second
     private List<ExcelStyle> bodyStyles;
+    private DefaultDataFormat defaultDataFormat = new DefaultDataFormat();
 
-    private boolean disableDefaultDataFormat;
-    private String defaultDateTimeDataFormat = "yyyy-MM-dd HH:mm:ss";
-    private String defaultDateDataFormat = "yyyy-MM-dd";
-    private String defaultTimeDataFormat = "HH:mm:ss";
-
-    private List<String> header;
+    private List<String> header; // header only support one line
     private List<List<Object>> body;
 
     @Setter(AccessLevel.NONE)
@@ -81,7 +77,7 @@ public class TableSheet implements IExcelSheet {
         // body style
         finalBodyStyles = bodyStyles;
         // add default data format for body
-        if (!disableDefaultDataFormat && body != null && !body.isEmpty()) {
+        if (!defaultDataFormat.isDisable() && body != null && !body.isEmpty()) {
             for (List<Object> row : body) {
                 if (row != null && !row.isEmpty()) {
                     finalBodyStyles = computeDataFormat(bodyStyles, row);
@@ -101,16 +97,9 @@ public class TableSheet implements IExcelSheet {
         int n = row.size();
         for (int i = 0; i < n; i++) {
             Object cell = row.get(i);
-            String dataFormat;
-            if (cell instanceof Date || cell instanceof LocalDateTime) {
-                dataFormat = defaultDateTimeDataFormat;
-            } else if (cell instanceof LocalDate) {
-                dataFormat = defaultDateDataFormat;
-            } else if (cell instanceof LocalTime) {
-                dataFormat = defaultTimeDataFormat;
-            } else {
-                continue;
-            }
+            String dataFormat = defaultDataFormat.getDataFormat(cell);
+            if (dataFormat == null) continue;
+
             dataFormatMap.put(i, dataFormat);
         }
         if (dataFormatMap.isEmpty()) {

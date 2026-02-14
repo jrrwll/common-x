@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -15,10 +14,9 @@ import java.lang.annotation.Target;
 /**
  * Create by tuke on 2020/7/23
  */
-@Target({ElementType.FIELD, ElementType.TYPE})
+@Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
-public @interface ExcelHeaderStyle {
+public @interface ExcelColumnStyle {
 
     HorizontalAlignment horizontalAlignment() default HorizontalAlignment.RIGHT;
 

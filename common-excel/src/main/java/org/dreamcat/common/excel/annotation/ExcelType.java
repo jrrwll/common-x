@@ -1,25 +1,22 @@
 package org.dreamcat.common.excel.annotation;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.dreamcat.common.Triple;
 import org.dreamcat.common.asm.BeanMapUtil;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.annotation.ExcelColumn.SubValue;
-import org.dreamcat.common.excel.build.DefaultDataFormat;
+import org.dreamcat.common.excel.annotation.ExcelColumn.Value;
+import org.dreamcat.common.excel.model.DefaultDataFormat;
 import org.dreamcat.common.excel.style.ExcelStyle;
-import org.dreamcat.common.util.ObjectUtil;
-import org.dreamcat.common.util.ReflectUtil;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Supplier;
 
 /**
  * Create by tuke on 2020/7/22
@@ -33,7 +30,20 @@ public @interface ExcelType {
 
     boolean onlyAnnotated() default false;
 
+    ExcelColumnStyle headerStyle() default @ExcelColumnStyle();
+
+    ExcelColumnStyle bodyStyle() default @ExcelColumnStyle();
+
+    ExcelColumnStyle style() default @ExcelColumnStyle();
+
+    ExcelColumnFont headerFont() default @ExcelColumnFont();
+
+    ExcelColumnFont bodyFont() default @ExcelColumnFont();
+
+    ExcelColumnFont font() default @ExcelColumnFont();
+
     @Getter
+    @Setter
     class Value {
 
         private String name;
@@ -46,89 +56,32 @@ public @interface ExcelType {
 
         public static Value parse(Class<?> clazz, DefaultDataFormat defaultDataFormat) {
             Value typeValue = new Value();
-            typeValue.columns = parseFields(clazz, ExcelColumn.Value::new, true, typeValue, defaultDataFormat);
+            typeValue.columns = ExcelColumn.Value.parseFields(
+                    clazz, ExcelColumn.Value::new,
+                    true, typeValue, defaultDataFormat);
             return typeValue;
         }
 
-        private static <T extends SubValue> List<T> parseFields(
-                Class<?> clazz, Supplier<T> columnValueConstructor,
-                boolean enableExpanded, Value typeValue, DefaultDataFormat defaultDataFormat) {
-            ExcelType excelType = ReflectUtil.retrieveAnnotation(clazz, ExcelType.class);
-            boolean onlyAnnotated = false;
-            ExcelStyle defaultStyle = null;
-            if (excelType != null) {
-                String name = excelType.name();
-                if (!name.isEmpty()) {
-                    if (typeValue != null) {
-                        typeValue.name = name;
-                    }
-                }
-                onlyAnnotated = excelType.onlyAnnotated();
-
-                defaultStyle = SubValue.parseStyle(clazz, null);
-            }
-
-            List<T> unsortedColumns = new ArrayList<>();
-            Map<Integer, T> annotatedSortedColumns = new TreeMap<>();
-
-            List<Field> fields = ReflectUtil.retrieveBeanFields(clazz);
-            for (Field field : fields) {
-                ExcelColumn excelColumn = field.getAnnotation(ExcelColumn.class);
-                if (excelColumn == null) {
-                    if (onlyAnnotated) continue;
-                }
-
-                T columnValue = columnValueConstructor.get();
-                ExcelStyle style = SubValue.parseStyle(field, defaultStyle);
-                if (!defaultDataFormat.isDisable() && style != null && ObjectUtil.isEmpty(style.getDataFormat())) {
-                    String dataFormat = defaultDataFormat.getDataFormat(field.getType());
-                    if (dataFormat != null) {
-                        style.setDataFormat(dataFormat);
-                    }
-                }
-                columnValue.style = style;
-
-                String fieldName = field.getName();
-                columnValue.fieldName = fieldName;
-                columnValue.header = fieldName;
-
-                if (excelColumn != null) {
-                    String header = excelColumn.header();
-                    if (!header.isEmpty()) {
-                        columnValue.header = header;
-                    }
-                    if (excelColumn.serializer() != ExcelColumn.None.class) {
-                        columnValue.serializer = ReflectUtil.newInstance(excelColumn.serializer());
-                    }
-                    if (excelColumn.deserializer() != ExcelColumn.None.class) {
-                        columnValue.deserializer = ReflectUtil.newInstance(excelColumn.deserializer());
-                    }
+        public void applyHeaderStyle(ExcelStyle style) {
+            for (ExcelColumn.Value column : columns) {
+                ExcelStyle excelStyle = column.headerStyle;
+                if (excelStyle != null) {
+                    excelStyle.merge(style);
                 } else {
-                    unsortedColumns.add(columnValue);
-                    continue;
-                }
-
-                if (enableExpanded && excelColumn.expanded()) {
-                    if (excelColumn.subheader()) {
-                        if (typeValue != null) {
-                            typeValue.subheader = true;
-                        }
-                    }
-
-                    ((ExcelColumn.Value) columnValue).subValues = parseFields(field.getType(), SubValue::new, false, null, defaultDataFormat);
-                }
-
-                int fieldIndex = excelColumn.fieldIndex();
-                if (fieldIndex == -1) {
-                    unsortedColumns.add(columnValue);
-                } else {
-                    annotatedSortedColumns.put(fieldIndex, columnValue);
+                    column.headerStyle = style.copy();
                 }
             }
-            List<T> columns = new ArrayList<>();
-            columns.addAll(unsortedColumns);
-            columns.addAll(annotatedSortedColumns.values());
-            return columns;
+        }
+
+        public void applyBodyStyle(ExcelStyle style) {
+            for (ExcelColumn.Value column : columns) {
+                ExcelStyle excelStyle = column.bodyStyle;
+                if (excelStyle != null) {
+                    excelStyle.merge(style);
+                } else {
+                    column.bodyStyle = style.copy();
+                }
+            }
         }
 
         public synchronized Triple<List<ExcelCell>, Integer, Integer> getHeaderCells() {
@@ -148,7 +101,7 @@ public @interface ExcelType {
                 ExcelCell excelCell = new ExcelCell(header, 0, offset);
                 excelCell.setRowSpan(rowSpan);
 
-                ExcelStyle style = column.getStyle();
+                ExcelStyle style = column.getHeaderStyle();
                 if (style != null) {
                     excelCell.setStyle(style);
                 }
@@ -168,7 +121,7 @@ public @interface ExcelType {
                 }
                 for (SubValue subValue : subValues) {
                     ExcelCell subExcelCell = new ExcelCell(subValue.getHeader(), 0, offset++);
-                    ExcelStyle subStyle = subValue.getStyle();
+                    ExcelStyle subStyle = subValue.getHeaderStyle();
                     if (subStyle != null) {
                         subExcelCell.setStyle(subStyle);
                     }
@@ -197,7 +150,7 @@ public @interface ExcelType {
                 }
 
                 if (subValues == null) {
-                    cells.add(new ExcelCell(v, 0, offset).setStyle(column.getStyle()));
+                    cells.add(new ExcelCell(v, 0, offset).setStyle(column.getBodyStyle()));
                     offset += span;
                     continue;
                 }
@@ -206,7 +159,7 @@ public @interface ExcelType {
                 for (SubValue subValue : subValues) {
                     Object subVal = subMap.get(subValue.getFieldName());
                     if (subVal != null) {
-                        cells.add(new ExcelCell(subVal, 0, offset).setStyle(column.getStyle()));
+                        cells.add(new ExcelCell(subVal, 0, offset).setStyle(column.getHeaderStyle()));
                     }
                     offset++;
                 }

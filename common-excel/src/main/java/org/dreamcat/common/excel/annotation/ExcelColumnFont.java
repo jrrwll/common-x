@@ -11,10 +11,10 @@ import java.lang.annotation.Target;
 /**
  * Create by tuke on 2020/7/23
  */
-@Target({ElementType.FIELD, ElementType.TYPE})
+@Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface ExcelFontStyle {
+public @interface ExcelColumnFont {
 
     String name() default "";
 

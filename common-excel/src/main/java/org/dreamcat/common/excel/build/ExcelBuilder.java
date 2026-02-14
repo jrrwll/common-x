@@ -6,6 +6,7 @@ import lombok.experimental.Accessors;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.build.MasterDetailSheet.ExtraField;
+import org.dreamcat.common.excel.model.DefaultDataFormat;
 import org.dreamcat.common.excel.model.DetailRow;
 import org.dreamcat.common.excel.model.MasterDetailRow;
 import org.dreamcat.common.excel.style.ExcelStyle;
@@ -129,6 +130,8 @@ public class ExcelBuilder {
         final Class<T> beanType;
 
         ExcelStyle defaultStyle;
+        ExcelStyle headerStyle;
+        ExcelStyle bodyStyle;
         DefaultDataFormat defaultDataFormat;
 
         String name;
@@ -138,7 +141,15 @@ public class ExcelBuilder {
 
         public BeanSheet<T> build() {
             BeanSheet<T> sheet = new BeanSheet<>(beanType);
-            sheet.setDefaultStyle(defaultStyle);
+            if (defaultStyle != null) {
+                sheet.applyStyle(defaultStyle);
+            }
+            if (headerStyle != null) {
+                sheet.applyHeaderStyle(headerStyle);
+            }
+            if (bodyStyle != null) {
+                sheet.applyBodyStyle(bodyStyle);
+            }
             if (defaultDataFormat != null) {
                 sheet.setDefaultDataFormat(defaultDataFormat);
             }
@@ -158,6 +169,9 @@ public class ExcelBuilder {
         final Class<M> masterType;
         final Class<D> detailType;
 
+        ExcelStyle defaultStyle;
+        ExcelStyle headerStyle;
+        ExcelStyle bodyStyle;
         DefaultDataFormat defaultDataFormat;
 
         List<ExtraField> masterExtraFields;
@@ -206,6 +220,15 @@ public class ExcelBuilder {
 
         public MasterDetailSheet<M, D> build() {
             MasterDetailSheet<M, D> sheet = new MasterDetailSheet<>(masterType, detailType);
+            if (defaultStyle != null) {
+                sheet.applyStyle(defaultStyle);
+            }
+            if (headerStyle != null) {
+                sheet.applyHeaderStyle(headerStyle);
+            }
+            if (bodyStyle != null) {
+                sheet.applyBodyStyle(bodyStyle);
+            }
             if (defaultDataFormat != null) {
                 sheet.setDefaultDataFormat(defaultDataFormat);
             }

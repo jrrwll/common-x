@@ -2,11 +2,13 @@ package org.dreamcat.common.excel.build;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.dreamcat.common.Triple;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
-import org.dreamcat.common.excel.annotation.ExcelType;
+import org.dreamcat.common.excel.annotation.ExcelType.Value;
+import org.dreamcat.common.excel.model.DefaultDataFormat;
 import org.dreamcat.common.excel.model.DetailRow;
 import org.dreamcat.common.excel.model.MasterDetailRow;
 import org.dreamcat.common.excel.style.ExcelStyle;
@@ -36,13 +38,13 @@ public class MasterDetailSheet<M, D> implements IExcelSheet {
     private String masterExtraSubheader; // set means enabled
     private String detailExtraSubheader;
 
-    private final ExcelType.Value masterType;
-    private final ExcelType.Value detailType;
+    private final Value masterType;
+    private final Value detailType;
 
     public MasterDetailSheet(
             Class<M> masterClass, Class<D> detailClass) {
-        this.masterType = ExcelType.Value.parse(masterClass, defaultDataFormat);
-        this.detailType = ExcelType.Value.parse(detailClass, defaultDataFormat);
+        this.masterType = Value.parse(masterClass, defaultDataFormat);
+        this.detailType = Value.parse(detailClass, defaultDataFormat);
 
         this.name = masterType.getName();
         this.detailSubheaderName = detailType.getName();
@@ -50,11 +52,27 @@ public class MasterDetailSheet<M, D> implements IExcelSheet {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class ExtraField {
 
         private String fieldName;
         private String header;
         private ExcelStyle style;
+    }
+
+    public void applyStyle(ExcelStyle style) {
+        applyHeaderStyle(style);
+        applyBodyStyle(style);
+    }
+
+    public void applyHeaderStyle(ExcelStyle style) {
+        masterType.applyHeaderStyle(style);
+        detailType.applyHeaderStyle(style);
+    }
+
+    public void applyBodyStyle(ExcelStyle style) {
+        masterType.applyBodyStyle(style);
+        detailType.applyBodyStyle(style);
     }
 
     @Override

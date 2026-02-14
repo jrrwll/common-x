@@ -15,8 +15,8 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.annotation.ExcelColumn;
-import org.dreamcat.common.excel.annotation.ExcelFontStyle;
-import org.dreamcat.common.excel.annotation.ExcelHeaderStyle;
+import org.dreamcat.common.excel.annotation.ExcelColumnFont;
+import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
 import org.dreamcat.common.excel.annotation.ExcelType;
 import org.dreamcat.common.util.ArrayUtil;
 import org.dreamcat.common.util.RandomUtil;
@@ -50,7 +50,7 @@ public class BeanSheetTest extends BaseTest {
     @Test
     void testHuge() {
         // header
-        ExcelSheet headerSheet = MixedSheetTest.createHeaderSheet();
+        ExcelSheet headerSheet = CompositeSheetTest.excelSheet1();
 
         // body
         BeanSheet<SimplePojo> bodySheet = new BeanSheet<>(SimplePojo.class);
@@ -86,33 +86,47 @@ public class BeanSheetTest extends BaseTest {
     @ExcelType(name = "Pojo")
     public static class Pojo {
 
-        @ExcelHeaderStyle(horizontalAlignment = HorizontalAlignment.CENTER,
-                fillColorIndex = IndexedColors.RED)
-        @ExcelFontStyle(name = "宋体", height = 24)
+        @ExcelColumn(
+                style = @ExcelColumnStyle(
+                        horizontalAlignment = HorizontalAlignment.CENTER,
+                        fillColorIndex = IndexedColors.RED
+                ),
+                font = @ExcelColumnFont(name = "宋体", height = 24)
+        )
         String name;
 
-        @ExcelHeaderStyle(fillColorIndex = IndexedColors.LEMON_CHIFFON,
+        @ExcelColumn(headerStyle = @ExcelColumnStyle(
+                fillColorIndex = IndexedColors.LEMON_CHIFFON,
                 fillBaseColorIndex = IndexedColors.GREEN,
                 fillPattern = FillPatternType.ALT_BARS)
+        )
         Double num;
 
-        @ExcelHeaderStyle(verticalAlignment = VerticalAlignment.CENTER)
-        @ExcelFontStyle(name = "黑体", height = 21, italic = true, indexedColor = IndexedColors.AQUA)
-        @ExcelColumn(expanded = true, header = "expanded item")
+
+        @ExcelColumn(
+                expanded = true, header = "expanded item",
+                bodyStyle = @ExcelColumnStyle(verticalAlignment = VerticalAlignment.CENTER),
+                headerFont = @ExcelColumnFont(name = "黑体", height = 21, italic = true, indexedColor =
+                        IndexedColors.AQUA)
+        )
         Item item;
 
-        @ExcelHeaderStyle(
-                fillColorIndex = IndexedColors.ROSE,
-                borderBottom = BorderStyle.DASH_DOT_DOT,
-                borderLeft = BorderStyle.THICK)
-        @ExcelFontStyle(name = "微软雅黑", height = 16, bold = true, italic = true)
+
+        @ExcelColumn(
+                headerStyle = @ExcelColumnStyle(
+                        fillColorIndex = IndexedColors.ROSE,
+                        borderBottom = BorderStyle.DASH_DOT_DOT,
+                        borderLeft = BorderStyle.THICK),
+                bodyFont = @ExcelColumnFont(name = "微软雅黑", height = 16, bold = true, italic = true))
         Date date;
 
-        @ExcelHeaderStyle(
-                fillColorIndex = IndexedColors.SKY_BLUE,
-                borderBottom = BorderStyle.DASHED,
-                borderLeft = BorderStyle.THIN)
-        @ExcelFontStyle(height = 15, italic = true)
+
+        @ExcelColumn(
+                bodyStyle = @ExcelColumnStyle(
+                        fillColorIndex = IndexedColors.SKY_BLUE,
+                        borderBottom = BorderStyle.DASHED,
+                        borderLeft = BorderStyle.THIN),
+                bodyFont = @ExcelColumnFont(height = 15, italic = true))
         LocalDateTime localDateTime;
 
         int seq;

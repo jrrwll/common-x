@@ -18,6 +18,7 @@ import org.dreamcat.common.excel.annotation.ExcelColumn;
 import org.dreamcat.common.excel.annotation.ExcelColumnFont;
 import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
 import org.dreamcat.common.excel.annotation.ExcelType;
+import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.util.ArrayUtil;
 import org.dreamcat.common.util.RandomUtil;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ public class BeanSheetTest extends BaseTest {
     void testSmall() {
         BeanSheet<Pojo> sheet = new BeanSheet<>(Pojo.class);
         sheet.setBody(ArrayUtil.mapRangeToList(1, 4, Pojo::create));
+        sheet.getWriteCallbacks().add(new FitWidthWriteCallback());
         writeXlsx("testSmall", sheet);
     }
 
@@ -98,10 +100,9 @@ public class BeanSheetTest extends BaseTest {
         @ExcelColumn(headerStyle = @ExcelColumnStyle(
                 fillColorIndex = IndexedColors.LEMON_CHIFFON,
                 fillBaseColorIndex = IndexedColors.GREEN,
-                fillPattern = FillPatternType.ALT_BARS)
-        )
+                fillPattern = FillPatternType.ALT_BARS
+        ))
         Double num;
-
 
         @ExcelColumn(
                 expanded = true, header = "expanded item",
@@ -111,7 +112,6 @@ public class BeanSheetTest extends BaseTest {
         )
         Item item;
 
-
         @ExcelColumn(
                 headerStyle = @ExcelColumnStyle(
                         fillColorIndex = IndexedColors.ROSE,
@@ -119,7 +119,6 @@ public class BeanSheetTest extends BaseTest {
                         borderLeft = BorderStyle.THICK),
                 bodyFont = @ExcelColumnFont(name = "微软雅黑", height = 16, bold = true, italic = true))
         Date date;
-
 
         @ExcelColumn(
                 bodyStyle = @ExcelColumnStyle(

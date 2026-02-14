@@ -105,37 +105,39 @@ public @interface ExcelColumn {
                 columnValue.fieldName = fieldName;
                 columnValue.header = fieldName;
 
-                if (excelColumn != null) {
-                    String header = excelColumn.header();
-                    if (!header.isEmpty()) {
-                        columnValue.header = header;
-                    }
-
-                    Pair<ExcelStyle, ExcelStyle> pair = parseStyle(excelColumn);
-                    ExcelStyle headerStyle = pair.first();
-                    ExcelStyle bodyStyle = pair.second();
-                    if (defaultHeaderStyle != null) {
-                        headerStyle = defaultHeaderStyle.copy().merge(headerStyle);
-                    }
-                    if (defaultBodyStyle != null) {
-                        bodyStyle = defaultBodyStyle.copy().merge(bodyStyle);
-                    }
-                    columnValue.headerStyle = headerStyle;
-                    columnValue.bodyStyle = bodyStyle;
-                    fillDefaultDataFormat(columnValue.bodyStyle, defaultDataFormat, field.getType());
-
-                    if (excelColumn.serializer() != ExcelColumn.None.class) {
-                        columnValue.serializer = ReflectUtil.newInstance(excelColumn.serializer());
-                    }
-                    if (excelColumn.deserializer() != ExcelColumn.None.class) {
-                        columnValue.deserializer = ReflectUtil.newInstance(excelColumn.deserializer());
-                    }
-                } else {
+                if (excelColumn == null) {
                     columnValue.headerStyle = defaultHeaderStyle != null ? defaultHeaderStyle.copy() : null;
                     columnValue.bodyStyle = defaultBodyStyle != null ? defaultBodyStyle.copy() : null;
-                    fillDefaultDataFormat(columnValue.bodyStyle, defaultDataFormat, field.getType());
+                    columnValue.bodyStyle = fillDefaultDataFormat(
+                            columnValue.bodyStyle, defaultDataFormat, field.getType());
                     unsortedColumns.add(columnValue);
                     continue;
+                }
+
+                String header = excelColumn.header();
+                if (!header.isEmpty()) {
+                    columnValue.header = header;
+                }
+
+                Pair<ExcelStyle, ExcelStyle> pair = parseStyle(excelColumn);
+                ExcelStyle headerStyle = pair.first();
+                ExcelStyle bodyStyle = pair.second();
+                if (defaultHeaderStyle != null) {
+                    headerStyle = defaultHeaderStyle.copy().merge(headerStyle);
+                }
+                if (defaultBodyStyle != null) {
+                    bodyStyle = defaultBodyStyle.copy().merge(bodyStyle);
+                }
+                columnValue.headerStyle = headerStyle;
+                columnValue.bodyStyle = bodyStyle;
+                columnValue.bodyStyle = fillDefaultDataFormat(
+                        columnValue.bodyStyle, defaultDataFormat, field.getType());
+
+                if (excelColumn.serializer() != ExcelColumn.None.class) {
+                    columnValue.serializer = ReflectUtil.newInstance(excelColumn.serializer());
+                }
+                if (excelColumn.deserializer() != ExcelColumn.None.class) {
+                    columnValue.deserializer = ReflectUtil.newInstance(excelColumn.deserializer());
                 }
 
                 if (enableExpanded && excelColumn.expanded()) {
@@ -145,9 +147,23 @@ public @interface ExcelColumn {
                         }
                     }
 
-                    ((ExcelColumn.Value) columnValue).subValues = parseFields(
+                    List<SubValue> subValues = parseFields(
                             field.getType(), SubValue::new, false,
                             null, defaultDataFormat);
+                    ((ExcelColumn.Value) columnValue).subValues = subValues;
+                    // filed style override type style
+                    for (SubValue subValue : subValues) {
+                        if (subValue.headerStyle != null) {
+                            subValue.headerStyle.merge(headerStyle);
+                        } else {
+                            subValue.headerStyle = headerStyle.copy();
+                        }
+                        if (subValue.bodyStyle != null) {
+                            subValue.bodyStyle.merge(bodyStyle);
+                        } else {
+                            subValue.bodyStyle = bodyStyle.copy();
+                        }
+                    }
                 }
 
                 int fieldIndex = excelColumn.fieldIndex();
@@ -201,15 +217,19 @@ public @interface ExcelColumn {
             return Pair.of(headerStyle, bodyStyle);
         }
 
-        private static void fillDefaultDataFormat(
+        private static ExcelStyle fillDefaultDataFormat(
                 ExcelStyle style, DefaultDataFormat defaultDataFormat, Class<?> fieldType) {
-            if (style == null || defaultDataFormat.isDisable()) return;
-            if (ObjectUtil.isNotEmpty(style.getDataFormat())) {
+            if (defaultDataFormat.isDisable()) return style;
+            if (style == null || ObjectUtil.isEmpty(style.getDataFormat())) {
                 String dataFormat = defaultDataFormat.getDataFormat(fieldType);
                 if (dataFormat != null) {
+                    if (style == null) {
+                        style = new ExcelStyle();
+                    }
                     style.setDataFormat(dataFormat);
                 }
             }
+            return style;
         }
     }
 

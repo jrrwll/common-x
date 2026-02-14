@@ -7,6 +7,7 @@ import org.dreamcat.common.Triple;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
+import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.annotation.ExcelType.Value;
 import org.dreamcat.common.excel.model.DefaultDataFormat;
 import org.dreamcat.common.excel.model.DetailRow;
@@ -21,11 +22,14 @@ import java.util.List;
 /**
  * Create by tuke on 2021/2/22
  */
-@Getter
 @Setter
 public class MasterDetailSheet<M, D> implements IExcelSheet {
 
+    @Getter
     private String name;
+    @Getter
+    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
+
     private boolean headerless;
     private DefaultDataFormat defaultDataFormat = new DefaultDataFormat();
 

@@ -159,7 +159,7 @@ public @interface ExcelType {
                 for (SubValue subValue : subValues) {
                     Object subVal = subMap.get(subValue.getFieldName());
                     if (subVal != null) {
-                        cells.add(new ExcelCell(subVal, 0, offset).setStyle(column.getHeaderStyle()));
+                        cells.add(new ExcelCell(subVal, 0, offset).setStyle(column.getBodyStyle()));
                     }
                     offset++;
                 }

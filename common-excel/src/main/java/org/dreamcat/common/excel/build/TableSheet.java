@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
+import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.content.ExcelUnionContent;
 import org.dreamcat.common.excel.content.IExcelContent;
 import org.dreamcat.common.excel.model.DefaultDataFormat;
@@ -28,6 +29,9 @@ public class TableSheet implements IExcelSheet {
 
     @Getter
     private String name;
+    @Getter
+    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
+
     private ExcelStyle defaultStyle;
     private ExcelStyle headerStyle;
     private List<ExcelStyle> headerStyles; // headerStyles first, headerStyle second

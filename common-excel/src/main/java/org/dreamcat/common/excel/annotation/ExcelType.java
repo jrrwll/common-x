@@ -15,6 +15,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -136,6 +137,7 @@ public @interface ExcelType {
         }
 
         public List<ExcelCell> getColumnCells(Object row) {
+            if (row == null) return Collections.emptyList();
             List<ExcelCell> cells = new ArrayList<>();
             Map<String, Object> rowMap = BeanMapUtil.toShallowMap(row);
 

@@ -36,10 +36,16 @@ public class BeanSheetTest extends BaseTest {
 
     @Test
     void testSmall() {
-        BeanSheet<Pojo> sheet = new BeanSheet<>(Pojo.class);
-        sheet.setBody(ArrayUtil.mapRangeToList(1, 4, Pojo::create));
-        sheet.getWriteCallbacks().add(new FitWidthWriteCallback());
-        writeXlsx("testSmall", sheet);
+        BeanSheet<Pojo> sheet1 = new BeanSheet<>(Pojo.class);
+        sheet1.setBody(ArrayUtil.mapRangeToList(1, 4, Pojo::create));
+        sheet1.getWriteCallbacks().add(new FitWidthWriteCallback());
+
+        BeanSheet<Pojo> sheet2 = new BeanSheet<>(Pojo.class);
+        sheet2.setName("Sheet 2");
+        sheet2.setHeaderless(true);
+        sheet2.setBody(ArrayUtil.mapRangeToList(1, 4, Pojo::create));
+        sheet2.getWriteCallbacks().add(new FitWidthWriteCallback());
+        writeXlsx("testSmall", sheet1, sheet2);
     }
 
     @Test
@@ -155,17 +161,16 @@ public class BeanSheetTest extends BaseTest {
 
         String r0 = RandomUtil.uuid();
 
+        public static Item create() {
+            return create((randi(1 << 8)));
+        }
+
         public static Item create(int seq) {
             Item item = new Item();
             item.r1 = randi(1000L);
             item.r2 = String.format("seq-%07d", seq);
             item.r3 = LocalDate.now().minusDays(randi(360));
             return item;
-        }
-
-        @Override
-        public String toString() {
-            return r2;
         }
     }
 }

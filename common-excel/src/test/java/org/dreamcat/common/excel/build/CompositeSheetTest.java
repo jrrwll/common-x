@@ -58,7 +58,7 @@ class CompositeSheetTest extends BaseTest {
     void testSmallParse() {
         readXlsx("testSmall", sheet -> {
             System.out.println("sheetName: " + sheet.getName());
-            System.out.println(sheet);
+            printSheetVerbose(sheet);
         });
     }
 
@@ -110,7 +110,7 @@ class CompositeSheetTest extends BaseTest {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    static class Pojo {
+    public static class Pojo {
 
         int a;
         double b;

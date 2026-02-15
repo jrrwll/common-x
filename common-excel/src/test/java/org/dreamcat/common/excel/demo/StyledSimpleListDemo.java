@@ -13,9 +13,9 @@ import org.dreamcat.common.Triple;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.ExcelWorkbook;
+import org.dreamcat.common.excel.annotation.ExcelColumn;
 import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
-import org.dreamcat.common.excel.annotation.XlsHeader;
-import org.dreamcat.common.excel.annotation.XlsSheet;
+import org.dreamcat.common.excel.annotation.ExcelType;
 import org.dreamcat.common.excel.build.BeanSheet;
 import org.dreamcat.common.excel.build.CompositeSheet;
 import org.dreamcat.common.excel.style.ExcelStyle;
@@ -33,29 +33,29 @@ import java.util.List;
  */
 public class StyledSimpleListDemo {
 
-    @XlsSheet(name = "Sheet via @XlsSheet")
+    @ExcelType(name = "Sheet via @ExcelType")
     @Data
     static class Pojo {
 
-        @XlsHeader(header = "Cell int", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.RED1))
+        @ExcelColumn(header = "Cell int", headerStyle = @ExcelColumnStyle(fillColorIndex = IndexedColors.RED1))
         int a = randi(128);
-        @XlsHeader(header = "Cell Double", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.BRIGHT_GREEN1))
+        @ExcelColumn(header = "Cell Double", headerStyle = @ExcelColumnStyle(fillColorIndex = IndexedColors.BRIGHT_GREEN1))
         Double b = rand();
-        @XlsHeader(header = "Cell String", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.BLUE1))
+        @ExcelColumn(header = "Cell String", headerStyle = @ExcelColumnStyle(fillColorIndex = IndexedColors.BLUE1))
         String c = choose36(randi(3, 7));
-        @XlsHeader(header = "Cell boolean", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.YELLOW1))
+        @ExcelColumn(header = "Cell boolean", headerStyle = @ExcelColumnStyle(fillColorIndex = IndexedColors.YELLOW1))
         boolean d = rand() > 0.5;
-        @XlsHeader(header = "Cell Date", style = @ExcelColumnStyle(
+        @ExcelColumn(header = "Cell Date", headerStyle = @ExcelColumnStyle(
                 fillColorIndex = IndexedColors.PINK1, dataFormat = "yyyy-MM-dd hh:mm:ss"))
         Date e = new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L));
-        @XlsHeader(header = "Cell LocalDate", style = @ExcelColumnStyle(
+        @ExcelColumn(header = "Cell LocalDate", headerStyle = @ExcelColumnStyle(
                 fillColorIndex = IndexedColors.TURQUOISE1, dataFormat = "yyyy-MM-dd"))
         LocalDate f = ofDate(
                 new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L))).toLocalDate();
-        @XlsHeader(header = "Cell LocalDateTime", style = @ExcelColumnStyle(
+        @ExcelColumn(header = "Cell LocalDateTime", headerStyle = @ExcelColumnStyle(
                 fillColorIndex = IndexedColors.RED, dataFormat = "yyyy-MM-dd hh:mm:ss"))
         LocalDateTime g = ofDate(new Date(System.currentTimeMillis() + randi(-3 * 24 * 3600L, 3 * 24 * 3600L)));
-        @XlsHeader(header = "null", style = @ExcelColumnStyle(fillColorIndex = IndexedColors.ROYAL_BLUE))
+        @ExcelColumn(header = "null", headerStyle = @ExcelColumnStyle(fillColorIndex = IndexedColors.ROYAL_BLUE))
         String _null; // null
     }
 

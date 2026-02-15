@@ -97,6 +97,8 @@ public @interface ExcelColumn {
                 ExcelColumn excelColumn = field.getAnnotation(ExcelColumn.class);
                 if (excelColumn == null) {
                     if (onlyAnnotated) continue;
+                } else if(excelColumn.ignore()) {
+                    continue;
                 }
 
                 T columnValue = columnValueConstructor.get();

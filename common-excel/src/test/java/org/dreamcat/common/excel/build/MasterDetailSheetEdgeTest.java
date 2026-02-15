@@ -7,8 +7,15 @@ import static org.dreamcat.common.util.RandomUtil.randi;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.annotation.ExcelColumn;
+import org.dreamcat.common.excel.annotation.ExcelColumnFont;
+import org.dreamcat.common.excel.annotation.ExcelColumnStyle;
+import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.excel.model.DetailRow;
 import org.dreamcat.common.excel.model.MasterDetailRow;
 import org.junit.jupiter.api.Test;
@@ -33,11 +40,30 @@ public class MasterDetailSheetEdgeTest extends BaseTest {
 
     @Test
     void testMasterDetail() {
-        Builder<?, ?> builder = new Builder<>(Master.class, Detail.class, Master::build, Detail::build);
+        Builder<Master, Detail> builder = new Builder<>(
+                Master.class, Detail.class, Master::build, Detail::build);
+        writeXlsx(builder.getName(), builder.buildSheets());
+    }
 
-        writeXlsx("testMasterDetail",
-                builder.buildSheet(10, 5, 0, 0)
-        );
+    @Test
+    void testMasterExpendDetail() {
+        Builder<MasterExpend, Detail> builder = new Builder<>(
+                MasterExpend.class, Detail.class, MasterExpend::build, Detail::build);
+        writeXlsx(builder.getName(), builder.buildSheets());
+    }
+
+    @Test
+    void testMasterDetailExpend() {
+        Builder<Master, DetailExpend> builder = new Builder<>(
+                Master.class, DetailExpend.class, Master::build, DetailExpend::build);
+        writeXlsx(builder.getName(), builder.buildSheets());
+    }
+
+    @Test
+    void testMasterExpendDetailExpend() {
+        Builder<MasterExpend, DetailExpend> builder = new Builder<>(
+                MasterExpend.class, DetailExpend.class, MasterExpend::build, DetailExpend::build);
+        writeXlsx(builder.getName(), builder.buildSheets());
     }
 
     @RequiredArgsConstructor
@@ -48,7 +74,23 @@ public class MasterDetailSheetEdgeTest extends BaseTest {
         final Function<Integer, M> masterBuilder;
         final BiFunction<Integer, Integer, D> detailBuilder;
 
-        public MasterDetailSheet<?, ?> buildSheet(int total, int detailBound, int masterMapSize, int detailMapSize) {
+        String getName() {
+            return String.format("%s_%s", masterClass.getSimpleName(), detailClass.getSimpleName());
+        }
+
+        MasterDetailSheet<?, ?>[] buildSheets() {
+            return new MasterDetailSheet<?, ?>[]{
+                    buildSheet(10, 5, 0, 0),
+                    buildSheet(23, 0, 0, 0),
+                    buildSheet(0, 5, 0, 0),
+                    buildSheet(2, 3, 2, 0),
+                    buildSheet(2, 3, 0, 2),
+                    buildSheet(2, 2, 1, 1),
+                    buildSheet(2, 1, 1, 1)
+            };
+        }
+
+        MasterDetailSheet<?, ?> buildSheet(int total, int detailBound, int masterMapSize, int detailMapSize) {
             return build(total, detailBound, masterMapSize, detailMapSize,
                     masterClass, detailClass, masterBuilder, detailBuilder);
         }
@@ -59,6 +101,9 @@ public class MasterDetailSheetEdgeTest extends BaseTest {
             Class<M> masterClass, Class<D> detailClass,
             Function<Integer, M> masterBuilder, BiFunction<Integer, Integer, D> detailBuilder) {
         MasterDetailSheet<M, D> sheet = new MasterDetailSheet<>(masterClass, detailClass);
+        sheet.setName(String.format("%d_%d_%d_%d",
+                total, detailBound, masterMapSize, detailMapSize));
+        sheet.getWriteCallbacks().add(new FitWidthWriteCallback());
 
         List<MasterDetailRow<M, D>> body = new ArrayList<>();
         for (int i = 1; i <= total; i++) {
@@ -93,6 +138,12 @@ public class MasterDetailSheetEdgeTest extends BaseTest {
     public static class Master {
 
         private int id;
+        @ExcelColumn(
+                headerStyle = @ExcelColumnStyle(
+                        horizontalAlignment = HorizontalAlignment.CENTER,
+                        fillColorIndex = IndexedColors.RED
+                ),
+                headerFont = @ExcelColumnFont(name = "宋体", height = 24))
         private String name = choose26(randi(4, 7));
         private Date date = new Date(System.currentTimeMillis() - randi(180 * 24 * 3600_000L));
 
@@ -105,15 +156,19 @@ public class MasterDetailSheetEdgeTest extends BaseTest {
 
     @Getter
     @Setter
-    public static class MasterExpended extends Master {
+    public static class MasterExpend extends Master {
 
         @ExcelColumn(expanded = true)
         private Expended expended;
         private boolean flag = rand() > 0.5;
+        @ExcelColumn(style = @ExcelColumnStyle(
+                fillColorIndex = IndexedColors.LEMON_CHIFFON,
+                fillBaseColorIndex = IndexedColors.GREEN,
+                fillPattern = FillPatternType.ALT_BARS))
         private BigDecimal amount = new BigDecimal(rand(-100, 100));
 
-        public static MasterExpended build(int id) {
-            MasterExpended master = new MasterExpended();
+        public static MasterExpend build(int id) {
+            MasterExpend master = new MasterExpend();
             master.setId(id);
             master.setExpended(new Expended());
             return master;
@@ -123,6 +178,9 @@ public class MasterDetailSheetEdgeTest extends BaseTest {
     @Getter
     @Setter
     public static class Expended {
+
+        @ExcelColumn(bodyFont = @ExcelColumnFont(
+                name = "黑体", height = 21, italic = true, indexedColor = IndexedColors.AQUA))
         private String code = "ex-" + choose26(randi(2, 5));
         private String remark = choose26(randi(1, 3));
         private double price = rand();
@@ -131,9 +189,14 @@ public class MasterDetailSheetEdgeTest extends BaseTest {
     @Getter
     @Setter
     public static class Detail {
+
         private int masterId;
         private String seq;
         private String name = "Detail-" + choose26(randi(2, 5));
+        @ExcelColumn(bodyStyle = @ExcelColumnStyle(
+                fillColorIndex = IndexedColors.ROSE,
+                borderBottom = BorderStyle.DASH_DOT_DOT,
+                borderLeft = BorderStyle.THICK))
         private LocalDate localDate = LocalDate.now().plusMonths(randi(100));
 
         public static Detail build(int masterId, int seq) {
@@ -151,6 +214,8 @@ public class MasterDetailSheetEdgeTest extends BaseTest {
         @ExcelColumn(expanded = true)
         private Expended expended;
         private BigDecimal amount2 = new BigDecimal(randi(-1000, 0));
+        @ExcelColumn(font = @ExcelColumnFont(
+                name = "微软雅黑", height = 16, bold = true, italic = true))
         private boolean flag2 = rand() > 0.5;
 
         public static DetailExpend build(int masterId, int seq) {
@@ -164,7 +229,7 @@ public class MasterDetailSheetEdgeTest extends BaseTest {
 
     private final static List<Supplier<?>> mapFns = Arrays.asList(
             () -> randi(1, 11),
-            () -> "E-" + choose26(randi(3, 7)),
+            () -> "Extra-" + choose26(randi(3, 7)),
             () -> LocalDateTime.now().minusWeeks(randi(1000))
     );
 

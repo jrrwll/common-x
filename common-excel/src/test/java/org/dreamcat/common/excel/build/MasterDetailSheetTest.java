@@ -8,6 +8,7 @@ import lombok.Data;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.annotation.ExcelColumn;
 import org.dreamcat.common.excel.annotation.ExcelType;
+import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
 import org.dreamcat.common.util.ArrayUtil;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,8 @@ public class MasterDetailSheetTest extends BaseTest {
                 1, 11, PojoMaster::new);
         ExcelBuilder.build()
                 .addSheet(PojoMaster.class, PojoDetail.class, sheet -> {
-                    sheet.body(rows, PojoMaster::getDetails);
+                    sheet.body(rows, PojoMaster::getDetails)
+                            .addWriteCallback(new FitWidthWriteCallback());
                 }).writeTo(outputFile("test", "xlsx"));
     }
 

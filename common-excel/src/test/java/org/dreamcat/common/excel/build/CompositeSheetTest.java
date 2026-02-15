@@ -8,11 +8,14 @@ import static org.dreamcat.common.util.RandomUtil.randi;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.ExcelSheet;
 import org.dreamcat.common.excel.IExcelSheet;
+import org.dreamcat.common.excel.style.ExcelFont;
 import org.dreamcat.common.excel.style.ExcelStyle;
 import org.junit.jupiter.api.Test;
 
@@ -143,6 +146,46 @@ class CompositeSheetTest extends BaseTest {
                 .setStyle(new ExcelStyle().fillColor(IndexedColors.YELLOW1)));
         sheet.addCell(new ExcelCell("D6:D7", 0, 3, 2, 1)
                 .setStyle(new ExcelStyle().fillColor(IndexedColors.TURQUOISE)));
+        return sheet;
+    }
+
+    static ExcelSheet excelSheet3() {
+        ExcelSheet sheet = new ExcelSheet();
+        // col1
+        sheet.addCell(new ExcelCell("A1:A2", 0, 0, 2, 1)
+                .setStyle(new ExcelStyle().setVerticalAlignment(VerticalAlignment.CENTER)
+                        .setHorizontalAlignment(HorizontalAlignment.CENTER)
+                        .fillColor(IndexedColors.ROSE)
+                        .setFont(new ExcelFont().height(24).color(IndexedColors.RED1))));
+        // col2
+        sheet.addCell(new ExcelCell("B1", 0, 1, 2, 1)
+                .setStyle(new ExcelStyle()
+                        .fillColor(IndexedColors.VIOLET)
+                        .fontHeight(32)));
+
+        // col3
+        sheet.addCell(new ExcelCell("C1:D1", 0, 2, 1, 2)
+                .setStyle(new ExcelStyle()
+                        .setVerticalAlignment(VerticalAlignment.CENTER)
+                        .fillColor(IndexedColors.LEMON_CHIFFON)
+                        .fontHeight(16)));
+        sheet.addCell(new ExcelCell("C2", 1, 2)
+                .setStyle(new ExcelStyle()
+                        .fillColor(IndexedColors.GREY_50_PERCENT)
+                        .fontHeight(14)));
+        sheet.addCell(new ExcelCell("D2", 1, 3)
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.LAVENDER)));
+
+        // col4
+        sheet.addCell(new ExcelCell("E1:F1", 0, 4, 1, 2)
+                .setStyle(new ExcelStyle()
+                        .setVerticalAlignment(VerticalAlignment.CENTER)
+                        .fillColor(IndexedColors.AQUA)
+                        .fontHeight(12)));
+        sheet.addCell(new ExcelCell("E2", 1, 4)
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.OLIVE_GREEN).fontHeight(10)));
+        sheet.addCell(new ExcelCell("F2", 1, 5)
+                .setStyle(new ExcelStyle().fillColor(IndexedColors.PALE_BLUE).fontHeight(8)));
         return sheet;
     }
 

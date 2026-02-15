@@ -21,6 +21,10 @@ import java.util.List;
 
 /**
  * Create by tuke on 2021/2/22
+ * <p>
+ * It is a very tricky implementation to translate annotated beans to sheet interface,
+ * which simplifies the API usage without sacrificing memory
+ * Note that it is thread-unsafe in the iteration however
  */
 @Setter
 public class MasterDetailSheet<M, D> implements IExcelSheet {
@@ -109,7 +113,7 @@ public class MasterDetailSheet<M, D> implements IExcelSheet {
         int masterRowSpan = masterTriple.second(), masterColumnSpan = masterTriple.third();
 
         Triple<List<ExcelCell>, Integer, Integer> detailTriple = detailType.getHeaderCells();
-        List<ExcelCell> detailCells = masterTriple.first();
+        List<ExcelCell> detailCells = detailTriple.first();
         int detailRowSpan = detailTriple.second(), detailColumnSpan = detailTriple.third();
 
         List<ExcelCell> masterExtraCells = new ArrayList<>();
@@ -232,11 +236,13 @@ public class MasterDetailSheet<M, D> implements IExcelSheet {
         }
         List<IExcelCell> cells = null;
 
+        int columnOffset = masterCells.size();
         int rowOffset = 0;
         for (DetailRow<D> detail : details) {
             List<ExcelCell> detailCells = detailType.getColumnCells(detail.getDetail());
             for (ExcelCell cell : detailCells) {
                 cell.setRowIndex(cell.getRowIndex() + rowOffset);
+                cell.setColumnIndex(cell.getColumnIndex() + columnOffset);
             }
             if (cells == null) {
                 cells = new ArrayList<>(masterCells.size() + rowSpan * detailCells.size());

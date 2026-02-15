@@ -123,4 +123,16 @@ public class ExcelCell implements IExcelCell {
         cellPart.comment = comment;
         return this;
     }
+
+    @Override
+    public String toString() {
+        if (cellPart == null) {
+            return String.format("(%d, %d) %s", rowIndex, columnIndex, content);
+        }
+        return String.format("(%d%s, %d%s) %s",
+                rowIndex, cellPart.rowSpan > 1 ? ":" + cellPart.rowSpan : "",
+                columnIndex, cellPart.columnSpan > 1 ? ":" + cellPart.columnSpan : "",
+                content
+        );
+    }
 }

@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.IExcelSheet;
+import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.excel.build.MasterDetailSheet.ExtraField;
 import org.dreamcat.common.excel.model.DefaultDataFormat;
 import org.dreamcat.common.excel.model.DetailRow;
@@ -15,6 +16,7 @@ import org.dreamcat.common.util.ListUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -102,8 +104,15 @@ public class ExcelBuilder {
         DefaultDataFormat defaultDataFormat;
 
         String name;
+        List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
+
         List<String> header;
         List<List<Object>> body;
+
+        public TableSheetBuilder addWriteCallback(IExcelWriteCallback writeCallback) {
+            this.writeCallbacks.add(writeCallback);
+            return this;
+        }
 
         public TableSheet build() {
             TableSheet sheet = new TableSheet();
@@ -116,6 +125,7 @@ public class ExcelBuilder {
             }
 
             sheet.setName(name);
+            sheet.getWriteCallbacks().addAll(writeCallbacks);
             sheet.setHeader(header);
             sheet.setBody(body);
             return sheet;
@@ -135,9 +145,15 @@ public class ExcelBuilder {
         DefaultDataFormat defaultDataFormat;
 
         String name;
+        List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
         boolean headerless;
 
         List<T> body;
+
+        public BeanSheetBuilder<T> addWriteCallback(IExcelWriteCallback writeCallback) {
+            this.writeCallbacks.add(writeCallback);
+            return this;
+        }
 
         public BeanSheet<T> build() {
             BeanSheet<T> sheet = new BeanSheet<>(beanType);
@@ -155,6 +171,7 @@ public class ExcelBuilder {
             }
 
             sheet.setName(name);
+            sheet.getWriteCallbacks().addAll(writeCallbacks);
             sheet.setHeaderless(headerless);
             sheet.setBody(body);
             return sheet;
@@ -182,8 +199,15 @@ public class ExcelBuilder {
         String detailExtraSubheader;
 
         String name;
+        List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
+
         boolean headerless;
         List<MasterDetailRow<M, D>> body;
+
+        public MasterDetailSheetBuilder<M, D> addWriteCallback(IExcelWriteCallback writeCallback) {
+            this.writeCallbacks.add(writeCallback);
+            return this;
+        }
 
         public MasterDetailSheetBuilder<M, D> body(List<M> body, Function<M, List<? extends D>> detailGetter) {
             this.body = body.stream()
@@ -241,6 +265,7 @@ public class ExcelBuilder {
             sheet.setDetailExtraSubheader(detailExtraSubheader);
 
             sheet.setName(name);
+            sheet.getWriteCallbacks().addAll(writeCallbacks);
             sheet.setHeaderless(headerless);
             sheet.setBody(body);
             return sheet;

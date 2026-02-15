@@ -20,7 +20,8 @@ abstract class RowBasedSheetIter<T> extends ExcelCellWithOffset implements Itera
     boolean hasData;
     Iterator<IExcelCell> headerIter;
     Iterator<IExcelCell> rowIter;
-    int nextOffset;
+    int prevOffset;
+    int maxRowOffset;
 
     abstract Iterator<IExcelCell> getHeaderCells();
 
@@ -65,13 +66,17 @@ abstract class RowBasedSheetIter<T> extends ExcelCellWithOffset implements Itera
     public IExcelCell next() {
         if (!hasNext()) throw new NoSuchElementException();
 
-        offset = nextOffset;
+        offset = prevOffset;
         if (headerIter != null && headerIter.hasNext()) {
             cell = headerIter.next();
+            // update the max row offset
+            maxRowOffset = Math.max(cell.getRowIndex() + cell.getRowSpan(), maxRowOffset);
+
             if (!headerIter.hasNext()) {
                 rowIter = skipEmptyRows();
                 if (rowIter != null) {
-                    nextOffset++;
+                    prevOffset += maxRowOffset;
+                    maxRowOffset = 0;
                 } else {
                     hasData = false;
                 }
@@ -80,11 +85,14 @@ abstract class RowBasedSheetIter<T> extends ExcelCellWithOffset implements Itera
         }
 
         cell = rowIter.next();
+        // update the max row offset
+        maxRowOffset = Math.max(cell.getRowIndex() + cell.getRowSpan(), maxRowOffset);
         if (!rowIter.hasNext()) {
             index++;
             rowIter = skipEmptyRows();
             if (rowIter != null) {
-                nextOffset++;
+                prevOffset += maxRowOffset;
+                maxRowOffset = 0;
             } else {
                 hasData = false;
             }

@@ -1,6 +1,7 @@
 dependencies {
     api libs.bundles.poi
 
+    testImplementation libs.bundles.log4j2
     // https://central.sonatype.com/artifact/com.alibaba/easyexcel
     testImplementation 'com.alibaba:easyexcel:4.0.3'
     // https://central.sonatype.com/artifact/com.opencsv/opencsv

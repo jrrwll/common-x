@@ -4,30 +4,35 @@ https://github.com/jrrwll/common-x/blob/master/common-excel/README_zh.adoc[简�
 
 **Excel** Tools，Wrapped for **Apache POI**
 
-== Features
-
-- export from Java Bean List
+== Demo
 
 https://github.com/jrrwll/common-x/blob/master/common-excel/src/test/java/org/dreamcat/common/excel/demo/SimpleListDemo.java[SimpleListDemo.java]
 
 [source,java]
 ----
-// build a empty sheet called "Sheet One"
-SimpleListSheet sheet = new SimpleListSheet("Sheet One");
+// pojo list
+List<Pojo> pojoList = new ArrayList<>();
 
-// add a styled header row to the sheet
-sheet.addHeader(Pojo.class);
+// raw list
+List<List<Object>> multiplyList = new ArrayList<>();
 
-// add many rows to the sheet
-List<Pojo> pojoList = Arrays.asList(new Pojo(), new Pojo());
-sheet.addAll(pojoList);
-
-// add one row to the sheet
-sheet.add(new Pojo());
-
-// write data to a local excel file
+// output file
 String excelFile = System.getenv("HOME") + "/Downloads/SimpleListDemo.xlsx";
-new ExcelWorkbook<>().addSheet(sheet).writeTo(excelFile);
+
+ExcelBuilder.build()
+        .addSheet(Pojo.class, sheet -> {
+            sheet.name("Pojo")
+                    .body(pojoList)
+                    .addWriteCallback(new FitWidthWriteCallback());
+        })
+        .addSheet(sheet -> {
+            sheet.name("9X9")
+                    .body(multiplyList)
+                    .addWriteCallback(new FixedWidthWriteCallback(140));
+        })
+        // vertically merge multiple sheets into one
+        .addCompositeSheet("Triple", headerSheet, tripleListSheet)
+        .writeTo(new File(excelFile));
 ----
 
 == Arch

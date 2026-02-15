@@ -329,6 +329,10 @@ public class ExcelStyle {
         return this;
     }
 
+    public ExcelStyle borderColor(IndexedColors color, BorderStyle style) {
+        return borderColor(color).borderStyle(style);
+    }
+
     public ExcelStyle borderColor(IndexedColors color) {
         ExcelColor excelColor = new ExcelColor(color.getIndex());
         this.bottomBorderColor = excelColor;
@@ -338,12 +342,12 @@ public class ExcelStyle {
         return this;
     }
 
-    public ExcelStyle borderColor(IndexedColors color, BorderStyle style) {
+    public ExcelStyle borderStyle(BorderStyle style) {
         this.borderBottom = style;
         this.borderLeft = style;
         this.borderTop = style;
         this.borderRight = style;
-        return borderColor(color);
+        return this;
     }
 
     public ExcelStyle fontHeight(int height) {

@@ -3,6 +3,11 @@ package org.dreamcat.common.excel.build;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.IExcelSheet;
 import org.dreamcat.common.excel.IExcelWriteCallback;
@@ -76,11 +81,11 @@ public class ExcelBuilder {
         return addSheet(sheetBuilder.build());
     }
 
-    public ExcelBuilder addSheet(String sheetName, IExcelSheet firstSheet, IExcelSheet... remainingSheets) {
-        return addSheet(sheetName, ListUtil.asList(firstSheet, remainingSheets));
+    public ExcelBuilder addCompositeSheet(String sheetName, IExcelSheet firstSheet, IExcelSheet... remainingSheets) {
+        return addCompositeSheet(sheetName, ListUtil.asList(firstSheet, remainingSheets));
     }
 
-    public ExcelBuilder addSheet(String sheetName, List<IExcelSheet> sheets) {
+    public ExcelBuilder addCompositeSheet(String sheetName, List<IExcelSheet> sheets) {
         CompositeSheet sheet = new CompositeSheet();
         sheet.setName(sheetName);
         sheet.setSheets(sheets);
@@ -270,5 +275,19 @@ public class ExcelBuilder {
             sheet.setBody(body);
             return sheet;
         }
+    }
+
+    public static ExcelStyle easyExcelStyle() {
+        return new ExcelStyle()
+                .setWrapText(true)
+                .setLocked(true)
+                .setVerticalAlignment(VerticalAlignment.CENTER)
+                .setHorizontalAlignment(HorizontalAlignment.CENTER)
+                .fillColor(IndexedColors.GREY_25_PERCENT)
+                .setFillPattern(FillPatternType.SOLID_FOREGROUND)
+                .borderStyle(BorderStyle.THIN)
+                .fontName("宋体")
+                .fontHeight(14)
+                .fontBold();
     }
 }

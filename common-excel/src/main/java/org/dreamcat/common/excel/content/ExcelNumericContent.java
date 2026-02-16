@@ -1,14 +1,18 @@
 package org.dreamcat.common.excel.content;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
  * Create by tuke on 2020/7/21
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExcelNumericContent implements IExcelContent {

@@ -24,12 +24,19 @@ public class ExcelCommentTest extends BaseTest {
                     .setStyle(ExcelBuilder.easyExcelStyle())
                     .setHyperLink(new ExcelHyperLink(
                             HyperlinkType.URL, "http://marry.me", "link"))
-                    .setComment(new ExcelComment(
-                            true, "tuke",
-                            ExcelRichString.from("awesom"),
-                            new ExcelClientAnchor(AnchorType.MOVE_AND_RESIZE,
+                    .setComment(new ExcelComment()
+                            .setAuthor("tuke")
+                            .setString(ExcelRichString.from("awesome"))
+                            .setClientAnchor(new ExcelClientAnchor(AnchorType.MOVE_AND_RESIZE,
                                     0, 0, 0, 0,
-                                    0, i, 0, i)));
+                                    i, 0, i, 0)));
+            sheet.addCell(cell);
+        }
+        for (int i = 0; i < 6; i++) {
+            ExcelCell cell = new ExcelCell(uuid32(), 1, i)
+                    .setComment(new ExcelComment()
+                            .setAuthor("tuke")
+                            .setString(ExcelRichString.from("dreamcat")));
             sheet.addCell(cell);
         }
         writeXlsx("testComment", sheet);

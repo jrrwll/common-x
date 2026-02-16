@@ -123,7 +123,7 @@ public class ExcelSheet implements IExcelSheet {
             excelCell.setHyperLink(ExcelHyperLink.from(hyperlink));
         }
         if (comment != null) {
-            excelCell.setComment(ExcelComment.from(comment));
+            excelCell.setComment(ExcelComment.from(comment, excelWorkbook));
         }
 
         cells.add(excelCell);

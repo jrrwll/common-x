@@ -3,6 +3,7 @@ package org.dreamcat.common.excel.content;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.dreamcat.common.excel.ExcelWorkbook;
 import org.dreamcat.common.excel.style.ExcelRichString;
 import org.dreamcat.common.util.DateUtil;
 
@@ -34,7 +35,7 @@ public interface IExcelContent {
         } else if (value instanceof IExcelContent) {
             return (IExcelContent) value;
         } else {
-            return ExcelStringContent.from(value == null ? "" : value.toString());
+            return new ExcelStringContent(value == null ? "" : value.toString());
         }
     }
 
@@ -42,8 +43,8 @@ public interface IExcelContent {
         CellType type = cell.getCellType();
         switch (type) {
             case STRING:
-                RichTextString richTextString = cell.getRichStringCellValue();
-                return new ExcelStringContent(ExcelRichString.from(richTextString));
+                // no parsing rich text
+                return new ExcelStringContent(cell.getStringCellValue());
             case NUMERIC:
                 if (org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted(cell)) {
                     return new ExcelDateContent(cell.getDateCellValue());
@@ -87,5 +88,4 @@ public interface IExcelContent {
     }
 
     void fill(Cell cell);
-
 }

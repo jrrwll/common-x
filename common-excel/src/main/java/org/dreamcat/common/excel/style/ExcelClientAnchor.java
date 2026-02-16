@@ -3,6 +3,7 @@ package org.dreamcat.common.excel.style;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -43,5 +44,11 @@ public class ExcelClientAnchor {
         ClientAnchor anchor = drawing.createAnchor(dx1, dy1, dx1, dy2, col1, row1, col2, row2);
         anchor.setAnchorType(anchorType);
         return anchor;
+    }
+
+    public static ClientAnchor createAnchor(Drawing<?> drawing, Cell cell) {
+        return drawing.createAnchor(0, 0, 0, 0,
+                cell.getColumnIndex(), cell.getRowIndex(),
+                cell.getColumnIndex(), cell.getRowIndex());
     }
 }

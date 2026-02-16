@@ -1,8 +1,10 @@
 package org.dreamcat.common.excel.content;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.dreamcat.common.util.DateUtil;
 
@@ -12,7 +14,9 @@ import java.util.Date;
  * @author Jerry Will
  * @version 2023-06-30
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExcelDateContent implements IExcelContent {

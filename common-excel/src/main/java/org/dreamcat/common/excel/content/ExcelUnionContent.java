@@ -1,7 +1,6 @@
 package org.dreamcat.common.excel.content;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.dreamcat.common.excel.style.ExcelRichString;
 import org.dreamcat.common.util.DateUtil;
 
 import java.time.LocalDate;
@@ -57,7 +56,7 @@ public class ExcelUnionContent implements IExcelContent {
     }
 
     public void setStringContent(String value) {
-        this.stringContent.setValue(ExcelRichString.from(value));
+        this.stringContent.setValue(value);
         this.rawContent = this.stringContent;
     }
 

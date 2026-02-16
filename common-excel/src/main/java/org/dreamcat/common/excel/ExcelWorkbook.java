@@ -49,13 +49,13 @@ public class ExcelWorkbook<T extends IExcelSheet> {
 
     final List<T> sheets = new ArrayList<>();
 
-    final Map<Integer, ExcelFont> fonts = new LinkedHashMap<>();
+    final Map<Integer, ExcelFont> fonts = new LinkedHashMap<>(); // hashCode
     final Map<ExcelFont, Font> reservedFonts = new LinkedHashMap<>();
 
-    final Map<Short, ExcelStyle> styles = new LinkedHashMap<>();
+    final Map<Short, ExcelStyle> styles = new LinkedHashMap<>(); // index
     final Map<ExcelStyle, CellStyle> reservedStyles = new LinkedHashMap<>();
 
-    final Map<ExcelPictureData, Integer> pictureDatas = new LinkedHashMap<>();
+    final Map<ExcelPictureData, Integer> pictureDatas = new LinkedHashMap<>(); // index
     final Map<PictureData, ExcelPictureData> reservedPictureDatas = new LinkedHashMap<>();
 
     boolean date1904;
@@ -128,7 +128,7 @@ public class ExcelWorkbook<T extends IExcelSheet> {
             Font font = workbook.getFontAt(i);
             ExcelFont excelFont = ExcelFont.from(font);
 
-            book.fonts.put(font.getIndex(), excelFont);
+            book.fonts.put(font.hashCode(), excelFont);
             book.reservedFonts.put(excelFont, font);
         }
 
@@ -252,7 +252,7 @@ public class ExcelWorkbook<T extends IExcelSheet> {
             // comment
             ExcelComment excelComment = excelCell.getComment();
             if (excelComment != null) {
-                excelComment.fill(cell, sheet);
+                excelComment.fill(cell, this);
             }
 
             for (IExcelWriteCallback writeCallback : excelSheet.getWriteCallbacks()) {

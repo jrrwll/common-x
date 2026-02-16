@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class FormattingRun {
 
     private String string;
-    private short fontIndex;
+    private ExcelFont font;
 
     public FormattingRun(String string) {
         this.string = string;

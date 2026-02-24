@@ -1,5 +1,7 @@
 package org.dreamcat.common.excel;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.dreamcat.common.excel.content.ExcelPicture;
 
 import java.util.Collections;
@@ -10,15 +12,26 @@ import java.util.List;
  */
 public interface IExcelSheet extends Iterable<IExcelCell> {
 
-    default String getName() {
-        return null;
-    }
+    String getName();
 
-    default List<IExcelWriteCallback> getWriteCallbacks() {
-        return Collections.emptyList();
-    }
+    List<IExcelWriteCallback> getWriteCallbacks();
+
+    void addWriteCallback(IExcelWriteCallback callback);
 
     default List<ExcelPicture> getPictures() {
         return Collections.emptyList();
+    }
+
+    @Getter
+    @Setter
+    abstract class Base implements IExcelSheet {
+
+        protected String name;
+        protected List<IExcelWriteCallback> writeCallbacks;
+
+        @Override
+        public void addWriteCallback(IExcelWriteCallback writeCallback) {
+            writeCallbacks.add(writeCallback);
+        }
     }
 }

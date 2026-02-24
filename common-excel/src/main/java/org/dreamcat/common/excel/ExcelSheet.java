@@ -2,7 +2,6 @@ package org.dreamcat.common.excel;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFPicture;
@@ -45,12 +44,9 @@ import java.util.TreeMap;
 @Slf4j
 @Getter
 @NoArgsConstructor
-public class ExcelSheet implements IExcelSheet {
+public class ExcelSheet extends IExcelSheet.Base {
 
-    @Setter
-    private String name;
     private final List<IExcelCell> cells = new ArrayList<>();
-    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
     private final List<ExcelPicture> pictures = new ArrayList<>();
 
     public ExcelSheet(String name) {
@@ -231,9 +227,5 @@ public class ExcelSheet implements IExcelSheet {
     @Override
     public Iterator<IExcelCell> iterator() {
         return cells.iterator();
-    }
-
-    public void addWriteCallback(IExcelWriteCallback writeCallback) {
-        writeCallbacks.add(writeCallback);
     }
 }

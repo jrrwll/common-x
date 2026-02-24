@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.dreamcat.common.excel.BaseTest;
 import org.dreamcat.common.excel.ExcelCell;
 import org.dreamcat.common.excel.ExcelSheet;
-import org.dreamcat.common.excel.build.ExcelBuilder;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -21,7 +20,6 @@ public class ExcelCommentTest extends BaseTest {
         ExcelSheet sheet = new ExcelSheet("Sheet One");
         for (int i = 0; i < 12; i++) {
             ExcelCell cell = new ExcelCell(uuid32(), 0, i)
-                    .setStyle(ExcelBuilder.easyExcelStyle())
                     .setHyperLink(new ExcelHyperLink(
                             HyperlinkType.URL, "http://marry.me", "link"))
                     .setComment(new ExcelComment()

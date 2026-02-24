@@ -19,7 +19,7 @@ import org.dreamcat.common.excel.annotation.ExcelType;
 import org.dreamcat.common.excel.build.BeanSheet;
 import org.dreamcat.common.excel.build.ExcelBuilder;
 import org.dreamcat.common.excel.callback.FitWidthWriteCallback;
-import org.dreamcat.common.excel.callback.FixedWidthWriteCallback;
+import org.dreamcat.common.excel.callback.WidthHeightWriteCallback;
 import org.dreamcat.common.excel.style.ExcelStyle;
 
 import java.io.File;
@@ -68,7 +68,7 @@ public class SimpleListDemo {
                 .addSheet(sheet -> {
                     sheet.name("9X9")
                             .body(multiplyList)
-                            .addWriteCallback(new FixedWidthWriteCallback(140));
+                            .addWriteCallback(new WidthHeightWriteCallback(12, 14));
                 })
                 .addCompositeSheet("Triple", headerSheet, tripleListSheet)
                 .writeTo(new File(excelFile));

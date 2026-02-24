@@ -27,12 +27,7 @@ import java.util.List;
  * Note that it is thread-unsafe in the iteration however
  */
 @Setter
-public class MasterDetailSheet<M, D> implements IExcelSheet {
-
-    @Getter
-    private String name;
-    @Getter
-    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
+public class MasterDetailSheet<M, D> extends IExcelSheet.Base {
 
     private boolean headerless;
     private DefaultDataFormat defaultDataFormat = new DefaultDataFormat();

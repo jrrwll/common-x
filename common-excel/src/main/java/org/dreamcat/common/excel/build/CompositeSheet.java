@@ -1,14 +1,11 @@
 package org.dreamcat.common.excel.build;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dreamcat.common.excel.IExcelCell;
 import org.dreamcat.common.excel.IExcelSheet;
-import org.dreamcat.common.excel.IExcelWriteCallback;
 import org.dreamcat.common.util.ObjectUtil;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -18,12 +15,7 @@ import java.util.NoSuchElementException;
  */
 @Setter
 @NoArgsConstructor
-public class CompositeSheet implements IExcelSheet {
-
-    @Getter
-    private String name;
-    @Getter
-    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
+public class CompositeSheet extends IExcelSheet.Base {
 
     private List<IExcelSheet> sheets;
 

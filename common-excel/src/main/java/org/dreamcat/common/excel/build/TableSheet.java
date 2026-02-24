@@ -25,12 +25,7 @@ import java.util.stream.Collectors;
  */
 @Setter
 @NoArgsConstructor
-public class TableSheet implements IExcelSheet {
-
-    @Getter
-    private String name;
-    @Getter
-    private final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
+public class TableSheet extends IExcelSheet.Base {
 
     private ExcelStyle defaultStyle;
     private ExcelStyle headerStyle;

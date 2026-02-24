@@ -1,5 +1,6 @@
 package org.dreamcat.common.excel.build;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,25 +23,48 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
  * Create by tuke on 2020/7/22
  */
 @SuppressWarnings({"unchecked"})
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExcelBuilder {
 
     private final ExcelWorkbook<IExcelSheet> workbook = new ExcelWorkbook<>();
+    private final List<Supplier<IExcelWriteCallback>> lastWriterCallbacks;
 
-    private ExcelBuilder() {
+    private ExcelStyle defaultHeaderStyle;
+
+    @SafeVarargs
+    public static ExcelBuilder build(Supplier<IExcelWriteCallback>... lastWriterCallbacks) {
+        return build(Arrays.asList(lastWriterCallbacks));
     }
 
-    public static ExcelBuilder build() {
-        return new ExcelBuilder();
+    public static ExcelBuilder build(List<Supplier<IExcelWriteCallback>> lastWriterCallbacks) {
+        return new ExcelBuilder(lastWriterCallbacks);
+    }
+
+    public ExcelBuilder useDefaultHeaderStyle() {
+        this.defaultHeaderStyle = new ExcelStyle()
+                .setWrapText(true)
+                .setLocked(true)
+                .setVerticalAlignment(VerticalAlignment.CENTER)
+                .setHorizontalAlignment(HorizontalAlignment.CENTER)
+                .fillColor(IndexedColors.GREY_25_PERCENT)
+                .setFillPattern(FillPatternType.SOLID_FOREGROUND)
+                .borderStyle(BorderStyle.THIN)
+                // .fontName("宋体")
+                .fontHeight(14)
+                .fontBold();
+        return this;
     }
 
     public void writeTo(File file) throws IOException {
@@ -60,6 +84,7 @@ public class ExcelBuilder {
 
     public ExcelBuilder addSheet(Consumer<TableSheetBuilder> builder) {
         TableSheetBuilder sheetBuilder = new TableSheetBuilder();
+        sheetBuilder.headerStyle(defaultHeaderStyle);
         builder.accept(sheetBuilder);
         return addSheet(sheetBuilder.build());
     }
@@ -71,12 +96,14 @@ public class ExcelBuilder {
 
     public <T> ExcelBuilder addSheet(Class<T> beanType, Consumer<BeanSheetBuilder<T>> builder) {
         BeanSheetBuilder<T> sheetBuilder = new BeanSheetBuilder<>(beanType);
+        sheetBuilder.headerStyle(defaultHeaderStyle);
         builder.accept(sheetBuilder);
         return addSheet(sheetBuilder.build());
     }
 
     public <M, D> ExcelBuilder addSheet(Class<M> masterType, Class<D> detailType, Consumer<MasterDetailSheetBuilder<M, D>> builder) {
         MasterDetailSheetBuilder<M, D> sheetBuilder = new MasterDetailSheetBuilder<>(masterType, detailType);
+        sheetBuilder.headerStyle(defaultHeaderStyle);
         builder.accept(sheetBuilder);
         return addSheet(sheetBuilder.build());
     }
@@ -93,6 +120,9 @@ public class ExcelBuilder {
     }
 
     public ExcelBuilder addSheet(IExcelSheet sheet) {
+        for (Supplier<IExcelWriteCallback> writerCallback : lastWriterCallbacks) {
+            sheet.addWriteCallback(writerCallback.get());
+        }
         workbook.addSheet(sheet);
         return this;
     }
@@ -130,7 +160,9 @@ public class ExcelBuilder {
             }
 
             sheet.setName(name);
-            sheet.getWriteCallbacks().addAll(writeCallbacks);
+            for (IExcelWriteCallback writeCallback : writeCallbacks) {
+                sheet.addWriteCallback(writeCallback);
+            }
             sheet.setHeader(header);
             sheet.setBody(body);
             return sheet;
@@ -176,7 +208,9 @@ public class ExcelBuilder {
             }
 
             sheet.setName(name);
-            sheet.getWriteCallbacks().addAll(writeCallbacks);
+            for (IExcelWriteCallback writeCallback : writeCallbacks) {
+                sheet.addWriteCallback(writeCallback);
+            }
             sheet.setHeaderless(headerless);
             sheet.setBody(body);
             return sheet;
@@ -270,24 +304,12 @@ public class ExcelBuilder {
             sheet.setDetailExtraSubheader(detailExtraSubheader);
 
             sheet.setName(name);
-            sheet.getWriteCallbacks().addAll(writeCallbacks);
+            for (IExcelWriteCallback writeCallback : writeCallbacks) {
+                sheet.addWriteCallback(writeCallback);
+            }
             sheet.setHeaderless(headerless);
             sheet.setBody(body);
             return sheet;
         }
-    }
-
-    public static ExcelStyle easyExcelStyle() {
-        return new ExcelStyle()
-                .setWrapText(true)
-                .setLocked(true)
-                .setVerticalAlignment(VerticalAlignment.CENTER)
-                .setHorizontalAlignment(HorizontalAlignment.CENTER)
-                .fillColor(IndexedColors.GREY_25_PERCENT)
-                .setFillPattern(FillPatternType.SOLID_FOREGROUND)
-                .borderStyle(BorderStyle.THIN)
-                .fontName("宋体")
-                .fontHeight(14)
-                .fontBold();
     }
 }

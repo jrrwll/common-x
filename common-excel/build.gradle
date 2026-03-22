@@ -1,5 +1,6 @@
 dependencies {
     api libs.bundles.poi
+    implementation libs.javassist
 
     testImplementation libs.bundles.log4j2
     // https://central.sonatype.com/artifact/com.alibaba/easyexcel

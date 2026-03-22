@@ -1,16 +1,5 @@
 package org.dreamcat.common.web.mybatis;
 
-import java.io.StringReader;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
@@ -34,6 +23,19 @@ import org.dreamcat.common.util.DateUtil;
 import org.dreamcat.common.util.ObjectUtil;
 import org.dreamcat.common.util.ReflectUtil;
 import org.dreamcat.common.util.StringUtil;
+
+import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 /**
  * @author Jerry Will
@@ -133,7 +135,10 @@ public class MybatisUtil {
             }
             sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(value));
         }
-        return sql;
+        // remove empty lines
+        return Arrays.stream(sql.split("\n"))
+                .filter(ObjectUtil::isNotBlank)
+                .collect(Collectors.joining("\n"));
     }
 
     // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====

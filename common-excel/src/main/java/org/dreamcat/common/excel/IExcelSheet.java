@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.dreamcat.common.excel.content.ExcelPicture;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public interface IExcelSheet extends Iterable<IExcelCell> {
     abstract class Base implements IExcelSheet {
 
         protected String name;
-        protected List<IExcelWriteCallback> writeCallbacks;
+        protected final List<IExcelWriteCallback> writeCallbacks = new ArrayList<>();
 
         @Override
         public void addWriteCallback(IExcelWriteCallback writeCallback) {
